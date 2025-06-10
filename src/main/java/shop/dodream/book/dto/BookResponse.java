@@ -27,4 +27,5 @@ public class BookResponse {
     private LocalDateTime createdAt;
     private Long searchCount;
     private Long viewCount;
+    private Long bookCount;
 }

@@ -64,5 +64,6 @@ public class Book {
     @Column(nullable = false)
     private long viewCount;
 
-
+    @Column(nullable = false)
+    private long BookCount;
 }

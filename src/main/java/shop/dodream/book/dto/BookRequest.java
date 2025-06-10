@@ -24,4 +24,5 @@ public class BookRequest {
     private Long salePrice;
     private Boolean isGiftable;
     private LocalDateTime createdAt;
+    private Long bookCount;
 }
