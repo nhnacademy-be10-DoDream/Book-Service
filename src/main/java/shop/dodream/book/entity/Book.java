@@ -42,6 +42,9 @@ public class Book {
     @Column(unique = true, nullable = false)
     private String isbn;
 
+    @Column(nullable = false)
+    private Long regularPrice;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "ENUM('SELL','SOLD_OUT','LOW_STOCK','REMOVED')")
     private BookStatus status;
