@@ -20,7 +20,7 @@ public class Category {
     private String categoryName;
 
     @Column(nullable = false)
-    private Long depth;
+    private long depth;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
