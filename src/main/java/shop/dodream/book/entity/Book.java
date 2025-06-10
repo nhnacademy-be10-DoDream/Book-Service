@@ -50,7 +50,7 @@ public class Book {
     private BookStatus status;
 
     @Column(nullable = false)
-    private long salePrice;
+    private Long salePrice;
 
     @Column(nullable = false)
     private Boolean isGiftable;
@@ -59,10 +59,11 @@ public class Book {
     private ZonedDateTime createdAt;
 
     @Column(nullable = false)
-    private long searchCount;
+    private Long searchCount;
 
     @Column(nullable = false)
-    private long viewCount;
+    private Long viewCount;
 
-
+    @Column(nullable = false)
+    private Long BookCount;
 }
