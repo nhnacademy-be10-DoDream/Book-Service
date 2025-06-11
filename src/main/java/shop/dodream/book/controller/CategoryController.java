@@ -14,7 +14,6 @@ import shop.dodream.service.CategoryService;
 import java.util.List;
 
 @RestController
-@RequestMapping
 @RequiredArgsConstructor
 public class CategoryController {
 
@@ -22,8 +21,8 @@ public class CategoryController {
 
     // 카테고리 등록
     @PostMapping("/categories")
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest categoryRequest) {
-        CategoryResponse response = categoryService.createCategory(categoryRequest);
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+        CategoryResponse response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -51,8 +50,8 @@ public class CategoryController {
     // 카테고리 수정
     @PutMapping("/categories/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long categoryId,
-                                                           @RequestBody CategoryRequest categoryRequest) {
-        CategoryResponse response = categoryService.updateCategory(categoryId, categoryRequest);
+                                                           @RequestBody CategoryRequest request) {
+        CategoryResponse response = categoryService.updateCategory(categoryId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

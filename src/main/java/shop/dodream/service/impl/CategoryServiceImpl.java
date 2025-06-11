@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse createCategory(CategoryRequest request) {
         // 관리자만 가능하게 할지????
         if (request.getCategoryName() == null || request.getCategoryName().isEmpty()) {
-            throw new CategoryNameIsNullException();
+            throw new CategoryNameIsNullException("생성하고자 하는 카테고리 이름이 비어 있습니다.");
         }
         Category category = new Category();
         applyCategoryRequestToEntity(category, request);
@@ -66,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override @Transactional
     public CategoryResponse updateCategory(Long categoryId, CategoryRequest request){
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId, " 라는 카테고리 아이디를 찾을 수 없습니다."));
         applyCategoryRequestToEntity(category, request);
 
         Category savedCategory = categoryRepository.save(category);
@@ -77,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override @Transactional
     public void deleteCategory(Long categoryId){
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId, " 라는 카테고리 아이디를 찾을 수 없습니다."));
         categoryRepository.delete(category);
     }
 
@@ -85,10 +85,10 @@ public class CategoryServiceImpl implements CategoryService {
     private void applyCategoryRequestToEntity(Category category, CategoryRequest request) {
         category.setCategoryName(request.getCategoryName());
         category.setDepth(request.getDepth());
-        if (request.getParentId() != null) {
-            Category parentCategory = categoryRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getParentId()));
-            category.setCategory(parentCategory);
-        }
+//        if (request.getCategory() != null) {
+//            Category parentCategory = categoryRepository.findByCategory(request.getCategory())
+//                    .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getCategory(), " 라는 부모 카테고리를 찾을 수 없습니다."));
+//            category.setCategory(parentCategory);
+//        }
     }
 }

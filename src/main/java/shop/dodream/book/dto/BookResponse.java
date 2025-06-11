@@ -28,9 +28,8 @@ public class BookResponse {
     private Long salePrice;
     private Boolean isGiftable;
     private ZonedDateTime createdAt;
-    private Long searchCount;
-    private Long viewCount;
     private Long bookCount;
+    private Long discountRate;
     public BookResponse(Book book) {
         this.bookId = book.getId();
         this.title = book.getTitle();
@@ -44,8 +43,7 @@ public class BookResponse {
         this.salePrice = book.getSalePrice();
         this.isGiftable = book.getIsGiftable();
         this.createdAt = book.getCreatedAt();
-        this.searchCount = book.getSearchCount();
-        this.viewCount = book.getViewCount();
         this.bookCount = book.getBookCount();
+        this.discountRate = book.getDiscountRate();
     }
 }

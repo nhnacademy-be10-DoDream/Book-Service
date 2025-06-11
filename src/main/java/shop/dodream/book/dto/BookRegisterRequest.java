@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import shop.dodream.book.entity.Category;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-public class CategoryRequest {
-    private String categoryName;
-    private Long depth;
-    private Category category;
+public class BookRegisterRequest {
+    private String isbn;
+    private String description;
+    private long discountRate;
 }

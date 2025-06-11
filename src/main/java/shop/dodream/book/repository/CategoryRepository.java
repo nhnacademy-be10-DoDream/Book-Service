@@ -6,4 +6,5 @@ import shop.dodream.book.entity.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
 }
