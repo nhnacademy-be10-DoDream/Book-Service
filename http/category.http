@@ -1,0 +1,44 @@
+### 카테고리 등록
+POST http://localhost:8080/categories
+Content-Type: application/json
+
+{
+  "categoryName": "프로그래밍",
+  "depth": 1,
+  "parentId": null
+}
+
+###
+
+### 전체 카테고리 조회
+GET http://localhost:8080/categories
+Accept: application/json
+
+###
+
+### 특정 도서의 카테고리 조회
+GET http://localhost:8080/books/1/categories
+Accept: application/json
+
+###
+
+### 특정 카테고리에 속한 도서 조회
+GET http://localhost:8080/categories/1/books
+Accept: application/json
+
+###
+
+### 카테고리 수정
+PUT http://localhost:8080/categories/1
+Content-Type: application/json
+
+{
+  "categoryName": "웹 개발",
+  "depth": 1,
+  "parentId": null
+}
+
+###
+
+### 카테고리 삭제
+DELETE http://localhost:8080/categories/1
