@@ -1,10 +1,11 @@
-package shop.dodream.book.exception;
+package shop.dodream.book.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import shop.dodream.book.dto.ErrorResponse;
+import shop.dodream.book.exception.BookIdEmptyError;
 
 import java.time.LocalDateTime;
 

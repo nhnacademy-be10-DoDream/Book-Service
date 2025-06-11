@@ -3,10 +3,10 @@ package shop.dodream.book.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import shop.dodream.book.dto.BookDetailResponse;
+import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.BookRegisterRequest;
 import shop.dodream.book.dto.BookRegisterResponse;
 import shop.dodream.book.service.BookService;
@@ -15,17 +15,44 @@ import java.util.List;
 
 
 @RestController
+@RequestMapping("/books")
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
-    @PostMapping("admin/books")
+    @PostMapping
     public ResponseEntity<BookRegisterResponse> registerBook(@RequestBody BookRegisterRequest request){
 
         BookRegisterResponse response = bookService.registerBookByIsbn(request);
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping
+    public ResponseEntity<List<BookListResponse>> getAllBooks(){
+        List<BookListResponse> bookListResponse = bookService.getAllBooks();
+        return ResponseEntity.ok(bookListResponse);
+    }
+
+
+
+    @GetMapping("{bookId}")
+    public ResponseEntity<BookDetailResponse> getBookById(@PathVariable Long bookId){
+        BookDetailResponse bookDetailResponse = bookService.getBookById(bookId);
+        return ResponseEntity.ok(bookDetailResponse);
+    }
+
+
+//    @PutMapping("{bookId}")
+//    public ResponseEntity<>
+//
+//
+//    @DeleteMapping("{bookId}")
+//    public ResponseEntity<>
+
+
+
 
 
 
