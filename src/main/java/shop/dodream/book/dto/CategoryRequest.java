@@ -12,4 +12,5 @@ import lombok.Setter;
 public class CategoryRequest {
     private String categoryName;
     private Long depth;
+    private Long parentId;
 }

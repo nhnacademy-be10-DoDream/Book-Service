@@ -3,6 +3,7 @@ package shop.dodream.book.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.ZonedDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Table(name = "Book", indexes = {
         @Index(name = "idx_sale_price", columnList = "salePrice"),
         @Index(name = "idx_created_at", columnList = "createdAt"),
