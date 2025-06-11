@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.dodream.book.entity.Category;
 
 @Getter
 @AllArgsConstructor
@@ -12,4 +13,5 @@ import lombok.Setter;
 public class CategoryRequest {
     private String categoryName;
     private Long depth;
+    private Long parentId;
 }

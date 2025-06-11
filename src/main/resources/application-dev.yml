@@ -1,0 +1,18 @@
+# application-dev.yml
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:10325/eureka
+  instance:
+    prefer-ip-address: true
+
+
+# redis 사용 시 (redisConfig 등록했으면 없어도 됨)
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
