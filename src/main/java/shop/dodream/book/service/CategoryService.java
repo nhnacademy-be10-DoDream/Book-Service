@@ -1,4 +1,4 @@
-package shop.dodream.service;
+package shop.dodream.book.service;
 
 import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;

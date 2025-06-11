@@ -1,0 +1,20 @@
+# application-prod.yml
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://dodream.shop:10325/eureka
+  instance:
+    prefer-ip-address: false
+    hostname: dodream.shop
+
+#redis 사용 시 (redisConfig 등록했으면 없어도 됨)
+spring:
+  data:
+    redis:
+      host: s4.java21.net
+      port: 6379
+      password: "*N2vya7H@muDTwdNMR!"
+      database: 305

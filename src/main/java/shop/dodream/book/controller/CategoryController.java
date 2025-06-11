@@ -1,15 +1,13 @@
 package shop.dodream.book.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
-import shop.dodream.book.entity.Category;
-import shop.dodream.service.CategoryService;
+import shop.dodream.book.service.CategoryService;
 
 import java.util.List;
 

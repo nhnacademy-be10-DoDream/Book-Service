@@ -13,5 +13,5 @@ import shop.dodream.book.entity.Category;
 public class CategoryRequest {
     private String categoryName;
     private Long depth;
-    private Category category;
+    private Long parentId;
 }

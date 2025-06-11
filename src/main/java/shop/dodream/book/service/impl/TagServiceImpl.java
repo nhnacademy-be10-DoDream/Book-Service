@@ -1,10 +1,9 @@
-package shop.dodream.service.impl;
+package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.BookResponse;
-import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.TagRequest;
 import shop.dodream.book.dto.TagResponse;
 import shop.dodream.book.entity.Book;
@@ -13,9 +12,8 @@ import shop.dodream.book.exception.TagIdNotFoundException;
 import shop.dodream.book.exception.TagNameIsNullException;
 import shop.dodream.book.repository.BookTagRepository;
 import shop.dodream.book.repository.TagRepository;
-import shop.dodream.service.TagService;
+import shop.dodream.book.service.TagService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

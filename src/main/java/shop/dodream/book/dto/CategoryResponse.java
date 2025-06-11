@@ -14,12 +14,12 @@ public class CategoryResponse {
     private Long categoryId;
     private String categoryName;
     private Long depth;
-    private Category category;
+    private Long parentId;
 
     public CategoryResponse(Category category) {
         this.categoryId = category.getId();
         this.categoryName = category.getCategoryName();
         this.depth = category.getDepth();
-        this.category = category.getCategory();
+        this.parentId = category.getCategory().getId();
     }
 }

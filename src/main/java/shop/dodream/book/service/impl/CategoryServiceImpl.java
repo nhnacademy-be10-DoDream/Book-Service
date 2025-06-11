@@ -1,4 +1,4 @@
-package shop.dodream.service.impl;
+package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import shop.dodream.book.exception.CategoryParentIdNotFoundException;
 import shop.dodream.book.repository.BookCategoryRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
-import shop.dodream.service.CategoryService;
+import shop.dodream.book.service.CategoryService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,10 +85,10 @@ public class CategoryServiceImpl implements CategoryService {
     private void applyCategoryRequestToEntity(Category category, CategoryRequest request) {
         category.setCategoryName(request.getCategoryName());
         category.setDepth(request.getDepth());
-//        if (request.getCategory() != null) {
-//            Category parentCategory = categoryRepository.findByCategory(request.getCategory())
-//                    .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getCategory(), " 라는 부모 카테고리를 찾을 수 없습니다."));
-//            category.setCategory(parentCategory);
-//        }
+        if (request.getParentId() != null) {
+            Category parentCategory = categoryRepository.findById(request.getParentId())
+                    .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getParentId(), " 라는 부모 카테고리를 찾을 수 없습니다."));
+            category.setCategory(parentCategory);
+        }
     }
 }
