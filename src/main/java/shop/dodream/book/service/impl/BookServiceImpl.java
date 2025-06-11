@@ -1,12 +1,16 @@
 package shop.dodream.book.service.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.dodream.book.config.NaverBookProperties;
+import shop.dodream.book.dto.BookDetailResponse;
+import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.BookRegisterRequest;
 import shop.dodream.book.dto.BookRegisterResponse;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
+import shop.dodream.book.exception.BookIdEmptyError;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookRepository;
@@ -15,6 +19,8 @@ import shop.dodream.book.service.BookService;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,6 +33,7 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
+    @Transactional
     public BookRegisterResponse registerBookByIsbn(BookRegisterRequest request) {
         // 외부 api 호출
         NaverBookResponse naverBookResponse = naverBookClient.searchBook(properties.getClientId(), properties.getClientSecret(), request.getIsbn());
@@ -91,5 +98,53 @@ public class BookServiceImpl implements BookService {
     private String removeSpecialChars(String input) {
         if (input == null) return null;
         return input.replaceAll("[^가-힣a-zA-Z0-9\\s]", " "); //한글, 영어 소문자 및 대문자, 숫자, 공백 을 제외한 나머진 공백 으로 대체
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookListResponse> getAllBooks() {
+
+        return bookRepository.findAll().stream()
+                .map(book -> new BookListResponse(
+                        book.getId(),
+                        book.getTitle(),
+                        book.getAuthor(),
+                        book.getIsbn(),
+                        book.getStatus(),
+                        book.getRegularPrice(),
+                        book.getSalePrice(),
+                        book.getIsGiftable(),
+                        book.getViewCount(),
+                        book.getSearchCount(),
+                        book.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookDetailResponse getBookById(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookIdEmptyError(id,": 아이디의 책은 없습니다."));
+        BookDetailResponse bookDetailResponse = new BookDetailResponse();
+        bookDetailResponse.setId(book.getId());
+        bookDetailResponse.setTitle(book.getTitle());
+        bookDetailResponse.setAuthor(book.getAuthor());
+        bookDetailResponse.setDescription(book.getDescription());
+        bookDetailResponse.setPublisher(book.getPublisher());
+        bookDetailResponse.setIsbn(book.getIsbn());
+        bookDetailResponse.setPublishedAt(book.getPublishedAt());
+        bookDetailResponse.setStatus(book.getStatus());
+        bookDetailResponse.setSalePrice(book.getSalePrice());
+        bookDetailResponse.setRegularPrice(book.getRegularPrice());
+        bookDetailResponse.setIsGiftable(book.getIsGiftable());
+        bookDetailResponse.setViewCount(book.getViewCount());
+        bookDetailResponse.setSearchCount(book.getSearchCount());
+        bookDetailResponse.setCreatedAt(book.getCreatedAt());
+        bookDetailResponse.setBookCount(book.getBookCount());
+        bookDetailResponse.setBookUrl(book.getBookUrl());
+        bookDetailResponse.setDiscountRate(book.getDiscountRate());
+
+        return bookDetailResponse;
     }
 }
