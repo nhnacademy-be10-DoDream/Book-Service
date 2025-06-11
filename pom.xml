@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>shop.dodream</groupId>
-	<artifactId>book</artifactId>
+	<artifactId>book-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>book</name>
 	<description>Book and Select</description>
@@ -95,6 +95,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>book-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

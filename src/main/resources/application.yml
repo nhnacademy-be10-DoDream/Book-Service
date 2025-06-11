@@ -1,0 +1,18 @@
+# application.yml
+
+spring:
+  application:
+    name: book-service # auth -> 본인의 서비스 명
+  profiles:
+    active: dev # dev or prod
+server:
+  port: 10325 # 10325 -> 본인의 포트번호
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
