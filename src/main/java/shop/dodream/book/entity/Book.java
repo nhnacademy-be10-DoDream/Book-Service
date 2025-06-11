@@ -3,7 +3,9 @@ package shop.dodream.book.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -11,6 +13,8 @@ import java.time.ZonedDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 @Table(name = "Book", indexes = {
         @Index(name = "idx_sale_price", columnList = "salePrice"),
         @Index(name = "idx_created_at", columnList = "createdAt"),
@@ -65,5 +69,12 @@ public class Book {
     private long viewCount;
 
     @Column(nullable = false)
-    private long BookCount;
+    private long bookCount;
+
+    private String bookUrl;
+
+    private long discountRate;
+
+
+
 }
