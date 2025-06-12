@@ -164,7 +164,7 @@ public class BookServiceImpl implements BookService {
             Long salePrice = request.getSalePrice() != null ? request.getSalePrice() : book.getSalePrice();
 
             if (salePrice > regularPrice) {
-                throw new InvalidDiscountPriceException("할인가가 정가보다 높을 순 없습니다."); // ← 커스텀 예외 던짐
+                throw new InvalidDiscountPriceException("할인가가 정가보다 높을 순 없습니다."); // 커스텀 예외 던짐
             }
             if (regularPrice != null && regularPrice != 0){
                 long discountRate = Math.round((1 - (double) salePrice / regularPrice) * 100);
@@ -172,7 +172,8 @@ public class BookServiceImpl implements BookService {
             }
         }
 
-        // 수량 기반 상태 자동 갱신
+
+
         if (book.getStatus() != BookStatus.REMOVED){
             long count = book.getBookCount();
             if (count == 0){
@@ -187,5 +188,12 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(book);
     }
 
+    @Override
+    @Transactional
+    public void deleteBook(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(()-> new BookIdNotFoundException("해당 하는 아이디의 책은 존재하지 않습니다."));
+        book.setStatus(BookStatus.REMOVED);
+        bookRepository.save(book);
 
+    }
 }

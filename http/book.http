@@ -17,7 +17,7 @@ GET http://localhost:8080/books/1
 Content-Type: application/json
 
 
-### 책 정보 수정 api
+### 책 정보 수정
 PATCH http://localhost:8080/books/1
 Content-Type: application/json
 
@@ -25,4 +25,7 @@ Content-Type: application/json
   "title": "얄리리 얄라숑",
   "salePrice": 11000
 }
+
+### 책 삭제(논리삭제)
+DELETE http://localhost:8080/books/1
 
