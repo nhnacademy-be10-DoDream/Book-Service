@@ -22,10 +22,18 @@ PATCH http://localhost:8080/books/1
 Content-Type: application/json
 
 {
-  "title": "얄리리 얄라숑",
-  "salePrice": 11000
+  "bookCount": -1
 }
 
 ### 책 삭제(논리삭제)
 DELETE http://localhost:8080/books/1
 
+
+### 재고 차감
+POST http://localhost:8080/books/decrease-bookCount
+Content-Type: application/json
+
+{
+  "bookId": 1,
+  "bookCount": 34
+}

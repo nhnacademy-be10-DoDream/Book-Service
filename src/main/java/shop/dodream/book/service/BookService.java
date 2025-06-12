@@ -15,4 +15,6 @@ public interface BookService {
     void updateBook(Long bookId, BookUpdateRequest request);
 
     void deleteBook(Long bookId);
+
+    BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request);
 }

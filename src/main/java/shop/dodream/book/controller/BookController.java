@@ -42,7 +42,7 @@ public class BookController {
 
     @PatchMapping("{bookId}")
     public ResponseEntity<Void> updateBook(@PathVariable Long bookId,
-                                           @RequestBody BookUpdateRequest request){
+                                           @Validated @RequestBody BookUpdateRequest request){
         bookService.updateBook(bookId, request);
         return ResponseEntity.noContent().build();
     }
@@ -52,6 +52,15 @@ public class BookController {
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/decrease-bookCount")
+    public ResponseEntity<BookCountDecreaseResponse> decreaseBookCount(@Validated @RequestBody BookCountDecreaseRequest request){
+        BookCountDecreaseResponse response = bookService.decreaseBookCount(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+
 
 
 
