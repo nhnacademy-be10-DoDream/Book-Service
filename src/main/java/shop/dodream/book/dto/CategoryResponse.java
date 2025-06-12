@@ -20,6 +20,8 @@ public class CategoryResponse {
         this.categoryId = category.getId();
         this.categoryName = category.getCategoryName();
         this.depth = category.getDepth();
-        this.parentId = category.getCategory().getId();
+        this.parentId = category.getCategory() != null
+                ? category.getCategory().getId()
+                : null;
     }
 }
