@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.BookDetailResponse;
-import shop.dodream.book.dto.BookListResponse;
-import shop.dodream.book.dto.BookRegisterRequest;
-import shop.dodream.book.dto.BookRegisterResponse;
+import shop.dodream.book.dto.*;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -43,13 +40,14 @@ public class BookController {
         return ResponseEntity.ok(bookDetailResponse);
     }
 
+    @PatchMapping("{bookId}")
+    public ResponseEntity<Void> updateBook(@PathVariable Long bookId,
+                                           @RequestBody BookUpdateRequest request){
+        bookService.updateBook(bookId, request);
+        return ResponseEntity.noContent().build();
+    }
 
-//    @PutMapping("{bookId}")
-//    public ResponseEntity<>
-//
-//
-//    @DeleteMapping("{bookId}")
-//    public ResponseEntity<>
+
 
 
 

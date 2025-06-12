@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
 import java.time.LocalDate;
@@ -33,5 +34,9 @@ public class BookDetailResponse {
     private long bookCount;
     private String bookUrl;
     private long discountRate;
+
+    public BookDetailResponse(Book book){
+
+    }
 
 }
