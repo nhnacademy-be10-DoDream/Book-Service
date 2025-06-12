@@ -6,7 +6,7 @@ spring:
   profiles:
     active: dev # dev or prod
 server:
-  port: 10325 # 10325 -> 본인의 포트번호
+  port: 8080 # 10325 -> 본인의 포트번호
 
 management:
   endpoints:

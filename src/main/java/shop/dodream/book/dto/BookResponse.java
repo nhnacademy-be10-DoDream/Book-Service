@@ -30,6 +30,7 @@ public class BookResponse {
     private ZonedDateTime createdAt;
     private Long bookCount;
     private Long discountRate;
+
     public BookResponse(Book book) {
         this.bookId = book.getId();
         this.title = book.getTitle();

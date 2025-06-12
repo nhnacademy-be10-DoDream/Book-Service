@@ -3,14 +3,13 @@ package shop.dodream.book.service.impl;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import shop.dodream.book.config.BookMapper;
 import shop.dodream.book.config.NaverBookProperties;
-import shop.dodream.book.dto.BookDetailResponse;
-import shop.dodream.book.dto.BookListResponse;
-import shop.dodream.book.dto.BookRegisterRequest;
-import shop.dodream.book.dto.BookRegisterResponse;
+import shop.dodream.book.dto.*;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.exception.BookIdEmptyError;
+import shop.dodream.book.exception.BookIdNotFoundException;
+import shop.dodream.book.exception.InvalidDiscountPriceException;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookRepository;
@@ -30,6 +29,7 @@ public class BookServiceImpl implements BookService {
     private final NaverBookClient naverBookClient;
     private final BookRepository bookRepository;
     private final NaverBookProperties properties;
+    private final BookMapper bookMapper;
 
 
     @Override
@@ -125,7 +125,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public BookDetailResponse getBookById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookIdEmptyError(id,": 아이디의 책은 없습니다."));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
         BookDetailResponse bookDetailResponse = new BookDetailResponse();
         bookDetailResponse.setId(book.getId());
         bookDetailResponse.setTitle(book.getTitle());
@@ -147,4 +147,45 @@ public class BookServiceImpl implements BookService {
 
         return bookDetailResponse;
     }
+
+
+    @Override
+    @Transactional
+    public void updateBook(Long bookId, BookUpdateRequest request) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
+
+        // MapStruct로 기본 필드 매핑 널값은 기존값 유지
+        bookMapper.updateBookFromDto(request, book);
+
+
+        // 정가 or 할인가가 변경 되엇으면 할인율 재계산
+        if (request.getRegularPrice() != null || request.getSalePrice() != null){
+            Long regularPrice = request.getRegularPrice() != null ? request.getRegularPrice() : book.getRegularPrice();
+            Long salePrice = request.getSalePrice() != null ? request.getSalePrice() : book.getSalePrice();
+
+            if (salePrice > regularPrice) {
+                throw new InvalidDiscountPriceException("할인가가 정가보다 높을 순 없습니다."); // ← 커스텀 예외 던짐
+            }
+            if (regularPrice != null && regularPrice != 0){
+                long discountRate = Math.round((1 - (double) salePrice / regularPrice) * 100);
+                book.setDiscountRate(discountRate);
+            }
+        }
+
+        // 수량 기반 상태 자동 갱신
+        if (book.getStatus() != BookStatus.REMOVED){
+            long count = book.getBookCount();
+            if (count == 0){
+                book.setStatus(BookStatus.SOLD_OUT);
+            } else if (count <= 5) {
+                book.setStatus(BookStatus.LOW_STOCK);
+            }else {
+                book.setStatus(BookStatus.SELL);
+            }
+        }
+
+        bookRepository.save(book);
+    }
+
+
 }

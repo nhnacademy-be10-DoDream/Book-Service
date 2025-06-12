@@ -1,9 +1,6 @@
 package shop.dodream.book.service;
 
-import shop.dodream.book.dto.BookDetailResponse;
-import shop.dodream.book.dto.BookListResponse;
-import shop.dodream.book.dto.BookRegisterRequest;
-import shop.dodream.book.dto.BookRegisterResponse;
+import shop.dodream.book.dto.*;
 
 import java.util.List;
 
@@ -14,4 +11,6 @@ public interface BookService {
     List<BookListResponse> getAllBooks();
 
     BookDetailResponse getBookById(Long id);
+
+    void updateBook(Long bookId, BookUpdateRequest request);
 }
