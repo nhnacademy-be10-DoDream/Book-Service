@@ -84,11 +84,14 @@ public class CategoryServiceImpl implements CategoryService {
     // create, update 공통부분
     private void applyCategoryRequestToEntity(Category category, CategoryRequest request) {
         category.setCategoryName(request.getCategoryName());
-        category.setDepth(request.getDepth());
         if (request.getParentId() != null) {
             Category parentCategory = categoryRepository.findById(request.getParentId())
                     .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getParentId(), " 라는 부모 카테고리를 찾을 수 없습니다."));
+            category.setDepth(parentCategory.getDepth() + 1);
             category.setCategory(parentCategory);
+        } else {
+            category.setDepth(request.getDepth() != null ? request.getDepth() : 1);
+            category.setCategory(null);
         }
     }
 }

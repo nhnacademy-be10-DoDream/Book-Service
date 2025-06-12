@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     // 카테고리 등록
     @PostMapping("/categories")
@@ -46,7 +46,7 @@ public class CategoryController {
     }
 
     // 카테고리 수정
-    @PutMapping("/categories/{categoryId}")
+    @PatchMapping("/categories/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long categoryId,
                                                            @RequestBody CategoryRequest request) {
         CategoryResponse response = categoryService.updateCategory(categoryId, request);

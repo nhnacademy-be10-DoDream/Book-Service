@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class TagController {
-    private TagService tagService;
+    private final TagService tagService;
 
     // 태그 등록
     @PostMapping("/tags")
@@ -43,7 +43,7 @@ public class TagController {
     }
 
     // 태그 수정
-    @PutMapping("/tags/{tagId}")
+    @PatchMapping("/tags/{tagId}")
     public ResponseEntity<TagResponse> updateTag(@PathVariable Long tagId,
                                                  @RequestBody TagRequest request) {
         TagResponse response = tagService.updateTag(tagId, request);
