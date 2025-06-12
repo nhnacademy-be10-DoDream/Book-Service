@@ -7,23 +7,33 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.entity.BookStatus;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookListResponse {
+public class AdminBookDetailResponse {
 
     private Long id;
     private String title;
     private String author;
+    private String description;
+    private String publisher;
     private String isbn;
+    private LocalDate publishedAt;
     private BookStatus status;
-    private Long regularPrice;
-    private Long salePrice;
+    private long salePrice;
+    private long regularPrice;
     private Boolean isGiftable;
     private long viewCount;
     private long searchCount;
     private ZonedDateTime createdAt;
+    private long bookCount;
+    private String bookUrl;
+    private long discountRate;
+
+
+
 }

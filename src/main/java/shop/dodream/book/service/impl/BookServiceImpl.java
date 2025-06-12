@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import shop.dodream.book.config.BookMapper;
 import shop.dodream.book.config.NaverBookProperties;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookListProjection;
+import shop.dodream.book.dto.projection.UserBookDetailProjection;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.exception.*;
@@ -49,7 +51,6 @@ public class BookServiceImpl implements BookService {
         // 정가 계산 (할인율을 직접등록)
         long discountRate = request.getDiscountRate();
         long regularPrice = (discountRate == 0) ? salePrice : Math.round(salePrice * 100.0 / (100 - discountRate));
-
 
 
         Book book = new Book();
@@ -100,51 +101,48 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    // 프로젝션으로 처리
     @Override
     @Transactional(readOnly = true)
-    public List<BookListResponse> getAllBooks() {
+    public List<BookListProjection> getAllBooks() {
 
-        return bookRepository.findAll().stream()
-                .map(book -> new BookListResponse(
-                        book.getId(),
-                        book.getTitle(),
-                        book.getAuthor(),
-                        book.getIsbn(),
-                        book.getStatus(),
-                        book.getRegularPrice(),
-                        book.getSalePrice(),
-                        book.getIsGiftable(),
-                        book.getViewCount(),
-                        book.getSearchCount(),
-                        book.getCreatedAt()
-                ))
-                .collect(Collectors.toList());
+        return bookRepository.findAllBy();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BookDetailResponse getBookById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
-        BookDetailResponse bookDetailResponse = new BookDetailResponse();
-        bookDetailResponse.setId(book.getId());
-        bookDetailResponse.setTitle(book.getTitle());
-        bookDetailResponse.setAuthor(book.getAuthor());
-        bookDetailResponse.setDescription(book.getDescription());
-        bookDetailResponse.setPublisher(book.getPublisher());
-        bookDetailResponse.setIsbn(book.getIsbn());
-        bookDetailResponse.setPublishedAt(book.getPublishedAt());
-        bookDetailResponse.setStatus(book.getStatus());
-        bookDetailResponse.setSalePrice(book.getSalePrice());
-        bookDetailResponse.setRegularPrice(book.getRegularPrice());
-        bookDetailResponse.setIsGiftable(book.getIsGiftable());
-        bookDetailResponse.setViewCount(book.getViewCount());
-        bookDetailResponse.setSearchCount(book.getSearchCount());
-        bookDetailResponse.setCreatedAt(book.getCreatedAt());
-        bookDetailResponse.setBookCount(book.getBookCount());
-        bookDetailResponse.setBookUrl(book.getBookUrl());
-        bookDetailResponse.setDiscountRate(book.getDiscountRate());
+    public AdminBookDetailResponse getBookByIdForAdmin(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
+        AdminBookDetailResponse adminBookDetailResponse = new AdminBookDetailResponse();
+        adminBookDetailResponse.setId(book.getId());
+        adminBookDetailResponse.setTitle(book.getTitle());
+        adminBookDetailResponse.setAuthor(book.getAuthor());
+        adminBookDetailResponse.setDescription(book.getDescription());
+        adminBookDetailResponse.setPublisher(book.getPublisher());
+        adminBookDetailResponse.setIsbn(book.getIsbn());
+        adminBookDetailResponse.setPublishedAt(book.getPublishedAt());
+        adminBookDetailResponse.setStatus(book.getStatus());
+        adminBookDetailResponse.setSalePrice(book.getSalePrice());
+        adminBookDetailResponse.setRegularPrice(book.getRegularPrice());
+        adminBookDetailResponse.setIsGiftable(book.getIsGiftable());
+        adminBookDetailResponse.setViewCount(book.getViewCount());
+        adminBookDetailResponse.setSearchCount(book.getSearchCount());
+        adminBookDetailResponse.setCreatedAt(book.getCreatedAt());
+        adminBookDetailResponse.setBookCount(book.getBookCount());
+        adminBookDetailResponse.setBookUrl(book.getBookUrl());
+        adminBookDetailResponse.setDiscountRate(book.getDiscountRate());
 
-        return bookDetailResponse;
+        return adminBookDetailResponse;
+    }
+
+
+    // 사용자 페이지에서 보여줄 북 정보 상세 조회
+    @Override
+    @Transactional(readOnly = true)
+    public UserBookDetailProjection getBookByIdForUser(Long bookId) {
+        return bookRepository.findBookDetailForUserById(bookId).orElseThrow(()-> new BookIdNotFoundException("해당 하는 아이디의 책은 존재하지 않습니다."));
+
+
     }
 
 
