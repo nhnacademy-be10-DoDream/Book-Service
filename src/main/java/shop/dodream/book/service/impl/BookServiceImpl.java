@@ -8,8 +8,7 @@ import shop.dodream.book.config.NaverBookProperties;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.exception.BookIdNotFoundException;
-import shop.dodream.book.exception.InvalidDiscountPriceException;
+import shop.dodream.book.exception.*;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookRepository;
@@ -154,6 +153,11 @@ public class BookServiceImpl implements BookService {
     public void updateBook(Long bookId, BookUpdateRequest request) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
 
+        // 삭제된 책은 수정 불가
+        if (book.getStatus() == BookStatus.REMOVED){
+            throw new BookAlreadyRemovedException("삭제된 도서는 수정할수 없습니다.");
+        }
+
         // MapStruct로 기본 필드 매핑 널값은 기존값 유지
         bookMapper.updateBookFromDto(request, book);
 
@@ -164,7 +168,7 @@ public class BookServiceImpl implements BookService {
             Long salePrice = request.getSalePrice() != null ? request.getSalePrice() : book.getSalePrice();
 
             if (salePrice > regularPrice) {
-                throw new InvalidDiscountPriceException("할인가가 정가보다 높을 순 없습니다."); // ← 커스텀 예외 던짐
+                throw new InvalidDiscountPriceException("할인가가 정가보다 높을 순 없습니다."); // 커스텀 예외 던짐
             }
             if (regularPrice != null && regularPrice != 0){
                 long discountRate = Math.round((1 - (double) salePrice / regularPrice) * 100);
@@ -172,20 +176,58 @@ public class BookServiceImpl implements BookService {
             }
         }
 
-        // 수량 기반 상태 자동 갱신
-        if (book.getStatus() != BookStatus.REMOVED){
+        // 상태 자동갱신( 관리자가 직접 상태를 조작 x 수량에 따른 자동으로 상태변경)
+        updateStatusByBookCount(book);
+        bookRepository.save(book);
+    }
+
+    @Override
+    @Transactional
+    public void deleteBook(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(()-> new BookIdNotFoundException("해당 하는 아이디의 책은 존재하지 않습니다."));
+        book.setStatus(BookStatus.REMOVED);
+        bookRepository.save(book);
+
+    }
+
+    @Override
+    @Transactional
+    public BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request) {
+        Book book = bookRepository.findById(request.getBookId()).orElseThrow(()-> new BookIdNotFoundException("해당 하는 아이디의 책은 존재하지 않습니다."));
+        if (book.getStatus() != BookStatus.SELL){
+            throw new BookNotOrderableException("해당 도서는 주문할 수없는 상태입니다.");
+        }
+
+        Long currentStock = book.getBookCount();
+        if (currentStock < request.getBookCount()){
+            throw new BookCountNotEnoughException("재고가 부족합니다. 현재 재고: "+currentStock);
+        }
+
+        // 차감
+        book.setBookCount(currentStock-request.getBookCount());
+
+        updateStatusByBookCount(book);
+        Book savedBook = bookRepository.save(book);
+
+        BookCountDecreaseResponse decreaseResponse = new BookCountDecreaseResponse(savedBook.getId(), savedBook.getBookCount(), savedBook.getStatus() == BookStatus.SELL);
+        return decreaseResponse;
+
+    }
+
+    // 수량에 따른 자동 삭제변경 삭제는 건들지 x
+    private void updateStatusByBookCount(Book book) {
+        if (book.getStatus() != BookStatus.REMOVED) {
             long count = book.getBookCount();
-            if (count == 0){
+            if (count == 0) {
                 book.setStatus(BookStatus.SOLD_OUT);
             } else if (count <= 5) {
                 book.setStatus(BookStatus.LOW_STOCK);
-            }else {
+            } else {
                 book.setStatus(BookStatus.SELL);
             }
         }
-
-        bookRepository.save(book);
     }
+
 
 
 }
