@@ -1,5 +1,5 @@
 ### 태그 생성
-POST http://localhost:8080/tags
+POST http://localhost:8080/admin/tags
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Accept: application/json
 ###
 
 ### 태그 수정
-PATCH http://localhost:8080/tags/1
+PATCH http://localhost:8080/admin/tags/1
 Content-Type: application/json
 
 {
@@ -37,6 +37,6 @@ Content-Type: application/json
 ###
 
 ### 태그 삭제
-DELETE http://localhost:8080/tags/1
+DELETE http://localhost:8080/admin/tags/1
 
 ###

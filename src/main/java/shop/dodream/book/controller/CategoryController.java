@@ -1,5 +1,6 @@
 package shop.dodream.book.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
+import shop.dodream.book.dto.CategoryTreeResponse;
 import shop.dodream.book.service.CategoryService;
 
 import java.util.List;
@@ -18,8 +20,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     // 카테고리 등록
-    @PostMapping("/categories")
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+    @PostMapping("/admin/categories")
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest request) {
         CategoryResponse response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -28,6 +30,27 @@ public class CategoryController {
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         List<CategoryResponse> response = categoryService.getCategories();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 특정 카테고리 조회
+    @GetMapping("/categories/{categoryId}")
+    public ResponseEntity<CategoryResponse> getCategory(@PathVariable Long categoryId) {
+        CategoryResponse response = categoryService.getCategory(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 특정 카테고리 하위 카테고리 조회
+    @GetMapping("/categories/{categoryId}/children")
+    public ResponseEntity<List<CategoryTreeResponse>> getCategoriesChildren(@PathVariable Long categoryId) {
+        List<CategoryTreeResponse> response = categoryService.getCategoriesChildren(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 특정 카테고리 연관 카테고리 전체 조회
+    @GetMapping("/categories/{categoryId}/related")
+    public ResponseEntity<List<CategoryTreeResponse>> getCategoriesRelated(@PathVariable Long categoryId) {
+        List<CategoryTreeResponse> response = categoryService.getCategoriesRelated(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -46,15 +69,15 @@ public class CategoryController {
     }
 
     // 카테고리 수정
-    @PatchMapping("/categories/{categoryId}")
+    @PatchMapping("/admin/categories/{categoryId}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long categoryId,
-                                                           @RequestBody CategoryRequest request) {
+                                                           @RequestBody @Valid CategoryRequest request) {
         CategoryResponse response = categoryService.updateCategory(categoryId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 카테고리 삭제
-    @DeleteMapping("/categories/{categoryId}")
+    @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

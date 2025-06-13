@@ -1,5 +1,6 @@
 package shop.dodream.book.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class TagController {
 
     // 태그 등록
     @PostMapping("/tags")
-    public ResponseEntity<TagResponse> createTag(@RequestBody TagRequest request) {
+    public ResponseEntity<TagResponse> createTag(@RequestBody @Valid TagRequest request) {
         TagResponse response = tagService.createTag(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -45,7 +46,7 @@ public class TagController {
     // 태그 수정
     @PatchMapping("/tags/{tagId}")
     public ResponseEntity<TagResponse> updateTag(@PathVariable Long tagId,
-                                                 @RequestBody TagRequest request) {
+                                                 @RequestBody @Valid TagRequest request) {
         TagResponse response = tagService.updateTag(tagId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
