@@ -1,6 +1,8 @@
 package shop.dodream.book.service;
 
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookListProjection;
+import shop.dodream.book.dto.projection.UserBookDetailProjection;
 
 import java.util.List;
 
@@ -8,9 +10,11 @@ public interface BookService {
 
     BookRegisterResponse registerBookByIsbn(BookRegisterRequest request);
 
-    List<BookListResponse> getAllBooks();
+    List<BookListProjection> getAllBooks();
 
-    BookDetailResponse getBookById(Long id);
+    AdminBookDetailResponse getBookByIdForAdmin(Long bookId);
+
+    UserBookDetailProjection getBookByIdForUser(Long bookId);
 
     void updateBook(Long bookId, BookUpdateRequest request);
 
