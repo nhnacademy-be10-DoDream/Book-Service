@@ -1,56 +1,63 @@
 ### 카테고리 등록
-POST http://localhost:8080/categories
+POST http://localhost:8080/admin/categories
 Content-Type: application/json
 
 {
-  "categoryName": "프로그래밍",
-  "depth": 5,
-  "parentId": 1
+  "categoryName": "프로그래밍4-1",
+  "depth": 1,
+  "parentId": 3
 }
 
-###
 
 ### 전체 카테고리 조회
 GET http://localhost:8080/categories
 Accept: application/json
 
-###
+
+### 특정 카테고리 조회
+GET http://localhost:8080/categories/2
+Accept: application/json
+
+
+### 특정 카테고리에 하위 카테고리 조회
+GET http://localhost:8080/categories/2/children
+Accept: application/json
+
+
+### 특정 카테고리에 연관 카테고리 전체 조회
+GET http://localhost:8080/categories/3/related
+Accept: application/json
+
+
 
 ### 특정 도서의 카테고리 조회
 GET http://localhost:8080/books/1/categories
 Accept: application/json
 
-###
 
 ### 특정 카테고리에 속한 도서 조회
-GET http://localhost:8080/categories/1/books
+GET http://localhost:8080/categories/2/books
 Accept: application/json
 
-###
-
-### 특정 카테고리에 하위 카테고리 조회
-GET http://localhost:8080/categories/1/children
-Accept: application/json
-
-###
-
-### 특정 카테고리에 연관 카테고리 전체 조회
-GET http://localhost:8080/categories/1/related
-Accept: application/json
-
-###
 
 ### 카테고리 수정
-PATCH http://localhost:8080/categories/1
+PATCH http://localhost:8080/admin/categories/4
 Content-Type: application/json
 
 {
-  "categoryName": "웹 개발",
-  "depth": 1,
-  "parentId": null
+  "categoryName": "프로그래밍4-1revert",
+  "depth": 4,
+  "parentId": 3
 }
 
-###
+
 
 ### 카테고리 삭제
-DELETE http://localhost:8080/categories/4
+DELETE http://localhost:8080/admin/categories/4
+
+
+
+
+### 특정 단계 카테고리 조회
+GET http://localhost:8080/categories/1/depth
+Accept: application/json

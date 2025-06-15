@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.entity.Category;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,8 +23,8 @@ public class CategoryResponse {
         this.categoryId = category.getId();
         this.categoryName = category.getCategoryName();
         this.depth = category.getDepth();
-        this.parentId = category.getCategory() != null
-                ? category.getCategory().getId()
+        this.parentId = category.getParent() != null
+                ? category.getParent().getId()
                 : null;
     }
 }
