@@ -16,3 +16,4 @@ public interface UserBookDetailProjection {
     Long getDiscountRate();
 
 }
+

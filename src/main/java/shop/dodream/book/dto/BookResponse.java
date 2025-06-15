@@ -1,5 +1,6 @@
 package shop.dodream.book.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,6 @@ import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -47,4 +47,6 @@ public class BookResponse {
         this.bookCount = book.getBookCount();
         this.discountRate = book.getDiscountRate();
     }
+
+
 }

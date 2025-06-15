@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -45,7 +44,7 @@ public class BookServiceImpl implements BookService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate localDate = LocalDate.parse(pubdate, formatter);
 
-        // 판매가 (할인가)
+        // 판매가 (할인가) 문자열 -> Long 타입변환
         long salePrice = Long.parseLong(item.getDiscount());
 
         // 정가 계산 (할인율을 직접등록)
@@ -65,9 +64,9 @@ public class BookServiceImpl implements BookService {
         book.setSalePrice(salePrice);
         book.setIsGiftable(true); //직접등록
         book.setCreatedAt(ZonedDateTime.now());
-        book.setSearchCount(0); // 직접등록 초기값 검색수 0
-        book.setViewCount(0); // 직접 등록 초기값 조회수 0
-        book.setBookCount(50); //직접 등록 초기값 수량 50
+        book.setSearchCount(0L); // 직접등록 초기값 검색수 0
+        book.setViewCount(0L); // 직접 등록 초기값 조회수 0
+        book.setBookCount(50L); //직접 등록 초기값 수량 50
         book.setBookUrl(item.getImage());
         book.setDiscountRate(discountRate); // 직접등록
 
@@ -142,7 +141,6 @@ public class BookServiceImpl implements BookService {
     public UserBookDetailProjection getBookByIdForUser(Long bookId) {
         return bookRepository.findBookDetailForUserById(bookId).orElseThrow(()-> new BookIdNotFoundException("해당 하는 아이디의 책은 존재하지 않습니다."));
 
-
     }
 
 
@@ -205,9 +203,8 @@ public class BookServiceImpl implements BookService {
         book.setBookCount(currentStock-request.getBookCount());
 
         updateStatusByBookCount(book);
-        Book savedBook = bookRepository.save(book);
 
-        BookCountDecreaseResponse decreaseResponse = new BookCountDecreaseResponse(savedBook.getId(), savedBook.getBookCount(), savedBook.getStatus() == BookStatus.SELL);
+        BookCountDecreaseResponse decreaseResponse = new BookCountDecreaseResponse(book.getId(), book.getBookCount(), book.getStatus() == BookStatus.SELL);
         return decreaseResponse;
 
     }
@@ -225,6 +222,7 @@ public class BookServiceImpl implements BookService {
             }
         }
     }
+
 
 
 

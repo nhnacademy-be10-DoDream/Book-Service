@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler({BookNotOrderableException.class, BookAlreadyRemovedException.class, BookCountNotEnoughException.class})
+    @ExceptionHandler({BookNotOrderableException.class, BookAlreadyRemovedException.class, BookCountNotEnoughException.class, BookLikeAlreadyRegisterException.class})
     public ResponseEntity<ErrorResponse> handleBookConflict(Exception e) {
         ErrorResponse error = new ErrorResponse(
                 e.getMessage(),
@@ -45,6 +45,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    // @Valid 처리 exception
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e){
         String message = e.getBindingResult().getAllErrors()

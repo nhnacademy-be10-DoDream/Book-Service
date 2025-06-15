@@ -18,5 +18,5 @@ public class BookRegisterRequest {
 
     private String description;
 
-    private long discountRate;
+    private Long discountRate;
 }

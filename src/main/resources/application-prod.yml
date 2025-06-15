@@ -5,7 +5,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://dodream.shop:10325/eureka
+      defaultZone: http://dodream.shop:10322/eureka
   instance:
     prefer-ip-address: false
     hostname: dodream.shop
