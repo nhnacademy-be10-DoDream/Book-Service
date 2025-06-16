@@ -12,11 +12,11 @@ import shop.dodream.book.infra.dto.NaverBookResponse;
 public interface NaverBookClient {
 
 
-    @GetMapping(value = "/book.json", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/book_adv.json", consumes = MediaType.APPLICATION_JSON_VALUE)
     NaverBookResponse searchBook(
             @RequestHeader("X-Naver-Client-Id") String clientId,
             @RequestHeader("X-Naver-Client-Secret") String clientSecret,
-            @RequestParam("query") String query
+            @RequestParam("d_isbn") String isbn
     );
 
 }

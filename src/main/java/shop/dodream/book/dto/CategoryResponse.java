@@ -10,7 +10,7 @@ import shop.dodream.book.entity.Category;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-public class CategoryResponse {
+public class    CategoryResponse {
     private Long categoryId;
     private String categoryName;
     private Long depth;

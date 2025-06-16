@@ -14,51 +14,41 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(BookIdNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleBookIdNotFound(BookIdNotFoundException e) {
-        ErrorResponse error = new ErrorResponse(
-                e.getMessage(),
-                HttpStatus.NOT_FOUND.value(),
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException e) {
+        return buildErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidDiscountPriceException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidDiscountPrice(InvalidDiscountPriceException e) {
-        ErrorResponse error = new ErrorResponse(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST.value(),
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException e) {
+        return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-
-    @ExceptionHandler({BookNotOrderableException.class, BookAlreadyRemovedException.class, BookCountNotEnoughException.class, BookLikeAlreadyRegisterException.class})
-    public ResponseEntity<ErrorResponse> handleBookConflict(Exception e) {
-        ErrorResponse error = new ErrorResponse(
-                e.getMessage(),
-                HttpStatus.CONFLICT.value(),
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException e) {
+        return buildErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
     }
 
-    // @Valid 처리 exception
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e){
         String message = e.getBindingResult().getAllErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
-
-        ErrorResponse error = new ErrorResponse(
-                message,
-                HttpStatus.BAD_REQUEST.value(),
-                LocalDateTime.now()
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return buildErrorResponse(message, HttpStatus.BAD_REQUEST);
     }
 
+
+
+
+
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(String message, HttpStatus status) {
+        ErrorResponse error = new ErrorResponse(
+                message,
+                status.value(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(status).body(error);
+    }
 }
