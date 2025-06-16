@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
 import java.time.LocalDate;
@@ -28,4 +29,21 @@ public class BookRegisterResponse {
     private ZonedDateTime createdAt;
     private Long bookCount;
     private Long discountRate;
+
+    public BookRegisterResponse(Book book){
+        this.bookId = book.getId();
+        this.title = book.getTitle();
+        this.description = book.getDescription();
+        this.author = book.getAuthor();
+        this.publisher = book.getPublisher();
+        this.publishedAt = book.getPublishedAt();
+        this.isbn = book.getIsbn();
+        this.regularPrice = book.getRegularPrice();
+        this.status = book.getStatus();
+        this.salePrice = book.getSalePrice();
+        this.isGiftable = book.getIsGiftable();
+        this.createdAt = book.getCreatedAt();
+        this.bookCount = book.getBookCount();
+        this.discountRate = book.getDiscountRate();
+    }
 }

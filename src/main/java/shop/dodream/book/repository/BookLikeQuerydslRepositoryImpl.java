@@ -1,13 +1,13 @@
 package shop.dodream.book.repository;
 
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.BookListResponse;
-import shop.dodream.book.dto.QBookListResponse;
+
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.QBook;
 import shop.dodream.book.entity.QBookLike;
@@ -28,7 +28,8 @@ public class BookLikeQuerydslRepositoryImpl implements BookLikeQuerydslRepositor
     QBook book = QBook.book;
 
     return queryFactory
-            .select(new QBookListResponse(
+            .select(Projections.constructor(
+                    BookListResponse.class,
                     book.id,
                     book.title,
                     book.author,
