@@ -26,7 +26,7 @@ public class TagServiceImpl implements TagService {
     @Override @Transactional
     public TagResponse createTag(TagRequest request){
         if(request.getTagName() == null || request.getTagName().isEmpty()){
-            throw new TagNameIsNullException("생성하고자 하는 태그 이름이 비어 있습니다.");
+            throw new TagNameIsNullException();
         }
         Tag tag = new Tag();
         tag.setTagName(request.getTagName());
@@ -61,7 +61,7 @@ public class TagServiceImpl implements TagService {
     @Override @Transactional
     public TagResponse updateTag(Long tagId, TagRequest request){
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagIdNotFoundException(tagId, " 라는 태그 아이디를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TagIdNotFoundException(tagId));
         tag.setTagName(request.getTagName());
 
         Tag savedtag = tagRepository.save(tag);
@@ -71,7 +71,7 @@ public class TagServiceImpl implements TagService {
     @Override @Transactional
     public void deleteTag(Long tagId){
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagIdNotFoundException(tagId, " 라는 태그 아이디를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TagIdNotFoundException(tagId));
         tagRepository.delete(tag);
     }
 }

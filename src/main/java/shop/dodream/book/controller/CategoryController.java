@@ -1,5 +1,6 @@
 package shop.dodream.book.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
+import shop.dodream.book.dto.CategoryTreeResponse;
+import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.service.CategoryService;
 
 import java.util.List;
@@ -15,11 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     // 카테고리 등록
-    @PostMapping("/categories")
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+    @PostMapping("/admin/categories")
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest request) {
         CategoryResponse response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -31,31 +34,59 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // 특정 카테고리 조회
+    @GetMapping("/categories/{category-id}")
+    public ResponseEntity<CategoryResponse> getCategory(@PathVariable("category-id") Long categoryId) {
+        CategoryResponse response = categoryService.getCategory(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 특정 카테고리 하위 카테고리 조회
+    @GetMapping("/categories/{category-id}/children")
+    public ResponseEntity<List<CategoryTreeResponse>> getCategoriesChildren(@PathVariable("category-id") Long categoryId) {
+        List<CategoryTreeResponse> response = categoryService.getCategoriesChildren(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 특정 카테고리 연관 카테고리 전체 조회
+    @GetMapping("/categories/{category-id}/related")
+    public ResponseEntity<List<CategoryTreeResponse>> getCategoriesRelated(@PathVariable("category-id") Long categoryId) {
+        List<CategoryTreeResponse> response = categoryService.getCategoriesRelated(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 특정 깊이 카테고리 전체 조회
+    @GetMapping("/categories/{depth}/depth")
+    public ResponseEntity<List<CategoryResponse>> getCategoriesDepth(@PathVariable Long depth) {
+        List<CategoryResponse> response = categoryService.getCategoriesDepth(depth);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     // 해당 도서의 카테고리 조회
-    @GetMapping("/books/{bookId}/categories")
-    public ResponseEntity<List<CategoryResponse>> getCategoriesByBookId(@PathVariable Long bookId) {
+    @GetMapping("/books/{book-id}/categories")
+    public ResponseEntity<List<CategoryResponse>> getCategoriesByBookId(@PathVariable("book-id") Long bookId) {
         List<CategoryResponse> response = categoryService.getCategoriesByBook(bookId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 해당 카테고리 도서 조회
-    @GetMapping("/categories/{categoryId}/books")
-    public ResponseEntity<List<BookResponse>> getBooksByCategoryId(@PathVariable Long categoryId) {
+    @GetMapping("/categories/{category-id}/books")
+    public ResponseEntity<List<BookResponse>> getBooksByCategoryId(@PathVariable("category-id") Long categoryId) {
         List<BookResponse> response = categoryService.getBooksByCategory(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 카테고리 수정
-    @PutMapping("/categories/{categoryId}")
-    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long categoryId,
-                                                           @RequestBody CategoryRequest request) {
+    @PatchMapping("/admin/categories/{category-id}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("category-id") Long categoryId,
+                                                           @RequestBody @Valid CategoryRequest request) {
         CategoryResponse response = categoryService.updateCategory(categoryId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 카테고리 삭제
-    @DeleteMapping("/categories/{categoryId}")
-    public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable Long categoryId) {
+    @DeleteMapping("/admin/categories/{category-id}")
+    public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable("category-id") Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

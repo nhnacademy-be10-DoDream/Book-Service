@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +19,7 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
+    @Column(name = "category_id") @Getter
     private Long id;
 
     @Column(nullable = false) @Setter
@@ -27,7 +30,16 @@ public class Category {
 
     @ManyToOne @Setter
     @JoinColumn(name = "parent_id")
-    private Category category;
+    private Category parent;
 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Category> children = new ArrayList<>();
+
+    public void addChild(Category child) {
+        if (!this.children.contains(child)) {
+            this.children.add(child);
+            child.setParent(this);
+        }
+    }
 
 }
