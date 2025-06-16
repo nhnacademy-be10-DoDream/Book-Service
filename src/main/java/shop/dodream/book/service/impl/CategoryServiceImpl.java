@@ -1,6 +1,5 @@
 package shop.dodream.book.service.impl;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,18 +7,16 @@ import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
+import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.Category;
-import shop.dodream.book.exception.CategoryIdNotFoundException;
-import shop.dodream.book.exception.CategoryNameIsNullException;
-import shop.dodream.book.exception.CategoryParentIdNotFoundException;
+import shop.dodream.book.exception.*;
 import shop.dodream.book.repository.BookCategoryRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.CategoryService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse createCategory(CategoryRequest request) {
         // 관리자만 가능하게 할지????
         if (request.getCategoryName() == null || request.getCategoryName().isEmpty()) {
-            throw new CategoryNameIsNullException("생성하고자 하는 카테고리 이름이 비어 있습니다.");
+            throw new CategoryNameIsNullException();
         }
         Category category = new Category();
         applyCategoryRequestToEntity(category, request);
@@ -61,33 +58,66 @@ public class CategoryServiceImpl implements CategoryService {
     @Override @Transactional(readOnly = true)
     public CategoryResponse getCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId, " 라는 카테고리 아이디를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
         return new CategoryResponse(category);
     }
 
     @Override @Transactional(readOnly = true)
     public List<CategoryTreeResponse> getCategoriesChildren(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId, " 라는 카테고리 아이디를 찾을 수 없습니다."));
+        // 플랫 구조로 조회
+        List<CategoryFlatProjection> flatCategories = categoryRepository.findAllFlat();
 
-        List<Category> result = new ArrayList<>();
-        result.add(category);
+        // 플랫 구조 -> 트리 구조
+        List<CategoryTreeResponse> tree = buildCategoryTree(flatCategories);
 
-        return result.stream()
-                .map(CategoryTreeResponse::new)
-                .collect(Collectors.toList());
+        // categoryId에 맞는 노드 반환
+        CategoryTreeResponse targetNode = findNodeById(tree, categoryId);
+        if (targetNode == null) { // 해당 노드가 없을때
+            throw new CategoryIdNotFoundException(categoryId);
+        }
+
+        List<CategoryTreeResponse> result = new ArrayList<>();
+        result.add(targetNode);
+        return result;
+
+
     }
 
     @Override @Transactional(readOnly = true)
     public List<CategoryTreeResponse> getCategoriesRelated(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId, " 라는 카테고리 아이디를 찾을 수 없습니다."));
+        // 플랫 구조로 조회
+        List<CategoryFlatProjection> flatCategories = categoryRepository.findAllFlat();
 
-        while (category.getParent() != null) {
-            category = category.getParent();
+        // 플랫 구조 -> 트리 구조
+        List<CategoryTreeResponse> tree = buildCategoryTree(flatCategories);
+
+        // categoryId에 맞는 노드 반환
+        CategoryTreeResponse targetNode = findNodeById(tree, categoryId);
+        if (targetNode == null) { // 해당 노드가 없을때
+            throw new CategoryIdNotFoundException(categoryId);
         }
 
-        return List.of(new CategoryTreeResponse(category));
+        // 최상위 노드까지
+        CategoryTreeResponse rootNode = targetNode;
+        while (Objects.requireNonNull(rootNode).getParentId() != null) {
+            rootNode = findNodeById(tree, rootNode.getParentId());
+        }
+
+        List<CategoryTreeResponse> result = new ArrayList<>();
+        result.add(rootNode);
+        return result;
+    }
+
+    @Override @Transactional(readOnly = true)
+    public List<CategoryResponse> getCategoriesDepth(Long depth) {
+        List<Category> categories = categoryRepository.findByDepth(depth);
+        if (categories.isEmpty()) {
+            throw new CategoryDepthNotFoundException(depth);
+        }
+        return categories.stream()
+                .map(CategoryResponse::new)
+                .collect(Collectors.toList());
+
     }
 
     @Override @Transactional(readOnly = true)
@@ -109,11 +139,16 @@ public class CategoryServiceImpl implements CategoryService {
     @Override @Transactional
     public CategoryResponse updateCategory(Long categoryId, CategoryRequest request){
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId, " 라는 카테고리 아이디를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+        if (request.getParentId() != null && categoryId.equals(request.getParentId())) {
+            throw new InvalidParentCategoryException();
+        }
+
+        if (request.getParentId() != null && isCyclicParent(category, request.getParentId())) {
+            throw new InvalidParentCategoryException("순환 참조 오류 발생");
+        }
+
         applyCategoryRequestToEntity(category, request);
-        //TODO 자기 자신을 부모 카테고리로 지정할 수 없게 예외 설정
-
-
         Category savedCategory = categoryRepository.save(category);
 
         return new CategoryResponse(savedCategory);
@@ -122,7 +157,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override @Transactional
     public void deleteCategory(Long categoryId){
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId, " 라는 카테고리 아이디를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+        if (!category.getChildren().isEmpty()) {
+            throw new CategoryNotDeleteWithChildren(categoryId);
+        }
         categoryRepository.delete(category);
     }
 
@@ -131,13 +169,77 @@ public class CategoryServiceImpl implements CategoryService {
         category.setCategoryName(request.getCategoryName());
         if (request.getParentId() != null) {
             Category parentCategory = categoryRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getParentId(), " 라는 부모 카테고리를 찾을 수 없습니다."));
-            category.setDepth(parentCategory.getDepth() + 1);
+                    .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getParentId()));
             category.setParent(parentCategory);
+            category.setDepth(parentCategory.getDepth() + 1);
             parentCategory.addChild(category);
         } else {
-            category.setDepth(1);
+            category.setDepth(1L);
             category.setParent(null);
         }
+    }
+
+    public List<CategoryTreeResponse> buildCategoryTree(List<CategoryFlatProjection> flatCategories) {
+        Map<Long, CategoryTreeResponse> map = new HashMap<>();
+        List<CategoryTreeResponse> roots = new ArrayList<>();
+
+        for (CategoryFlatProjection c : flatCategories) {
+            CategoryTreeResponse node = new CategoryTreeResponse(
+                    c.getCategoryId(),
+                    c.getCategoryName(),
+                    c.getDepth(),
+                    c.getParentId()
+            );
+            map.put(c.getCategoryId(), node);
+        }
+
+        for (CategoryTreeResponse node : map.values()) {
+            Long parentId = node.getParentId();
+            // parentId가 null 이거나 자기인 경우
+            if (parentId == null || parentId.equals(node.getCategoryId())) {
+                roots.add(node);
+            } else { // 자식일경우
+                CategoryTreeResponse parent = map.get(parentId);
+                if (parent != null) {
+                    parent.getChildren().add(node);
+                } else {
+                    System.out.println("부모 노드 못 찾음 - nodeId: " + node.getCategoryId() + ", parentId: " + parentId);
+                }
+            }
+        }
+
+        return roots;
+    }
+
+    private CategoryTreeResponse findNodeById(List<CategoryTreeResponse> nodes, Long id) {
+        for (CategoryTreeResponse node : nodes) {
+            if (node.getCategoryId().equals(id)) {
+                return node;
+            }
+            CategoryTreeResponse found = findNodeById(node.getChildren(), id);
+            if (found != null) { // 자식에서 찾았다면 반환
+                return found;
+            }
+        }
+        return null;
+    }
+
+    private boolean isCyclicParent(Category category, Long newParentId) {
+        if (newParentId == null) return false;
+
+        if (category.getId().equals(newParentId)) return true; // 자기 자신
+
+        Category parent = categoryRepository.findById(newParentId).orElse(null);
+        Set<Long> visited = new HashSet<>();
+        while (parent != null) {
+            if (!visited.add(parent.getId())) {
+                return true; // 순환 감지
+            }
+            if (parent.getId().equals(category.getId())) {
+                return true; // 자식이 부모로 올라가는 경우
+            }
+            parent = parent.getParent();
+        }
+        return false;
     }
 }

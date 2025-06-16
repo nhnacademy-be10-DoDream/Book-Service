@@ -23,5 +23,8 @@ public class CategoryTreeResponse extends CategoryResponse {
                 .map(CategoryTreeResponse::new)
                 .collect(Collectors.toList());
     }
+    public CategoryTreeResponse(Long categoryId, String categoryName, Long depth, Long parentId) {
+        super(categoryId, categoryName, depth, parentId);
+    }
 }
 
