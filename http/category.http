@@ -3,9 +3,9 @@ POST http://localhost:8080/admin/categories
 Content-Type: application/json
 
 {
-  "categoryName": "프로그래밍4-1",
+  "categoryName": "프로그래밍1-3",
   "depth": 1,
-  "parentId": 3
+  "parentId": 6
 }
 
 
@@ -15,7 +15,7 @@ Accept: application/json
 
 
 ### 특정 카테고리 조회
-GET http://localhost:8080/categories/2
+GET http://localhost:8080/categories/1
 Accept: application/json
 
 
@@ -29,6 +29,10 @@ GET http://localhost:8080/categories/3/related
 Accept: application/json
 
 
+### 특정 깊이 카테고리 조회
+GET http://localhost:8080/categories/3/depth
+Accept: application/json
+
 
 ### 특정 도서의 카테고리 조회
 GET http://localhost:8080/books/1/categories
@@ -41,23 +45,18 @@ Accept: application/json
 
 
 ### 카테고리 수정
-PATCH http://localhost:8080/admin/categories/4
+PATCH http://localhost:8080/admin/categories/3
 Content-Type: application/json
 
 {
   "categoryName": "프로그래밍4-1revert",
-  "depth": 4,
-  "parentId": 3
+  "depth": 5,
+  "parentId": 4
 }
 
 
 
 ### 카테고리 삭제
-DELETE http://localhost:8080/admin/categories/4
+DELETE http://localhost:8080/admin/categories/3
 
 
-
-
-### 특정 단계 카테고리 조회
-GET http://localhost:8080/categories/1/depth
-Accept: application/json

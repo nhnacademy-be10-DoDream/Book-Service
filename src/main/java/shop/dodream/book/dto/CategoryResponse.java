@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Setter
 public class CategoryResponse {
@@ -26,5 +25,11 @@ public class CategoryResponse {
         this.parentId = category.getParent() != null
                 ? category.getParent().getId()
                 : null;
+    }
+    public CategoryResponse(Long categoryId, String categoryName, Long depth, Long parentId) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.depth = depth;
+        this.parentId = parentId;
     }
 }
