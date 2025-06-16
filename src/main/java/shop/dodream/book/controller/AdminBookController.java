@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.*;
-import shop.dodream.book.dto.projection.BookListProjection;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class AdminBookController {
 
     // 책 등록(naverApi) 활용
     @PostMapping
-    public ResponseEntity<BookRegisterResponse> registerBook(@RequestBody BookRegisterRequest request){
+    public ResponseEntity<BookRegisterResponse> registerBook(@Validated @RequestBody BookRegisterRequest request){
 
         BookRegisterResponse response = bookService.registerBookByIsbn(request);
         return ResponseEntity.ok(response);
@@ -30,9 +29,9 @@ public class AdminBookController {
 
     // 책 전체 리스트 조회
     @GetMapping
-    public ResponseEntity<List<BookListProjection>> getAllBooks(){
-        List<BookListProjection> bookListProjections = bookService.getAllBooks();
-        return ResponseEntity.ok(bookListProjections);
+    public ResponseEntity<List<BookListResponse>> getAllBooks(){
+        List<BookListResponse> bookListResponses = bookService.getAllBooks();
+        return ResponseEntity.ok(bookListResponses);
     }
 
 

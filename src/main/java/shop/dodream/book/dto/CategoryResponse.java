@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 @Setter
-public class CategoryResponse {
+public class    CategoryResponse {
     private Long categoryId;
     private String categoryName;
     private Long depth;

@@ -73,8 +73,8 @@ public class Book {
 
     private String bookUrl;
 
+    @Column(nullable = false)
     private Long discountRate;
-
 
 
 }

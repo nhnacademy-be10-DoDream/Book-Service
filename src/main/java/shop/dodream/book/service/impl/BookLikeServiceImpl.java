@@ -1,5 +1,6 @@
 package shop.dodream.book.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,8 @@ import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.exception.BookAlreadyRemovedException;
 import shop.dodream.book.exception.BookIdNotFoundException;
 import shop.dodream.book.exception.BookLikeAlreadyRegisterException;
+import shop.dodream.book.exception.BookLikeNotFoundException;
+import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookLikeRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookLikeService;
@@ -19,13 +22,13 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class BookLikeServiceImpl implements BookLikeService {
 
 
-    @Autowired
-    private BookRepository bookRepository;
-    @Autowired
-    private BookLikeRepository bookLikeRepository;
+    private final BookRepository bookRepository;
+    private final BookLikeRepository bookLikeRepository;
+
 
 
     @Override
@@ -33,10 +36,10 @@ public class BookLikeServiceImpl implements BookLikeService {
     public void registerBookLike(Long bookId, String userId) {
 
         if (bookLikeRepository.existsByBookIdAndUserId(bookId,userId)) {
-            throw new BookLikeAlreadyRegisterException("이미 좋아요를 눌른 도서입니다.");
+            throw new BookLikeAlreadyRegisterException();
         }
 
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
 
         BookLike bookLike = new BookLike();
         bookLike.setUserId(userId);
@@ -44,13 +47,14 @@ public class BookLikeServiceImpl implements BookLikeService {
 
         bookLikeRepository.save(bookLike);
 
+
     }
 
 
     @Override
     @Transactional(readOnly = true)
     public BookLikeResponse bookLikeFindMe(Long bookId, String userId) {
-        bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
+        bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
 
         Boolean bookLiked = bookLikeRepository.existsByBookIdAndUserId(bookId,userId);
 
@@ -61,13 +65,13 @@ public class BookLikeServiceImpl implements BookLikeService {
     @Override
     @Transactional
     public void bookLikeDelete(Long bookId, String userId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException("해당하는 아이디의 책은 존재하지않습니다."));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
 
         if (book.getStatus() == BookStatus.REMOVED){
-            throw new BookAlreadyRemovedException("삭제된 도서에 대해서는 좋아요를 취소할수 없습니다.");
+            throw new BookAlreadyRemovedException();
         }
 
-        BookLike bookLike = bookLikeRepository.findByBookIdAndUserId(bookId, userId).orElseThrow(()-> new BookIdNotFoundException("좋아요 기록이 없습니다."));
+        BookLike bookLike = bookLikeRepository.findByBookIdAndUserId(bookId, userId).orElseThrow(()-> new BookLikeNotFoundException(bookId,userId));
 
 
         bookLikeRepository.delete(bookLike);

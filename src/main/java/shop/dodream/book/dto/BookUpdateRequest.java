@@ -3,6 +3,7 @@ package shop.dodream.book.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import shop.dodream.book.entity.BookStatus;
@@ -29,6 +30,7 @@ public class BookUpdateRequest {
 
     @Min(value = 0, message = "수량은 0이상이어야합니다.")
     private Long bookCount;
+
     private String bookUrl;
 
 }
