@@ -26,7 +26,7 @@ public class Category {
     private String categoryName;
 
     @Column(nullable = false) @Setter
-    private long depth;
+    private Long depth;
 
     @ManyToOne @Setter
     @JoinColumn(name = "parent_id")

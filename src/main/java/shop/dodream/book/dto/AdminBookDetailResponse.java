@@ -24,15 +24,15 @@ public class AdminBookDetailResponse {
     private String isbn;
     private LocalDate publishedAt;
     private BookStatus status;
-    private long salePrice;
-    private long regularPrice;
+    private Long salePrice;
+    private Long regularPrice;
     private Boolean isGiftable;
-    private long viewCount;
-    private long searchCount;
+    private Long viewCount;
+    private Long searchCount;
     private ZonedDateTime createdAt;
-    private long bookCount;
+    private Long bookCount;
     private String bookUrl;
-    private long discountRate;
+    private Long discountRate;
 
 
 
