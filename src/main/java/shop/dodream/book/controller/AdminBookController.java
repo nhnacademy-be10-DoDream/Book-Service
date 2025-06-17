@@ -53,12 +53,7 @@ public class AdminBookController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/decrease-bookCount")
-    public ResponseEntity<BookCountDecreaseResponse> decreaseBookCount(@Validated @RequestBody BookCountDecreaseRequest request){
-        BookCountDecreaseResponse response = bookService.decreaseBookCount(request);
 
-        return ResponseEntity.ok(response);
-    }
 
 
 

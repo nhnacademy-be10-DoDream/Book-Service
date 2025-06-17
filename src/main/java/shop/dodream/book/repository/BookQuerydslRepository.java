@@ -18,5 +18,5 @@ public interface BookQuerydslRepository {
 
     Optional<BookLikeCountResponse> findLikeCountByBookId(Long bookId);
 
-
+    List<BookListResponse> findVisibleBooksByIds(List<Long> ids);
 }
