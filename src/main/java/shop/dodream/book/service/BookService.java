@@ -20,4 +20,6 @@ public interface BookService {
     void deleteBook(Long bookId);
 
     BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request);
+
+    BookLikeCountResponse getBookLikeCount(Long bookId);
 }

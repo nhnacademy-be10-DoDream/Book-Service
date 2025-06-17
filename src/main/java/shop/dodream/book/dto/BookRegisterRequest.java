@@ -45,6 +45,7 @@ public class BookRegisterRequest {
         book.setViewCount(0L);
         book.setIsGiftable(true);
         book.setCreatedAt(ZonedDateTime.now());
+        book.setLikeCount(0L);
     }
 
 

@@ -3,7 +3,7 @@ POST http://localhost:8080/admin/books
 Content-Type: application/json
 
 {
-  "isbn": "9791157956579",
+  "isbn": "9791198520548",
   "description" : "직접 설명을 등록해야함...",
   "discountRate": 0
 }
@@ -44,6 +44,8 @@ Content-Type: application/json
   "bookCount": 100
 }
 
+### 책 좋아요 조회
+GET http://localhost:8080/books/1/likes/count
 
 
 
@@ -53,7 +55,7 @@ POST http://localhost:8080/books/1/likes
 X-USER-ID: test1
 
 ### 책 좋아요 여부 조회
-GET http://localhost:8080/books/5/me
+GET http://localhost:8080/books/1/me
 X-USER-ID: test1
 
 
@@ -64,5 +66,6 @@ X-USER-ID: test1
 ### 좋아요한 책목록 조회
 GET http://localhost:8080/users/me/likes/books
 X-USER-ID: test1
+
 
 

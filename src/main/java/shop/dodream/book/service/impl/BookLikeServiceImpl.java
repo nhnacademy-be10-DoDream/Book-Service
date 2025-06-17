@@ -46,6 +46,7 @@ public class BookLikeServiceImpl implements BookLikeService {
         bookLike.setBook(book);
 
         bookLikeRepository.save(bookLike);
+        bookRepository.incrementLikCount(bookId);
 
 
     }
@@ -75,6 +76,9 @@ public class BookLikeServiceImpl implements BookLikeService {
 
 
         bookLikeRepository.delete(bookLike);
+        bookRepository.decreaseLikeCount(bookId);
+
+
     }
 
 

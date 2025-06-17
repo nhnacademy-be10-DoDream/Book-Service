@@ -4,6 +4,7 @@ package shop.dodream.book.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.dodream.book.dto.BookLikeCountResponse;
 import shop.dodream.book.dto.BookLikeResponse;
 import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.repository.BookLikeQuerydslRepository;
@@ -55,12 +56,6 @@ public class BookLikeController {
 
         return ResponseEntity.ok(bookListResponses);
     }
-
-
-
-
-
-
 
 
 }

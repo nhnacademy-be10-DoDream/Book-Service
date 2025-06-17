@@ -142,6 +142,15 @@ public class BookServiceImpl implements BookService {
 
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public BookLikeCountResponse getBookLikeCount(Long bookId) {
+        return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+
+    }
+
+
+
     private void updateStatusByBookCount(Book book) {
         if (book.getStatus() != BookStatus.REMOVED) {
             long count = book.getBookCount();
