@@ -30,6 +30,7 @@ public class AdminBookDetailResponse {
     private Long bookCount;
     private String bookUrl;
     private Long discountRate;
+    private Long likeCount;
 
 
 
@@ -51,5 +52,6 @@ public class AdminBookDetailResponse {
         this.bookCount = book.getBookCount();
         this.bookUrl = book.getBookUrl();
         this.discountRate = book.getDiscountRate();
+        this.likeCount = book.getLikeCount();
     }
 }

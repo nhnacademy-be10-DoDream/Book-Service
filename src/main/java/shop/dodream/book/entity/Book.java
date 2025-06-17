@@ -76,5 +76,8 @@ public class Book {
     @Column(nullable = false)
     private Long discountRate;
 
+    @Column(nullable = false)
+    private Long likeCount;
+
 
 }
