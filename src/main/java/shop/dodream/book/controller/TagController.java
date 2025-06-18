@@ -29,19 +29,9 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(tags);
     }
 
-    // 해당 도서의 태그 조회
-    @GetMapping("/tags/{tag-id}/books")
-    public ResponseEntity<List<TagResponse>> getTagsByBookId(@PathVariable("tag-id") Long tagId) {
-        List<TagResponse> response = tagService.getTagsByBook(tagId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
 
-    // 해당 태그의 도서 조회
-    @GetMapping("/books/{book-id}/tags")
-    public ResponseEntity<List<BookResponse>> getBooksByTagId(@PathVariable("book-id") Long bookId) {
-        List<BookResponse> response = tagService.getBooksByTag(bookId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+
+
 
     // 태그 수정
     @PatchMapping("/tags/{tag-id}")

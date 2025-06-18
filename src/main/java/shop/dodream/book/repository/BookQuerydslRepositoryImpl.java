@@ -106,4 +106,27 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                 .fetchOne()
         );
     }
+
+    @Override
+    public List<BookListResponse> findVisibleBooksByIds(List<Long> ids) {
+        QBook book = QBook.book;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        BookListResponse.class,
+                        book.id,
+                        book.title,
+                        book.author,
+                        book.isbn,
+                        book.regularPrice,
+                        book.salePrice,
+                        book.bookUrl
+                ))
+                .from(book)
+                .where(
+                        book.id.in(ids),
+                        book.status.ne(BookStatus.REMOVED)
+                )
+                .fetch();
+    }
 }

@@ -132,7 +132,6 @@ public class BookServiceImpl implements BookService {
             throw new BookCountNotEnoughException(currentStock);
         }
 
-        // 차감
         book.setBookCount(currentStock-request.getBookCount());
 
         updateStatusByBookCount(book);
@@ -148,6 +147,16 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
 
     }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookListResponse> findAllByIds(List<Long> ids) {
+        return bookRepository.findVisibleBooksByIds(ids);
+    }
+
+
+
 
 
 

@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
-import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.service.CategoryService;
 
 import java.util.List;
@@ -69,12 +67,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 해당 카테고리 도서 조회
-    @GetMapping("/categories/{category-id}/books")
-    public ResponseEntity<List<BookResponse>> getBooksByCategoryId(@PathVariable("category-id") Long categoryId) {
-        List<BookResponse> response = categoryService.getBooksByCategory(categoryId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
 
     // 카테고리 수정
     @PatchMapping("/admin/categories/{category-id}")
