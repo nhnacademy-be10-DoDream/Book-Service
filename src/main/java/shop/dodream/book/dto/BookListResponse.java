@@ -13,8 +13,4 @@ public class BookListResponse {
     private Long regularPrice;
     private Long salePrice;
     private String bookUrl;
-
-
-
-
 }

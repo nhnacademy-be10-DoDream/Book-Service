@@ -1,6 +1,5 @@
 package shop.dodream.book.service;
 
-import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
@@ -15,8 +14,6 @@ public interface CategoryService {
     List<CategoryTreeResponse> getCategoriesChildren(Long categoryId);
     List<CategoryTreeResponse> getCategoriesRelated(Long categoryId);
     List<CategoryResponse> getCategoriesDepth(Long depth);
-    List<CategoryResponse> getCategoriesByBook(Long bookId);
-    List<BookResponse> getBooksByCategory(Long categoryId);
     CategoryResponse updateCategory(Long categoryId, CategoryRequest request);
     void deleteCategory(Long categoryId);
 }

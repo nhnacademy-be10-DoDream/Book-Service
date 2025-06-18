@@ -3,7 +3,6 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
@@ -118,22 +117,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(CategoryResponse::new)
                 .collect(Collectors.toList());
 
-    }
-
-    @Override @Transactional(readOnly = true)
-    public List<CategoryResponse> getCategoriesByBook(Long bookId) {
-        List<Category> categories = bookCategoryRepository.findCategoriesByBook(bookId);
-        return categories.stream()
-                .map(CategoryResponse::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override @Transactional(readOnly = true)
-    public List<BookResponse> getBooksByCategory(Long categoryId) {
-        List<Book> books = bookCategoryRepository.findBooksByCategory(categoryId);
-        return books.stream()
-                .map(BookResponse::new)
-                .collect(Collectors.toList());
     }
 
     @Override @Transactional

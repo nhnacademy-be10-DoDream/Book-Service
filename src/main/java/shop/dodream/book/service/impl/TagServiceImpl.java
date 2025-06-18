@@ -3,7 +3,6 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.TagRequest;
 import shop.dodream.book.dto.TagResponse;
 import shop.dodream.book.entity.Book;
@@ -42,21 +41,6 @@ public class TagServiceImpl implements TagService {
                 .collect(Collectors.toList());
     }
 
-    @Override @Transactional(readOnly = true)
-    public List<TagResponse> getTagsByBook(Long bookId){
-        List<Tag> tags = bookTagRepository.findTagsByBook(bookId);
-        return tags.stream()
-                .map(TagResponse::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override @Transactional(readOnly = true)
-    public List<BookResponse> getBooksByTag(Long tagId){
-        List<Book> books = bookTagRepository.findBooksByTag(tagId);
-        return books.stream()
-                .map(BookResponse::new)
-                .collect(Collectors.toList());
-    }
 
     @Override @Transactional
     public TagResponse updateTag(Long tagId, TagRequest request){

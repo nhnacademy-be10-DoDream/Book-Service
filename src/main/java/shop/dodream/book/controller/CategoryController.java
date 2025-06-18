@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
@@ -59,20 +58,6 @@ public class CategoryController {
     @GetMapping("/categories/{depth}/depth")
     public ResponseEntity<List<CategoryResponse>> getCategoriesDepth(@PathVariable Long depth) {
         List<CategoryResponse> response = categoryService.getCategoriesDepth(depth);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    // 해당 도서의 카테고리 조회
-    @GetMapping("/books/{book-id}/categories")
-    public ResponseEntity<List<CategoryResponse>> getCategoriesByBookId(@PathVariable("book-id") Long bookId) {
-        List<CategoryResponse> response = categoryService.getCategoriesByBook(bookId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    // 해당 카테고리 도서 조회
-    @GetMapping("/categories/{category-id}/books")
-    public ResponseEntity<List<BookResponse>> getBooksByCategoryId(@PathVariable("category-id") Long categoryId) {
-        List<BookResponse> response = categoryService.getBooksByCategory(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
