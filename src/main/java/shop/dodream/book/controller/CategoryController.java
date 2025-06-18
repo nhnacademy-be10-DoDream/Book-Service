@@ -60,14 +60,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 해당 도서의 카테고리 조회
-    @GetMapping("/books/{book-id}/categories")
-    public ResponseEntity<List<CategoryResponse>> getCategoriesByBookId(@PathVariable("book-id") Long bookId) {
-        List<CategoryResponse> response = categoryService.getCategoriesByBook(bookId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-
     // 카테고리 수정
     @PatchMapping("/admin/categories/{category-id}")
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("category-id") Long categoryId,

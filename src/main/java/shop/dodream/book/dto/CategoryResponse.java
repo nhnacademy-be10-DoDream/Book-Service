@@ -11,11 +11,13 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-@Setter
 public class    CategoryResponse {
     private Long categoryId;
+    @Setter
     private String categoryName;
+    @Setter
     private Long depth;
+    @Setter
     private Long parentId;
 
     public CategoryResponse(Category category) {

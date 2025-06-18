@@ -119,16 +119,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
-    @Override @Transactional(readOnly = true)
-    public List<CategoryResponse> getCategoriesByBook(Long bookId) {
-        List<Category> categories = bookCategoryRepository.findCategoriesByBook(bookId);
-        return categories.stream()
-                .map(CategoryResponse::new)
-                .collect(Collectors.toList());
-    }
-
-
-
     @Override @Transactional
     public CategoryResponse updateCategory(Long categoryId, CategoryRequest request){
         Category category = categoryRepository.findById(categoryId)

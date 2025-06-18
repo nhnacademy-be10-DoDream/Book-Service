@@ -3,9 +3,9 @@ POST http://localhost:8080/admin/categories
 Content-Type: application/json
 
 {
-  "categoryName": "프로그래밍1-3",
+  "categoryName": "마",
   "depth": 1,
-  "parentId": 6
+  "parentId": 1
 }
 
 

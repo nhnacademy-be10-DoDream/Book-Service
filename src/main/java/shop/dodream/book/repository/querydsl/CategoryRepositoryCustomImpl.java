@@ -1,13 +1,16 @@
 package shop.dodream.book.repository.querydsl;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
+import shop.dodream.book.dto.projection.CategoryWithParentProjection;
 import shop.dodream.book.dto.projection.QCategoryFlatProjection;
 import shop.dodream.book.entity.QCategory;
 
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public class CategoryRepositoryCustomImpl implements CategoryRepositoryCustom {
@@ -25,5 +28,24 @@ public class CategoryRepositoryCustomImpl implements CategoryRepositoryCustom {
                 ))
                 .from(category)
                 .fetch(); // -> DB, <- 결과를 리스트 형태
+    }
+
+    @Override
+    public List<CategoryWithParentProjection> findAllByIdsWithParent(List<Long> categoryIds) {
+        QCategory category = QCategory.category;
+        QCategory parent = new QCategory("parent");
+
+        return queryFactory
+                .select(Projections.constructor(CategoryWithParentProjection.class,
+                        category.id,
+                        category.categoryName,
+                        category.depth,
+                        category.parent.id,
+                        category.parent.categoryName
+                ))
+                .from(category)
+                .leftJoin(category.parent, parent)
+                .where(category.id.in(categoryIds))
+                .fetch();
     }
 }
