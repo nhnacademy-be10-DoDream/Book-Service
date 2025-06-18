@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.entity.BookStatus;
 
 import java.time.LocalDate;
@@ -30,7 +31,5 @@ public class BookUpdateRequest {
 
     @Min(value = 0, message = "수량은 0이상이어야합니다.")
     private Long bookCount;
-
-    private String bookUrl;
 
 }

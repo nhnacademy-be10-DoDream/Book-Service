@@ -60,7 +60,8 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                                 book.regularPrice,
                                 book.isGiftable,
                                 book.bookUrl,
-                                book.discountRate
+                                book.discountRate,
+                                book.likeCount
                         ))
                         .from(book)
                         .where(

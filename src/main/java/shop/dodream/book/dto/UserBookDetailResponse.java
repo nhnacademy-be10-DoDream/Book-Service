@@ -20,6 +20,7 @@ public class UserBookDetailResponse {
     private Boolean isGiftable;
     private String bookUrl;
     private Long discountRate;
+    private Long likeCount;
 
 
 }
