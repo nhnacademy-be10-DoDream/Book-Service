@@ -25,4 +25,9 @@ public class BookTag {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
+    public BookTag(Book book, Tag tag) {
+        this.book = book;
+        this.tag = tag;
+        this.id = new BookTagId(book.getId(), tag.getId());
+    }
 }

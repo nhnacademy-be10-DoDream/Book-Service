@@ -1,0 +1,22 @@
+### 해당 도서에 태그 등록
+POST http://localhost:8080/admin/books/1/tags/2
+Content-Type: application/json
+
+
+### 해당 도서의 태그 조회
+GET http://localhost:8080/books/1/tags
+Content-Type: application/json
+
+
+### 해당 도서의 태그 수정
+PATCH http://localhost:8080/admin/books/1/tags/1
+Content-Type: application/json
+
+{
+  "tagId": 3
+}
+
+
+### 해당 도서의 태그 삭제
+DELETE http://localhost:8080/admin/books/1/tags/2
+Content-Type: application/json

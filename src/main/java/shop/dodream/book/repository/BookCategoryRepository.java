@@ -16,12 +16,6 @@ import java.util.Set;
 
 @Repository
 public interface BookCategoryRepository extends JpaRepository<BookCategory, BookCategoryId> {
-    @Query("SELECT bc.category FROM BookCategory bc WHERE bc.book.id = :bookId")
-    List<Category> findCategoriesByBook(@Param("bookId") Long bookId);
-
-    @Query("SELECT bc.book FROM BookCategory bc WHERE bc.category.id = :categoryId")
-    List<Book> findBooksByCategory(@Param("categoryId") Long categoryId);
-
     @Query("SELECT bc.category.id FROM BookCategory bc WHERE bc.book.id = :bookId")
     Set<Long> findCategoryIdsByBookId(@Param("bookId") Long bookId);
 

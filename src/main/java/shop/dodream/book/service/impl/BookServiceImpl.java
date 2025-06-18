@@ -51,18 +51,18 @@ public class BookServiceImpl implements BookService {
         NaverBookResponse.Item item = items.getFirst();
 
 
-        String localImageUrl;
-        try {
-            localImageUrl = imageUploader.uploadFromUrl(item.getImage());
-        } catch (IOException e) {
-            // exception 생성 해야함
-            throw new RuntimeException("이미지 저장 실패", e);
-        }
+//        String localImageUrl;
+//        try {
+//            localImageUrl = imageUploader.uploadFromUrl(item.getImage());
+//        } catch (IOException e) {
+//            // exception 생성 해야함
+//            throw new RuntimeException("이미지 저장 실패", e);
+//        }
 
 
         Book book = item.toPartialEntity();
         request.applyTo(book);
-        book.setBookUrl(localImageUrl);
+        //book.setBookUrl(localImageUrl);
 
         Book savedBook = bookRepository.save(book);
 
