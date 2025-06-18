@@ -42,7 +42,7 @@ public class BookCategoryController {
     }
 
     @DeleteMapping("/admin/books/{book-id}/categories")
-    public ResponseEntity<CategoryResponse> deleteCategoriesByBook(@PathVariable("book-id") Long bookId, @RequestBody @Valid BookWithCategoriesRequest request){
+    public ResponseEntity<Void> deleteCategoriesByBook(@PathVariable("book-id") Long bookId, @RequestBody @Valid BookWithCategoriesRequest request){
         bookCategoryService.deleteCategoriesByBook(bookId, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
