@@ -13,8 +13,10 @@ import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookService;
+import shop.dodream.book.support.ImageUploader;
 
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -26,7 +28,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final NaverBookProperties properties;
     private final BookMapper bookMapper;
-
+    private final ImageUploader imageUploader;
 
     @Override
     @Transactional
@@ -48,11 +50,22 @@ public class BookServiceImpl implements BookService {
 
         NaverBookResponse.Item item = items.getFirst();
 
-        Book book = item.toPartialEntity();
 
+        String localImageUrl;
+        try {
+            localImageUrl = imageUploader.uploadFromUrl(item.getImage());
+        } catch (IOException e) {
+            // exception 생성 해야함
+            throw new RuntimeException("이미지 저장 실패", e);
+        }
+
+
+        Book book = item.toPartialEntity();
         request.applyTo(book);
+        book.setBookUrl(localImageUrl);
 
         Book savedBook = bookRepository.save(book);
+
 
         return new BookRegisterResponse(savedBook);
 
@@ -132,7 +145,6 @@ public class BookServiceImpl implements BookService {
             throw new BookCountNotEnoughException(currentStock);
         }
 
-        // 차감
         book.setBookCount(currentStock-request.getBookCount());
 
         updateStatusByBookCount(book);
@@ -141,6 +153,25 @@ public class BookServiceImpl implements BookService {
         return decreaseResponse;
 
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookLikeCountResponse getBookLikeCount(Long bookId) {
+        return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookListResponse> findAllByIds(List<Long> ids) {
+        return bookRepository.findVisibleBooksByIds(ids);
+    }
+
+
+
+
+
 
     private void updateStatusByBookCount(Book book) {
         if (book.getStatus() != BookStatus.REMOVED) {

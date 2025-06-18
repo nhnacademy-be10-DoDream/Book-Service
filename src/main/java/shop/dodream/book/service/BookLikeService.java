@@ -1,5 +1,6 @@
 package shop.dodream.book.service;
 
+import shop.dodream.book.dto.BookLikeCountResponse;
 import shop.dodream.book.dto.BookLikeResponse;
 import shop.dodream.book.dto.BookListResponse;
 
@@ -15,5 +16,6 @@ public interface BookLikeService {
     void bookLikeDelete(Long bookId, String userId);
 
     List<BookListResponse> getLikedBooksByUserId (String userId);
+
 
 }

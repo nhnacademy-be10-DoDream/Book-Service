@@ -10,4 +10,5 @@ public interface BookRepository extends JpaRepository<Book, Long>, BookQuerydslR
 
 
     boolean existsByIsbn(String isbn);
+
 }

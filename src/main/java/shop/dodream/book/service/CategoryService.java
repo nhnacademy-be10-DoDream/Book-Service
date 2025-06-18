@@ -3,7 +3,6 @@ package shop.dodream.book.service;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
-import shop.dodream.book.dto.projection.CategoryFlatProjection;
 
 import java.util.List;
 

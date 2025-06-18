@@ -18,7 +18,6 @@ public class AdminBookController {
     @Autowired
     private BookService bookService;
 
-    // 책 등록(naverApi) 활용
     @PostMapping
     public ResponseEntity<BookRegisterResponse> registerBook(@Validated @RequestBody BookRegisterRequest request){
 
@@ -27,7 +26,6 @@ public class AdminBookController {
     }
 
 
-    // 책 전체 리스트 조회
     @GetMapping
     public ResponseEntity<List<BookListResponse>> getAllBooks(){
         List<BookListResponse> bookListResponses = bookService.getAllBooks();
@@ -36,14 +34,12 @@ public class AdminBookController {
 
 
 
-    // 책 단일 조회
     @GetMapping("{bookId}")
     public ResponseEntity<AdminBookDetailResponse> getBookById(@PathVariable Long bookId){
         AdminBookDetailResponse adminBookDetailResponse = bookService.getBookByIdForAdmin(bookId);
         return ResponseEntity.ok(adminBookDetailResponse);
     }
 
-    // 책 수정
     @PatchMapping("{bookId}")
     public ResponseEntity<Void> updateBook(@PathVariable Long bookId,
                                            @Validated @RequestBody BookUpdateRequest request){
@@ -51,20 +47,13 @@ public class AdminBookController {
         return ResponseEntity.noContent().build();
     }
 
-    // 책 삭제
     @DeleteMapping("{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId){
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
 
-    // 재고 차감 API 외부 호출용
-    @PostMapping("/decrease-bookCount")
-    public ResponseEntity<BookCountDecreaseResponse> decreaseBookCount(@Validated @RequestBody BookCountDecreaseRequest request){
-        BookCountDecreaseResponse response = bookService.decreaseBookCount(request);
 
-        return ResponseEntity.ok(response);
-    }
 
 
 
