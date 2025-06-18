@@ -8,6 +8,7 @@ spring:
 server:
   port: 8080 # 10325 -> 본인의 포트번호
 
+
 management:
   endpoints:
     web:
@@ -16,3 +17,4 @@ management:
   endpoint:
     health:
       show-details: always
+
