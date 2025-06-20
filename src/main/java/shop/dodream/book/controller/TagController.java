@@ -16,7 +16,7 @@ public class TagController {
     private final TagService tagService;
 
     // 태그 등록
-    @PostMapping("/tags")
+    @PostMapping("/admin/tags")
     public ResponseEntity<TagResponse> createTag(@RequestBody @Valid TagRequest request) {
         TagResponse response = tagService.createTag(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -29,12 +29,8 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(tags);
     }
 
-
-
-
-
     // 태그 수정
-    @PatchMapping("/tags/{tag-id}")
+    @PatchMapping("/admin/tags/{tag-id}")
     public ResponseEntity<TagResponse> updateTag(@PathVariable("tag-id") Long tagId,
                                                  @RequestBody @Valid TagRequest request) {
         TagResponse response = tagService.updateTag(tagId, request);
@@ -42,8 +38,8 @@ public class TagController {
     }
 
     // 태그 삭제
-    @DeleteMapping("/tags/{tag-id}")
-    public ResponseEntity<CategoryResponse> deleteTag(@PathVariable("tag-id") Long tagId) {
+    @DeleteMapping("/admin/tags/{tag-id}")
+    public ResponseEntity<Void> deleteTag(@PathVariable("tag-id") Long tagId) {
         tagService.deleteTag(tagId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
