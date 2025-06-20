@@ -3,7 +3,7 @@ POST http://localhost:8080/admin/books
 Content-Type: application/json
 
 {
-  "isbn": "9791197378270",
+  "isbn": "9791157956579",
   "description" : "직접 설명을 등록해야함...",
   "discountRate": 0
 }
@@ -36,12 +36,12 @@ DELETE http://localhost:8080/admin/books/1
 
 
 ### 재고 차감
-POST http://localhost:8080/admin/books/decrease-bookCount
+POST http://localhost:8080/books/internal/decrease-bookCount
 Content-Type: application/json
 
 {
   "bookId": 1,
-  "bookCount": 100
+  "bookCount": 10
 }
 
 ### 책 좋아요 조회

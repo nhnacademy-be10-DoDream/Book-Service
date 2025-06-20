@@ -2,6 +2,7 @@ package shop.dodream.book.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
@@ -11,6 +12,7 @@ import java.time.ZonedDateTime;
 @Getter
 @AllArgsConstructor
 public class AdminBookDetailResponse {
+
 
 
     private Long bookId;
@@ -31,6 +33,7 @@ public class AdminBookDetailResponse {
     private String bookUrl;
     private Long discountRate;
     private Long likeCount;
+
 
 
 

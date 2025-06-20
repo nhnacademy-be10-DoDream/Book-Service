@@ -29,7 +29,7 @@ public class NaverBookResponse {
         public Book toPartialEntity() {
             Book book = new Book();
             book.setTitle(this.title);
-            book.setBookUrl(this.image);
+//            book.setBookUrl(this.image);
             book.setAuthor(BookUtils.removeSpecialChars(this.author));
             book.setSalePrice(Long.parseLong(this.discount));
             book.setPublisher(this.publisher);
