@@ -13,10 +13,10 @@ jobs:
     if: github.event_name == 'pull_request'
 
     env:
-    NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-    NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-    MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
-    MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+      NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+      NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+      MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+      MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
 
     services:
       mysql:
