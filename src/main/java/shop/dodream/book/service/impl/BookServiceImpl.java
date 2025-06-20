@@ -21,7 +21,7 @@ import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookService;
-import shop.dodream.book.support.ImageUploader;
+import shop.dodream.book.util.MinioUploader;
 
 
 import java.io.IOException;
@@ -39,8 +39,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final NaverBookProperties properties;
     private final BookMapper bookMapper;
-    private final ImageUploader imageUploader;
-    private final ElasticsearchClient esClient;
+    private final MinioUploader minioUploader;
 
     @Override
     @Transactional
@@ -62,19 +61,17 @@ public class BookServiceImpl implements BookService {
 
         NaverBookResponse.Item item = items.getFirst();
 
-
-//        String localImageUrl;
-//        try {
-//            localImageUrl = imageUploader.uploadFromUrl(item.getImage());
-//        } catch (IOException e) {
-//            // exception 생성 해야함
-//            throw new RuntimeException("이미지 저장 실패", e);
-//        }
+        String uploadedImageUrl;
+        try {
+            uploadedImageUrl = minioUploader.uploadFromUrl(item.getImage());
+        } catch (IOException e) {
+            throw new MinioImageUploadException();
+        }
 
 
         Book book = item.toPartialEntity();
+        book.setBookUrl(uploadedImageUrl);
         request.applyTo(book);
-        //book.setBookUrl(localImageUrl);
 
         Book savedBook = bookRepository.save(book);
 

@@ -21,16 +21,16 @@ public class BookController {
 
 
 
-    @GetMapping("{bookId}")
-    public ResponseEntity<UserBookDetailResponse> getBookById(@PathVariable Long bookId){
+    @GetMapping("{book-id}")
+    public ResponseEntity<UserBookDetailResponse> getBookById(@PathVariable("book-id") Long bookId){
         UserBookDetailResponse userBookDetailResponse = bookService.getBookByIdForUser(bookId);
         return ResponseEntity.ok(userBookDetailResponse);
     }
 
 
     // 도서 좋아요 수 조회
-    @GetMapping("/{bookId}/likes/count")
-    ResponseEntity<BookLikeCountResponse> getBookLikeCount(@PathVariable Long bookId){
+    @GetMapping("/{book-id}/likes/count")
+    ResponseEntity<BookLikeCountResponse> getBookLikeCount(@PathVariable("book-id") Long bookId){
         BookLikeCountResponse bookLikeCountResponse = bookService.getBookLikeCount(bookId);
         return ResponseEntity.ok(bookLikeCountResponse);
     }

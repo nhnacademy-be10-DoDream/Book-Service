@@ -21,8 +21,8 @@ public class BookLikeController {
 
 
     // 좋아요 등록
-    @PostMapping("/books/{bookId}/likes")
-    ResponseEntity<Void> registerBookLike(@PathVariable Long bookId,
+    @PostMapping("/books/{book-id}/likes")
+    ResponseEntity<Void> registerBookLike(@PathVariable("book-id") Long bookId,
                                           @RequestHeader("X-USER-ID") String userId){
 
         bookLikeService.registerBookLike(bookId, userId);
@@ -31,8 +31,8 @@ public class BookLikeController {
     }
 
     // 로그인한 사용자 특정 도서 좋아요 여부 조회
-    @GetMapping("/books/{bookId}/me")
-    ResponseEntity<BookLikeResponse> bookLikeFindMe(@PathVariable Long bookId,
+    @GetMapping("/books/{book-id}/me")
+    ResponseEntity<BookLikeResponse> bookLikeFindMe(@PathVariable("book-id") Long bookId,
                                                     @RequestHeader("X-USER-ID") String userId){
         BookLikeResponse bookLikeResponse = bookLikeService.bookLikeFindMe(bookId, userId);
 
@@ -41,8 +41,8 @@ public class BookLikeController {
 
 
     // 좋아요 취소(삭제)
-    @DeleteMapping("/books/{bookId}/likes")
-    ResponseEntity<Void> bookLikeDelete(@PathVariable Long bookId,
+    @DeleteMapping("/books/{book-id}/likes")
+    ResponseEntity<Void> bookLikeDelete(@PathVariable("book-id") Long bookId,
                                         @RequestHeader("X-USER-ID") String userId){
         bookLikeService.bookLikeDelete(bookId, userId);
 
