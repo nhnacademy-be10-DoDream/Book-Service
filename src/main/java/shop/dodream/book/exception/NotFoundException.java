@@ -1,0 +1,7 @@
+package shop.dodream.book.exception;
+
+public class NotFoundException extends RuntimeException {
+    public NotFoundException(String message) {
+        super(message);
+    }
+}
