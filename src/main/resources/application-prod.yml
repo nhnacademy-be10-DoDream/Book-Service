@@ -25,5 +25,9 @@ naver:
     client-id: C8kYlyIf_05ozU5MMduV
     client-secret: W8TZKkfTBj
 
-upload:
-  book-image-dir: /home/be10/be10-team2/uploads/images/books/
+
+minio:
+  endpoint: http://storage.java21.net:8000
+  access-key: 93yLFI9DEhUySJMdeJYN
+  secret-key: WZ4HYxOFRI7oCElseXeKv5aVO7vwr6aFHTBGAV7R
+  bucket: dodream-book-images

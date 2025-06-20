@@ -38,6 +38,19 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MinioImageUploadException.class)
+    public ResponseEntity<ErrorResponse> MinIOException(MethodArgumentNotValidException e){
+        return buildErrorResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+
+
+
+
+
+
+
 
 
 

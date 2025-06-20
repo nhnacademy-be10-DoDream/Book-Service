@@ -3,6 +3,7 @@ package shop.dodream.book.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import shop.dodream.book.entity.Book;
 
 @Getter
@@ -16,13 +17,15 @@ public class BookListResponse {
     private Long salePrice;
     private String bookUrl;
 
+
+
     public BookListResponse(Book book){
         this.bookId = book.getId();
         this.title = book.getTitle();
         this.author = book.getAuthor();
         this.isbn = book.getIsbn();
         this.regularPrice = book.getRegularPrice();
-        this.salePrice = book.getRegularPrice();
+        this.salePrice = book.getSalePrice();
         this.bookUrl = book.getBookUrl();
     }
 

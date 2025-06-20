@@ -34,21 +34,21 @@ public class AdminBookController {
 
 
 
-    @GetMapping("{bookId}")
-    public ResponseEntity<AdminBookDetailResponse> getBookById(@PathVariable Long bookId){
+    @GetMapping("{book-id}")
+    public ResponseEntity<AdminBookDetailResponse> getBookById(@PathVariable("book-id") Long bookId){
         AdminBookDetailResponse adminBookDetailResponse = bookService.getBookByIdForAdmin(bookId);
         return ResponseEntity.ok(adminBookDetailResponse);
     }
 
-    @PatchMapping("{bookId}")
-    public ResponseEntity<Void> updateBook(@PathVariable Long bookId,
+    @PatchMapping("{book-id}")
+    public ResponseEntity<Void> updateBook(@PathVariable("book-id") Long bookId,
                                            @Validated @RequestBody BookUpdateRequest request){
         bookService.updateBook(bookId, request);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{bookId}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId){
+    @DeleteMapping("{book-id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable("book-id") Long bookId){
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
