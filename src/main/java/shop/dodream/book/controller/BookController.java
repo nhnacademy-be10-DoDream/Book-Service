@@ -42,6 +42,18 @@ public class BookController {
         return ResponseEntity.ok(bookListResponse);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<BookListResponse>> searchBooks(
+            @RequestParam String keyword,
+            @RequestParam(required = false, defaultValue = "popularity") String sort) {
 
+        List<BookListResponse> results = bookService.searchBooks(keyword, sort);
+        return ResponseEntity.ok(results);
+    }
 
+    @PostMapping("/reindex")
+    public ResponseEntity<Void> reindexAllBooks() {
+        bookService.indexAllBooks();
+        return ResponseEntity.ok().build();
+    }
 }

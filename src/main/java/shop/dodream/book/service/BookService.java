@@ -25,4 +25,9 @@ public interface BookService {
     BookLikeCountResponse getBookLikeCount(Long bookId);
 
     List<BookListResponse> findAllByIds(List<Long> ids);
+
+    List<BookListResponse> searchBooks(String keyword, String sort);
+
+    void indexAllBooks();
+
 }

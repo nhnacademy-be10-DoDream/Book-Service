@@ -1,5 +1,13 @@
 package shop.dodream.book.service.impl;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.util.ObjectBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +26,9 @@ import shop.dodream.book.support.ImageUploader;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,6 +40,7 @@ public class BookServiceImpl implements BookService {
     private final NaverBookProperties properties;
     private final BookMapper bookMapper;
     private final ImageUploader imageUploader;
+    private final ElasticsearchClient esClient;
 
     @Override
     @Transactional
@@ -186,6 +198,83 @@ public class BookServiceImpl implements BookService {
         }
     }
 
+    public List<BookListResponse> searchBooks(String keyword, String sort) {
+        try {
+            SearchResponse<Book> response = esClient.search(s -> s
+                            .index("books")
+                            .query(q -> q
+                                    .multiMatch(m -> m
+                                            .fields("title^100", "description^10", "tags^50")
+                                            .query(keyword)
+                                    )
+                            )
+                            .sort(sortField(sort))
+                    , Book.class);
+
+            return response.hits().hits().stream()
+                    .map(hit -> new BookListResponse(Objects.requireNonNull(hit.source())))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new BookSearchException(e);
+        }
+    }
+
+    public void indexAllBooks() {
+        List<Book> books = bookRepository.findAll();
+
+//        for (Book book : books) {
+//            try {
+//                esClient.index(i -> i
+//                        .index("books")
+//                        .id(book.getId().toString())
+//                        .document(book)
+//                );
+//            } catch (IOException e) {
+//                System.err.println("인덱싱 실패: " + book.getTitle());
+//            }
+//        }
+
+        ObjectMapper testMapper = new ObjectMapper();
+        testMapper.registerModule(new JavaTimeModule());
+        testMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        for (Book book : books) {
+            try {
+                String json = testMapper.writeValueAsString(book);
+                System.out.println("인덱싱할 JSON: " + json);
+
+                esClient.index(i -> i
+                        .index("books")
+                        .id(book.getId().toString())
+                        .document(book)
+                );
+            } catch (Exception e) {
+                System.err.println("인덱싱 실패: " + book.getTitle());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Function<SortOptions.Builder, ObjectBuilder<SortOptions>> sortField(String sort) {
+        return builder -> {
+            switch(sort.toLowerCase()) {
+                case "popularity":
+                    return builder.field(f -> f.field("popularity").order(SortOrder.Desc));
+                case "latest":
+                    return builder.field(f -> f.field("publish_date").order(SortOrder.Desc));
+                case "lowest_price":
+                    return builder.field(f -> f.field("price").order(SortOrder.Asc));
+                case "highest_price":
+                    return builder.field(f -> f.field("price").order(SortOrder.Desc));
+                case "rating":
+                    return builder.field(f -> f.field("average_rating").order(SortOrder.Desc));
+                case "review":
+                    return builder.field(f -> f.field("review_count").order(SortOrder.Desc));
+                default:
+                    return builder.field(f -> f.field("_score").order(SortOrder.Desc));
+            }
+        };
+    }
 
 
 

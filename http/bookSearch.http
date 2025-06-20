@@ -1,0 +1,4 @@
+### 인덱싱 처리
+POST http://localhost:8080/books/reindex
+
+
