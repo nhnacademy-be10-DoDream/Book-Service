@@ -12,13 +12,13 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
 
 
-    @Value("${elasticsearch.uris}")
+    @Value("${elastic.uris}")
     private String host;
 
-    @Value("${elasticsearch.user-id}")
+    @Value("${elastic.user-id}")
     private String userId;
 
-    @Value("${elasticsearch.user-password}")
+    @Value("${elastic.user-password}")
     private String userPassword;
 
     @Override
