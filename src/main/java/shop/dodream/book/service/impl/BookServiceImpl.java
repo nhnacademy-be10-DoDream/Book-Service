@@ -1,5 +1,14 @@
 package shop.dodream.book.service.impl;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.util.ObjectBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +27,9 @@ import shop.dodream.book.util.MinioUploader;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -166,11 +178,6 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findVisibleBooksByIds(ids);
     }
 
-
-
-
-
-
     private void updateStatusByBookCount(Book book) {
         if (book.getStatus() != BookStatus.REMOVED) {
             long count = book.getBookCount();
@@ -183,8 +190,4 @@ public class BookServiceImpl implements BookService {
             }
         }
     }
-
-
-
-
 }
