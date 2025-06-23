@@ -1,11 +1,10 @@
 package shop.dodream.book.dto;
 
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
@@ -13,8 +12,11 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Data
-@Document(indexName = "books")
+@Document(indexName = "dodream_books")
+@Setting(settingPath = "elasticsearch/setting.json")
+@Mapping(mappingPath = "elasticsearch/mapping.json")
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookDocument {
     @Id
     private String id;

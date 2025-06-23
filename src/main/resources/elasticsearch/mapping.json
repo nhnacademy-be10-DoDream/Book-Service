@@ -2,26 +2,62 @@
   "properties": {
     "title": {
       "type": "text",
-      "analyzer": "synonym_nori_analyzer"
+      "fields": {
+        "nori": {
+          "type": "text",
+          "analyzer": "korean_with_icu"
+        },
+        "jaso": {
+          "type": "text",
+          "analyzer": "jaso_index_analyzer",
+          "search_analyzer": "jaso_search_analyzer"
+        },
+        "synonym": {
+          "type": "text",
+          "analyzer": "synonym_analyzer"
+        }
+      }
     },
     "description": {
-      "type": "text",
-      "analyzer": "synonym_nori_analyzer"
+      "type": "text"
     },
     "author": {
-      "type": "text",
-      "analyzer": "synonym_nori_analyzer"
+      "type": "keyword"
+    },
+    "publisher": {
+      "type": "keyword"
     },
     "publishedAt": {
       "type": "date"
     },
+    "isbn": {
+      "type": "keyword"
+    },
     "salePrice": {
       "type": "long"
     },
-    "searchCount": {
+    "bookId": {
       "type": "long"
     },
-    "viewCount": {
+    "regularPrice": {
+      "type": "long"
+    },
+    "status": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "isGiftable": {
+      "type": "boolean"
+    },
+    "createdAt": {
+      "type": "date"
+    },
+    "bookCount": {
       "type": "long"
     }
   }
