@@ -38,21 +38,6 @@ jobs:
         options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
 
 
-      elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
-        ports:
-          - 9200:9200
-        env:
-          discovery.type: single-node
-          xpack.security.enabled: true
-          ELASTIC_USER_ID: elastic
-          ELASTIC_USER_PASSWORD: nhnacademy123!
-        options: >-
-          --health-cmd "curl -u elastic:nhnacademy123! http://localhost:9200/_cluster/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5  
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
