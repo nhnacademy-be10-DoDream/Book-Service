@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookLikeCountResponse;
 import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.UserBookDetailResponse;
+import shop.dodream.book.service.BookSearchService;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
-
+    @Autowired
+    private BookSearchService bookSearchService;
 
 
     @GetMapping("{book-id}")
@@ -40,20 +42,5 @@ public class BookController {
 
         List<BookListResponse> bookListResponse = bookService.findAllByIds(ids);
         return ResponseEntity.ok(bookListResponse);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<BookListResponse>> searchBooks(
-            @RequestParam String keyword,
-            @RequestParam(required = false, defaultValue = "popularity") String sort) {
-
-        List<BookListResponse> results = bookService.searchBooks(keyword, sort);
-        return ResponseEntity.ok(results);
-    }
-
-    @PostMapping("/reindex")
-    public ResponseEntity<Void> reindexAllBooks() {
-        bookService.indexAllBooks();
-        return ResponseEntity.ok().build();
     }
 }
