@@ -17,6 +17,9 @@ jobs:
       NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
       MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
       MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+      ELASTIC_USER_ID: ${{ secrets.ELASTIC_USER_ID }}
+      ELASTIC_USER_PASSWORD: ${{ secrets.ELASTIC_USER_PASSWORD }}
+
 
     services:
       mysql:

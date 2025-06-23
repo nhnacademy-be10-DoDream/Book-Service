@@ -15,17 +15,17 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     @Value("${elasticsearch.uris}")
     private String host;
 
-    @Value("${elasticsearch.username}")
-    private String username;
+    @Value("${elasticsearch.user-id}")
+    private String userId;
 
-    @Value("${elasticsearch.password}")
-    private String password;
+    @Value("${elasticsearch.user-password}")
+    private String userPassword;
 
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
                 .connectedTo(host)
-                .withBasicAuth(username,password)
+                .withBasicAuth(userId,userPassword)
                 .build();
     }
 }
