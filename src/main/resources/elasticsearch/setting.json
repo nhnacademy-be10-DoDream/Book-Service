@@ -1,0 +1,26 @@
+{
+  "analysis": {
+    "analyzer": {
+      "synonym_nori_analyzer": {
+        "tokenizer": "nori_tokenizer",
+        "filter": ["synonym_filter", "lowercase"]
+      }
+    },
+    "filter": {
+      "synonym_filter": {
+        "type": "synonym",
+        "synonyms": [
+          "아기, 유아",
+          "학생, 제자",
+          "구입, 구매",
+          "예쁜, 아름다운",
+          "슬픈, 우울한",
+          "기질, 특성",
+          "LA, 로스엔젤레스"
+        ]
+      }
+    }
+  }
+}
+
+

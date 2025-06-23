@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "title": {
+      "type": "text",
+      "analyzer": "synonym_nori_analyzer"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "synonym_nori_analyzer"
+    },
+    "author": {
+      "type": "text",
+      "analyzer": "synonym_nori_analyzer"
+    },
+    "publishedAt": {
+      "type": "date"
+    },
+    "salePrice": {
+      "type": "long"
+    },
+    "searchCount": {
+      "type": "long"
+    },
+    "viewCount": {
+      "type": "long"
+    }
+  }
+}
