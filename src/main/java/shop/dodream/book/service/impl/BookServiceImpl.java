@@ -8,6 +8,7 @@ import co.elastic.clients.util.ObjectBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Profile("!ci")
 public class BookServiceImpl implements BookService {
 
     private final NaverBookClient naverBookClient;
