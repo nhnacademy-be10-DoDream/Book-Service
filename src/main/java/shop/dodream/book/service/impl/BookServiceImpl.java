@@ -20,7 +20,6 @@ import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
-import shop.dodream.book.repository.BookElasticRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.util.MinioUploader;
@@ -42,7 +41,7 @@ public class BookServiceImpl implements BookService {
     private final NaverBookProperties properties;
     private final BookMapper bookMapper;
     private final MinioUploader minioUploader;
-    private final BookElasticRepository bookElasticRepository;
+    private final ElasticsearchClient esClient;
 
     @Override
     @Transactional
@@ -78,8 +77,19 @@ public class BookServiceImpl implements BookService {
 
         Book savedBook = bookRepository.save(book);
 
-        BookDocument document = new BookDocument(savedBook);
-        bookElasticRepository.save(document);
+        List<Book> books = bookRepository.findAll();
+
+        try {
+            BookRegisterResponse doc = new BookRegisterResponse(savedBook);
+
+            var response = esClient.index(i -> i
+                    .index("dream_books")
+                    .id(savedBook.getId().toString())
+                    .document(doc)
+            );
+        } catch (IOException e) {
+            System.err.println("인덱싱 실패: " + savedBook.getTitle());
+        }
 
 
         return new BookRegisterResponse(savedBook);

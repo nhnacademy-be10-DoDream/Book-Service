@@ -160,6 +160,12 @@
 
 		<!-- elasticsearch -->
 		<dependency>
+			<groupId>co.elastic.clients</groupId>
+			<artifactId>elasticsearch-java</artifactId>
+			<version>8.13.4</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-elasticsearch</artifactId>
 		</dependency>

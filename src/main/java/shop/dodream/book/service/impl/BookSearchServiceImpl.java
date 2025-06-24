@@ -21,11 +21,9 @@ import shop.dodream.book.exception.BookSearchException;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookSearchService;
 
-import java.io.IOException;
-import java.util.List;
+
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
 
 
 @Service
@@ -48,6 +46,7 @@ public class BookSearchServiceImpl implements BookSearchService {
               "fields": [
                 "title^100",
                 "title_synonym^50",
+                "title_jaso^20",
                 "description^10",
                 "author^30"
               ]
