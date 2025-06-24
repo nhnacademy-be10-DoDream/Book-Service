@@ -92,6 +92,19 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             throw new CategoryNotFoundException();
         }
 
+        for (CategoryWithParentProjection requestedCat : initialCategories) { // 부모 카테고리와 자식 카테고리 동시 등록 불가
+            Long currentCatId = requestedCat.id();
+            Long parentId = requestedCat.parentId();
+
+            while (parentId != null) {
+                if (requestCategoryIds.contains(parentId)) {
+                    throw new CategoryParentChildConflictException(currentCatId, parentId);
+                }
+                CategoryWithParentProjection parentProjection = categoryMap.get(parentId);
+                parentId = (parentProjection != null) ? parentProjection.parentId() : null;
+            }
+        }
+
         // 등록할때 부모가 이미 등록되어있을 경우
         for (CategoryWithParentProjection category : initialCategories) {
             Long current = category.parentId();
