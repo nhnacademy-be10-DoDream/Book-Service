@@ -15,7 +15,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 @Configuration
 @EnableElasticsearchRepositories
-@Profile("!ci")
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
 
 

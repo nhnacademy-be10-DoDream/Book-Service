@@ -1,20 +1,15 @@
 package shop.dodream.book.service.impl;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 import shop.dodream.book.dto.BookDocument;
 import shop.dodream.book.dto.BookItemResponse;
-import shop.dodream.book.dto.BookRegisterResponse;
 import shop.dodream.book.dto.BookSearchResponse;
-import shop.dodream.book.entity.Book;
 import shop.dodream.book.exception.BookSearchException;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookSearchService;
@@ -28,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Profile("!ci")
 public class BookSearchServiceImpl implements BookSearchService {
     private final BookRepository bookRepository;
     private final ElasticsearchClient esClient;

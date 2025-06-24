@@ -33,7 +33,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Profile("!ci")
 public class BookServiceImpl implements BookService {
 
     private final NaverBookClient naverBookClient;
