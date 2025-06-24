@@ -84,7 +84,7 @@ jobs:
         run: |
           java -Dserver.port=9999 \
                -Dspring.profiles.active=ci \
-               -Dspring.application.name=book \. <--- 수정
+               -Dspring.application.name=book \
                -Dspring.cloud.discovery.enabled=false \
                -jar target/*.jar &
           PID=$!
