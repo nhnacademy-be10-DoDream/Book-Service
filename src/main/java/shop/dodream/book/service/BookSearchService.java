@@ -4,8 +4,9 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import shop.dodream.book.dto.BookDocument;
 import shop.dodream.book.dto.BookSearchResponse;
 
+import java.util.Map;
+
 public interface BookSearchService {
-    void indexAllBooks();
-    BookSearchResponse searchBooks(String keyword);
+    Map<String, Object> searchBooks(String keyword);
 
 }

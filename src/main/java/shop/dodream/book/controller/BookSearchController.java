@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookSearchResponse;
 import shop.dodream.book.service.BookSearchService;
 
+import java.util.Map;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -15,15 +17,9 @@ public class BookSearchController {
 
     private final BookSearchService bookSearchService;
 
-    @PostMapping("/reindex")
-    public ResponseEntity<Void> reindexAllBooks() {
-        bookSearchService.indexAllBooks();
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/search")
-    public ResponseEntity<BookSearchResponse> searchBooks(@RequestParam(required = false) String keyword) {
-        BookSearchResponse response = bookSearchService.searchBooks(keyword);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<?> searchBooks(@RequestParam String keyword) {
+        Map<String, Object> results = bookSearchService.searchBooks(keyword);
+        return ResponseEntity.ok(results);
     }
 }

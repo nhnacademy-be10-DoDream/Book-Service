@@ -20,6 +20,7 @@ import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
+import shop.dodream.book.repository.BookElasticRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.util.MinioUploader;
@@ -41,6 +42,7 @@ public class BookServiceImpl implements BookService {
     private final NaverBookProperties properties;
     private final BookMapper bookMapper;
     private final MinioUploader minioUploader;
+    private final BookElasticRepository bookElasticRepository;
 
     @Override
     @Transactional
@@ -75,6 +77,9 @@ public class BookServiceImpl implements BookService {
         request.applyTo(book);
 
         Book savedBook = bookRepository.save(book);
+
+        BookDocument document = new BookDocument(savedBook);
+        bookElasticRepository.save(document);
 
 
         return new BookRegisterResponse(savedBook);

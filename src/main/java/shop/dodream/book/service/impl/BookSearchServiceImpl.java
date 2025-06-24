@@ -7,8 +7,11 @@ import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import shop.dodream.book.dto.BookDocument;
 import shop.dodream.book.dto.BookItemResponse;
 import shop.dodream.book.dto.BookRegisterResponse;
@@ -19,94 +22,47 @@ import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookSearchService;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 
 @Service
-@RequiredArgsConstructor
 public class BookSearchServiceImpl implements BookSearchService {
-    private final BookRepository bookRepository;
-    private final ElasticsearchClient esClient;
-    private final ElasticsearchOperations elasticsearchOperations;
+    private final RestTemplate restTemplate;
+    private final String elasticsearchUrl = "http://s4.java21.net:9200/dream_books/_search";
 
-    public void indexAllBooks() {
-        List<Book> books = bookRepository.findAll();
-
-        for (Book book : books) {
-            try {
-                BookRegisterResponse doc = new BookRegisterResponse(book);
-
-                var response = esClient.index(i -> i
-                        .index("books")
-                        .id(book.getId().toString())
-                        .document(doc)
-                );
-            } catch (IOException e) {
-                System.err.println("인덱싱 실패: " + book.getTitle());
-            }
-        }
+    public BookSearchServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder
+                .basicAuthentication("elastic", "nhnacademy123!")
+                .build();
     }
 
-    public BookSearchResponse searchBooks(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return new BookSearchResponse(0, Collections.emptyList());
+    public Map<String, Object> searchBooks(String keyword) {
+        String queryJson = """
+        {
+          "query": {
+            "multi_match": {
+              "query": "%s",
+              "fields": [
+                "title^100",
+                "title_synonym^50",
+                "description^10",
+                "author^30"
+              ]
+            }
+          }
         }
+        """.formatted(keyword);
 
-        try {
-            SearchResponse<BookDocument> response = esClient.search(s -> s
-                            .index("books")
-                            .query(q -> {
-                                BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-                                boolQueryBuilder.should(sh -> sh
-                                        .multiMatch(mm -> mm
-                                                .fields("title.nori^5", "description^1", "author^2", "publisher^1.5")
-                                                .query(keyword)
-                                                .analyzer("korean_with_icu")
-                                        )
-                                );
+        HttpEntity<String> request = new HttpEntity<>(queryJson, headers);
 
-                                String chosungQuery = keyword.replace(" ", "");
-                                if (!chosungQuery.isEmpty()) {
-                                    boolQueryBuilder.should(sh -> sh
-                                            .prefix(p -> p
-                                                    .field("title.jaso")
-                                                    .value(chosungQuery)
-                                                    .boost(3.0f)
-                                            )
-                                    );
-                                }
+        ResponseEntity<Map> response = restTemplate.exchange(elasticsearchUrl, HttpMethod.POST, request, Map.class);
 
-                                boolQueryBuilder.should(sh -> sh
-                                        .match(m -> m
-                                                .field("title.synonym")
-                                                .query(keyword)
-                                                .analyzer("synonym_analyzer")
-                                                .boost(4.0f)
-                                        )
-                                );
-
-                                boolQueryBuilder.minimumShouldMatch("1");
-
-                                return q.bool(boolQueryBuilder.build());
-                            })
-
-                            .sort(so -> so.score(score -> score.order(SortOrder.Desc)))
-                    // .size(10) // 페이지당 개수
-                    // .from(0)  // 시작 위치
-                    , BookDocument.class);
-
-            List<BookItemResponse> bookItems = response.hits().hits().stream()
-                    .map(hit -> new BookItemResponse(Objects.requireNonNull(hit.source())))
-                    .collect(Collectors.toList());
-
-            return new BookSearchResponse(response.hits().total().value(), bookItems);
-
-        } catch (IOException e) {
-            throw new BookSearchException(e);
-        }
+        return response.getBody();
     }
 }

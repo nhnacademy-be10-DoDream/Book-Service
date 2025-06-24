@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Data
-@Document(indexName = "books")
+@Document(indexName = "dream_books")
 @NoArgsConstructor
 public class BookDocument {
     @Id
