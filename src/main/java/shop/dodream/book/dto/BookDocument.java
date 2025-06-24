@@ -90,10 +90,6 @@ public class BookDocument {
         this.bookCount = book.getBookCount();
         this.discountRate = book.getDiscountRate();
 
-
-//        this.salesCount = 0L;
-//        this.rating = 0.0;
-//        this.reviewCount = 0L;
     }
 
 }

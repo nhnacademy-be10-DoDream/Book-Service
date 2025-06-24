@@ -32,23 +32,23 @@ public class BookSearchServiceImpl implements BookSearchService {
     private final ElasticsearchClient esClient;
     private final ElasticsearchOperations elasticsearchOperations;
 
-    public void indexAllBooks() {
-        List<Book> books = bookRepository.findAll();
-
-        for (Book book : books) {
-            try {
-                BookRegisterResponse doc = new BookRegisterResponse(book);
-
-                var response = esClient.index(i -> i
-                        .index("books")
-                        .id(book.getId().toString())
-                        .document(doc)
-                );
-            } catch (IOException e) {
-                System.err.println("인덱싱 실패: " + book.getTitle());
-            }
-        }
-    }
+//    public void indexAllBooks() {
+//        List<Book> books = bookRepository.findAll();
+//
+//        for (Book book : books) {
+//            try {
+//                BookRegisterResponse doc = new BookRegisterResponse(book);
+//
+//                var response = esClient.index(i -> i
+//                        .index("books")
+//                        .id(book.getId().toString())
+//                        .document(doc)
+//                );
+//            } catch (IOException e) {
+//                System.err.println("인덱싱 실패: " + book.getTitle());
+//            }
+//        }
+//    }
 
     public BookSearchResponse searchBooks(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -57,7 +57,7 @@ public class BookSearchServiceImpl implements BookSearchService {
 
         try {
             SearchResponse<BookDocument> response = esClient.search(s -> s
-                            .index("books")
+                            .index("dodream_books")
                             .query(q -> {
                                 BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
 

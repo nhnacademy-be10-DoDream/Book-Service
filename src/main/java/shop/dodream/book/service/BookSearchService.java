@@ -5,7 +5,7 @@ import shop.dodream.book.dto.BookDocument;
 import shop.dodream.book.dto.BookSearchResponse;
 
 public interface BookSearchService {
-    void indexAllBooks();
+//    void indexAllBooks();
     BookSearchResponse searchBooks(String keyword);
 
 }

@@ -15,11 +15,11 @@ public class BookSearchController {
 
     private final BookSearchService bookSearchService;
 
-    @PostMapping("/reindex")
-    public ResponseEntity<Void> reindexAllBooks() {
-        bookSearchService.indexAllBooks();
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/reindex")
+//    public ResponseEntity<Void> reindexAllBooks() {
+//        bookSearchService.indexAllBooks();
+//        return ResponseEntity.ok().build();
+//    }
 
     @GetMapping("/search")
     public ResponseEntity<BookSearchResponse> searchBooks(@RequestParam(required = false) String keyword) {

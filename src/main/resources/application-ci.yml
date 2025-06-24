@@ -41,7 +41,7 @@ minio:
   secret-key: ${MINIO_SECRET_KEY}
   bucket: dodream-book-images
 
-elastic:
+elasticsearch:
   uris: s4.java21.net:9200
   user-id: ${ELASTIC_USER_ID}
   user-password: ${ELASTIC_USER_PASSWORD}
