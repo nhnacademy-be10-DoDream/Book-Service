@@ -37,16 +37,4 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
                 .build();
     }
 
-    @Bean
-    public ElasticsearchClient elasticsearchClient() {
-        RestClient restClient = RestClient.builder(host).build();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // LocalDate 직렬화 지원
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // yyyy-MM-dd 형식 사용
-
-        JacksonJsonpMapper mapper = new JacksonJsonpMapper(objectMapper);
-
-        return new ElasticsearchClient(new RestClientTransport(restClient, mapper));
-    }
 }
