@@ -47,19 +47,18 @@ public class BookSearchServiceImpl implements BookSearchService {
             };
 
             // 3. SearchRequest 생성
-            SearchRequest.Builder requestBuilder = new SearchRequest.Builder()
-                    .index("dodream_books") // 실제 인덱스 이름 사용
+            SearchRequest request = new SearchRequest.Builder()
+                    .index("dodream_books")
                     .query(query)
-                    .size(20);
-
-            if (sortOption != null) {
-                requestBuilder.sort(sortOption);
-            }
+                    .size(20)
+                    .sort(sortOption != null ? Collections.singletonList(sortOption) : Collections.emptyList())
+                    .build();
 
             SearchResponse<BookDocument> response = elasticsearchClient.search(
-                    requestBuilder.build(),
+                    request,
                     BookDocument.class
             );
+
 
             // 4. 결과 매핑
             return response.hits().hits().stream()

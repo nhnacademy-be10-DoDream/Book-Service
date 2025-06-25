@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.dto.BookUpdateRequest;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 @Entity
@@ -47,7 +47,7 @@ public class Book {
 
     @Setter
     @Column(nullable = false)
-    private LocalDate publishedAt;
+    private Date publishedAt;
 
     @Setter
     @Column(unique = true, nullable = false)
