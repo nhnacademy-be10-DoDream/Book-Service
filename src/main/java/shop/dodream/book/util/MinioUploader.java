@@ -21,7 +21,7 @@ public class MinioUploader {
 
     private final S3Client s3Client;
 
-    @Value("${minio.bucket}")
+    @Value("${minio.book-bucket}")
     private String bucketName;
 
     @Value("${minio.endpoint}")
