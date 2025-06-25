@@ -21,13 +21,13 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 public class ElasticsearchConfig{
 
 
-    @Value("${elasticsearch.uris}")
+    @Value("${spring.elasticsearch.uris}")
     private String host;
 
-    @Value("${elasticsearch.user-id}")
+    @Value("${spring.elasticsearch.user-id}")
     private String userId;
 
-    @Value("${elasticsearch.user-password}")
+    @Value("${spring.elasticsearch.user-password}")
     private String userPassword;
 
 
