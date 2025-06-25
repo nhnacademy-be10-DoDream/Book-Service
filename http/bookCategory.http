@@ -3,7 +3,7 @@ POST http://localhost:8080/admin/books/1/categories
 Content-Type: application/json
 
 {
-  "categoryIds" : [2]
+  "categoryIds" : [1,2]
 }
 
 ### 해당 도서의 카테고리 조회

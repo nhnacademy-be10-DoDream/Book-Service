@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookLikeCountResponse;
 import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.UserBookDetailResponse;
+import shop.dodream.book.service.BookSearchService;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -41,7 +42,4 @@ public class BookController {
         List<BookListResponse> bookListResponse = bookService.findAllByIds(ids);
         return ResponseEntity.ok(bookListResponse);
     }
-
-
-
 }

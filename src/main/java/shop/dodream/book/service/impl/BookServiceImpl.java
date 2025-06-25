@@ -1,5 +1,15 @@
 package shop.dodream.book.service.impl;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.util.ObjectBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +21,7 @@ import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
+import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.util.MinioUploader;
@@ -29,6 +40,7 @@ public class BookServiceImpl implements BookService {
     private final NaverBookProperties properties;
     private final BookMapper bookMapper;
     private final MinioUploader minioUploader;
+    private final BookElasticsearchRepository bookElasticsearchRepository;
 
     @Override
     @Transactional
@@ -63,6 +75,7 @@ public class BookServiceImpl implements BookService {
         request.applyTo(book);
 
         Book savedBook = bookRepository.save(book);
+        bookElasticsearchRepository.save(new BookDocument(savedBook));
 
 
         return new BookRegisterResponse(savedBook);
@@ -166,11 +179,6 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findVisibleBooksByIds(ids);
     }
 
-
-
-
-
-
     private void updateStatusByBookCount(Book book) {
         if (book.getStatus() != BookStatus.REMOVED) {
             long count = book.getBookCount();
@@ -183,8 +191,4 @@ public class BookServiceImpl implements BookService {
             }
         }
     }
-
-
-
-
 }

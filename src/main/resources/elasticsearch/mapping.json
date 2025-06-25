@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "bookId": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "author": {
+      "type": "keyword",
+      "analyzer": "korean"
+    },
+    "publisher": {
+      "type": "keyword"
+    },
+    "salePrice": {
+      "type": "long"
+    },
+    "publishedAt": {
+      "type": "date",
+      "format": "yyyy-MM-dd"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 package shop.dodream.book.service;
 
+import org.springframework.data.elasticsearch.core.SearchHits;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.entity.Book;
 

@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "categoryName": "마",
   "depth": 1,
-  "parentId": 1
+  "parentId": 2
 }
 
 
