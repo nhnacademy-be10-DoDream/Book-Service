@@ -31,7 +31,7 @@ public class BookDocument {
     @Field(type = FieldType.Text)
     private String description;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String author;
 
     @Field(type = FieldType.Keyword)
@@ -42,6 +42,17 @@ public class BookDocument {
 
     @Field(type = FieldType.Date)
     private LocalDate publishedAt;
+
+    @Field(type = FieldType.Long)
+    private Long viewCount;
+
+    @Field(type = FieldType.Float)
+    private Float ratingAvg;
+
+    @Field(type = FieldType.Long)
+    private Long reviewCount;
+
+
 
 
 
