@@ -1,4 +1,4 @@
-package shop.dodream.book.config;
+package shop.dodream.book.core.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

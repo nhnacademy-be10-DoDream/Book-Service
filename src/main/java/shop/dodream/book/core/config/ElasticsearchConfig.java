@@ -1,4 +1,4 @@
-package shop.dodream.book.config;
+package shop.dodream.book.core.config;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
@@ -7,14 +7,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.auth.UsernamePasswordCredentials;
-
 
 
 @Configuration
@@ -24,10 +23,10 @@ public class ElasticsearchConfig{
     @Value("${spring.elasticsearch.uris}")
     private String host;
 
-    @Value("${spring.elasticsearch.user-id}")
+    @Value("${spring.elasticsearch.username}")
     private String userId;
 
-    @Value("${spring.elasticsearch.user-password}")
+    @Value("${spring.elasticsearch.password}")
     private String userPassword;
 
 

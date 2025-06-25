@@ -2,7 +2,6 @@ package shop.dodream.book.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchClientAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,8 @@ public class BookCategoryController {
     private final BookCategoryService bookCategoryService;
 
     @PostMapping("/admin/books/{book-id}/categories")
-    public ResponseEntity<BookWithCategoriesResponse> registerCategory(@PathVariable("book-id") Long bookId, @RequestBody @Valid BookWithCategoriesRequest request) {
+    public ResponseEntity<BookWithCategoriesResponse> registerCategory(@PathVariable("book-id") Long bookId,
+                                                                       @RequestBody @Valid BookWithCategoriesRequest request) {
         BookWithCategoriesResponse response = bookCategoryService.registerCategory(bookId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -43,7 +43,8 @@ public class BookCategoryController {
     }
 
     @DeleteMapping("/admin/books/{book-id}/categories")
-    public ResponseEntity<Void> deleteCategoriesByBook(@PathVariable("book-id") Long bookId, @RequestBody @Valid BookWithCategoriesRequest request){
+    public ResponseEntity<Void> deleteCategoriesByBook(@PathVariable("book-id") Long bookId,
+                                                       @RequestBody @Valid BookWithCategoriesRequest request){
         bookCategoryService.deleteCategoriesByBook(bookId, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

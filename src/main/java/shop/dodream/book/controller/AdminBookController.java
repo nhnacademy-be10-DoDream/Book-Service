@@ -1,7 +1,7 @@
 package shop.dodream.book.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +13,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/books")
+@RequiredArgsConstructor
 public class AdminBookController {
-
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookRegisterResponse> registerBook(@Validated @RequestBody BookRegisterRequest request){
-
-        BookRegisterResponse response = bookService.registerBookByIsbn(request);
-        return ResponseEntity.ok(response);
+    public BookRegisterResponse registerBook(@Validated @RequestBody BookRegisterRequest request){
+        return bookService.registerBookByIsbn(request);
     }
 
 
@@ -52,11 +49,5 @@ public class AdminBookController {
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
-
-
 
 }

@@ -1,20 +1,10 @@
 package shop.dodream.book.service.impl;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.util.ObjectBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.context.annotation.Profile;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import shop.dodream.book.config.BookMapper;
-import shop.dodream.book.config.NaverBookProperties;
+import shop.dodream.book.core.mapper.BookMapper;
+import shop.dodream.book.core.properties.NaverBookProperties;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
@@ -93,7 +83,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public AdminBookDetailResponse getBookByIdForAdmin(Long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
         return new AdminBookDetailResponse(book);
     }
 
@@ -101,14 +91,14 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public UserBookDetailResponse getBookByIdForUser(Long bookId) {
-        return bookRepository.findBookDetailForUserById(bookId).orElseThrow(()-> new BookIdNotFoundException(bookId));
+        return bookRepository.findBookDetailForUserById(bookId).orElseThrow(()-> new BookNotFoundException(bookId));
     }
 
 
     @Override
     @Transactional
     public void updateBook(Long bookId, BookUpdateRequest request) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
         if (book.getStatus() == BookStatus.REMOVED){
             throw new BookAlreadyRemovedException();
@@ -138,7 +128,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void deleteBook(Long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(()-> new BookIdNotFoundException(bookId));
+        Book book = bookRepository.findById(bookId).orElseThrow(()-> new BookNotFoundException(bookId));
         book.setStatus(BookStatus.REMOVED);
 
     }
@@ -146,7 +136,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request) {
-        Book book = bookRepository.findById(request.getBookId()).orElseThrow(()-> new BookIdNotFoundException(request.getBookId()));
+        Book book = bookRepository.findById(request.getBookId()).orElseThrow(()-> new BookNotFoundException(request.getBookId()));
         if (book.getStatus() != BookStatus.SELL){
             throw new BookNotOrderableException();
         }
@@ -168,7 +158,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public BookLikeCountResponse getBookLikeCount(Long bookId) {
-        return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+        return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
     }
 

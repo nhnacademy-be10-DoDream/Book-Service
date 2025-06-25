@@ -11,18 +11,16 @@ import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookTag;
 import shop.dodream.book.entity.BookTagId;
 import shop.dodream.book.entity.Tag;
-import shop.dodream.book.exception.BookIdNotFoundException;
+import shop.dodream.book.exception.BookNotFoundException;
 import shop.dodream.book.exception.BookTagDuplicateException;
 import shop.dodream.book.exception.BookTagNotFoundException;
-import shop.dodream.book.exception.TagIdNotFoundException;
+import shop.dodream.book.exception.TagNotFoundException;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.BookTagRepository;
 import shop.dodream.book.repository.TagRepository;
 import shop.dodream.book.service.BookTagService;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +32,9 @@ public class BookTagServiceImpl implements BookTagService {
     @Override @Transactional
     public BookWithTagResponse registerTag(Long bookId, Long tagId){
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookIdNotFoundException(bookId));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagIdNotFoundException(tagId));
+                .orElseThrow(() -> new TagNotFoundException(tagId));
 
         if (bookTagRepository.existsByBookIdAndTagId(bookId, tagId)) {
             throw new BookTagDuplicateException(bookId, tagId);
@@ -51,7 +49,7 @@ public class BookTagServiceImpl implements BookTagService {
     @Override @Transactional(readOnly = true)
     public BookWithTagsResponse getTagsByBook(Long bookId){
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookIdNotFoundException(bookId));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
 
         List<Tag> tags = tagRepository.findAllByBookId(bookId);
 
@@ -67,11 +65,11 @@ public class BookTagServiceImpl implements BookTagService {
         Long newTagId = request.getTagId();
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookIdNotFoundException(bookId));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagIdNotFoundException(tagId));
+                .orElseThrow(() -> new TagNotFoundException(tagId));
         Tag newTag = tagRepository.findById(newTagId)
-                .orElseThrow(() -> new TagIdNotFoundException(newTagId));
+                .orElseThrow(() -> new TagNotFoundException(newTagId));
 
         BookTag bookTag = bookTagRepository.findByBookIdAndTagId(bookId, tagId)
                 .orElseThrow(() -> new BookTagNotFoundException(bookId, tagId));
@@ -92,9 +90,9 @@ public class BookTagServiceImpl implements BookTagService {
     @Override @Transactional
     public void deleteTagByBook(Long bookId, Long tagId){
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookIdNotFoundException(bookId));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagIdNotFoundException(tagId));
+                .orElseThrow(() -> new TagNotFoundException(tagId));
 
         BookTagId bookTagId = new BookTagId(bookId, tagId);
         BookTag bookTag = bookTagRepository.findById(bookTagId)

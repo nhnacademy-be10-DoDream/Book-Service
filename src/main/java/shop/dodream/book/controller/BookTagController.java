@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.service.BookTagService;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

@@ -33,7 +33,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     @Override @Transactional
     public BookWithCategoriesResponse registerCategory(Long bookId, BookWithCategoriesRequest request) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookIdNotFoundException(bookId));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
 
         List<Long> categoryIds = request.getCategoryIds(); // 아무것도 보내지 않았을 경우 검사
         if(categoryIds == null || categoryIds.isEmpty()) {
@@ -151,7 +151,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     @Override @Transactional(readOnly = true)
     public List<CategoryTreeResponse> getCategoriesByBookId(Long bookId){
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookIdNotFoundException(bookId));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
 
         Set<Long> categoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId);
         if(categoryIds == null || categoryIds.isEmpty()) {
@@ -194,7 +194,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     @Override @Transactional(readOnly = true)
     public List<BookListResponse> getBooksByCategoryId(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
         List<Long> bookIds = bookCategoryRepository.findBookIdsByCategoryId(categoryId);
         List<Book> books = bookRepository.findAllById(bookIds);
 
@@ -216,10 +216,10 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         Long newCategoryId = request.getCategoryId();
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookIdNotFoundException(bookId));
+                .orElseThrow(() -> new BookNotFoundException(bookId));
 
         Category category = categoryRepository.findById(newCategoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(newCategoryId));
+                .orElseThrow(() -> new CategoryNotFoundException(newCategoryId));
 
         BookCategory bookCategory = bookCategoryRepository.findExistingCategoryId(bookId, categoryId)
                 .orElseThrow(() -> new BookCategoryNotFoundException(bookId, categoryId));

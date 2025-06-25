@@ -15,9 +15,7 @@ import shop.dodream.book.service.BookService;
 @RequestMapping("/books/internal")
 @RequiredArgsConstructor
 public class BookInternalController {
-
     private final BookService bookService;
-
 
     @PostMapping("/decrease-bookCount")
     public ResponseEntity<BookCountDecreaseResponse> decreaseBookCount(@Validated @RequestBody BookCountDecreaseRequest request){

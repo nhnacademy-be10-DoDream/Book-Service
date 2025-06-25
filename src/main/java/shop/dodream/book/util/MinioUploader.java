@@ -48,9 +48,9 @@ public class MinioUploader {
 
             return endpoint+"/" + bucketName + "/" + fileName;
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("MinIO 이미지 업로드 실패", e);
-            throw new RuntimeException("MinIO 이미지 업로드 실패", e);
+            throw e;
         }
     }
 }
