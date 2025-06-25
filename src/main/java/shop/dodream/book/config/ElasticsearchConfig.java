@@ -35,8 +35,8 @@ public class ElasticsearchConfig{
 
     @Bean
     public ElasticsearchClient elasticsearchClient() {
-        log.info("username is {}", username);
-        log.info("password is {}", password);
+        log.info("i is {}", username);
+        log.info("p is {}", password);
         log.info("host is {}", host);
 
         ObjectMapper objectMapper = new ObjectMapper();
