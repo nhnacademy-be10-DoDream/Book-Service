@@ -24,11 +24,11 @@ public class ElasticsearchConfig{
     @Value("${spring.elasticsearch.uris}")
     private String host;
 
-    @Value("${spring.elasticsearch.user-id}")
-    private String userId;
+    @Value("${spring.elasticsearch.username}")
+    private String username;
 
-    @Value("${spring.elasticsearch.user-password}")
-    private String userPassword;
+    @Value("${spring.elasticsearch.password}")
+    private String password;
 
 
     @Bean
@@ -41,7 +41,7 @@ public class ElasticsearchConfig{
 
 
         BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userId, userPassword));
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
 
         RestClientBuilder restClientBuilder = RestClient.builder(HttpHost.create(host))
                 .setHttpClientConfigCallback(httpClientBuilder ->
