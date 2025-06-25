@@ -12,4 +12,6 @@ import java.util.List;
 public interface TagRepository extends JpaRepository<Tag, Long> {
     @Query("SELECT bt.tag FROM BookTag bt WHERE bt.book.id = :bookId")
     List<Tag> findAllByBookId(@Param("bookId") Long bookId);
+
+
 }

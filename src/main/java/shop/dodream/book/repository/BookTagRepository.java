@@ -15,4 +15,7 @@ import java.util.Optional;
 public interface BookTagRepository extends JpaRepository<BookTag, BookTagId> {
     boolean existsByBookIdAndTagId(Long bookId, Long tagId);
     Optional<BookTag> findByBookIdAndTagId(Long bookId, Long tagId);
+
+    @Query("SELECT bt.book.id FROM BookTag bt WHERE bt.tag.id = :tagId")
+    List<Long> findBookIdsByTagId(@Param("tagId") Long tagId);
 }
