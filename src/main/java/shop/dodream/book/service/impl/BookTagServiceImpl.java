@@ -47,7 +47,7 @@ public class BookTagServiceImpl implements BookTagService {
     }
 
     @Override @Transactional(readOnly = true)
-    public BookWithTagsResponse getTagsByBook(Long bookId){
+    public BookWithTagsResponse getTagsByBookId(Long bookId){
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
@@ -61,7 +61,7 @@ public class BookTagServiceImpl implements BookTagService {
     }
 
     @Override @Transactional(readOnly = true)
-    public List<BookListResponse> getBooksByTag(Long tagId){
+    public List<BookListResponse> getBooksByTagId(Long tagId){
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new TagNotFoundException(tagId));
 

@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface BookTagService {
     BookWithTagResponse registerTag(Long bookId, Long tagId);
-    BookWithTagsResponse getTagsByBook(Long bookId);
-    List<BookListResponse> getBooksByTag(Long tagId);
+    BookWithTagsResponse getTagsByBookId(Long bookId);
+    List<BookListResponse> getBooksByTagId(Long tagId);
     BookWithTagResponse updateTagByBook(Long BookId, Long tagId, Long newTagId);
     void deleteTagByBook(Long bookId, Long tagId);
 }
