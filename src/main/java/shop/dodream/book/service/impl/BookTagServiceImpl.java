@@ -3,7 +3,6 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookWithTagRequest;
 import shop.dodream.book.dto.BookWithTagResponse;
 import shop.dodream.book.dto.BookWithTagsResponse;
 import shop.dodream.book.dto.TagResponse;
@@ -61,9 +60,7 @@ public class BookTagServiceImpl implements BookTagService {
     }
 
     @Override @Transactional
-    public BookWithTagResponse updateTagByBook(Long bookId, Long tagId, BookWithTagRequest request){
-        Long newTagId = request.getTagId();
-
+    public BookWithTagResponse updateTagByBook(Long bookId, Long tagId, Long newTagId){
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
         Tag tag = tagRepository.findById(tagId)

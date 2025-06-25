@@ -3,7 +3,6 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.TagRequest;
 import shop.dodream.book.dto.TagResponse;
 import shop.dodream.book.entity.Tag;
 import shop.dodream.book.exception.TagNotFoundException;
@@ -21,9 +20,9 @@ public class TagServiceImpl implements TagService {
     private final BookTagRepository bookTagRepository;
 
     @Override @Transactional
-    public TagResponse createTag(TagRequest request){
+    public TagResponse createTag(String newTagName){
         Tag tag = new Tag();
-        tag.setTagName(request.getTagName());
+        tag.setTagName(newTagName);
         Tag savedtag = tagRepository.save(tag);
         return new TagResponse(savedtag);
     }
@@ -38,10 +37,10 @@ public class TagServiceImpl implements TagService {
 
 
     @Override @Transactional
-    public TagResponse updateTag(Long tagId, TagRequest request){
+    public TagResponse updateTag(Long tagId, String newTagName){
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new TagNotFoundException(tagId));
-        tag.setTagName(request.getTagName());
+        tag.setTagName(newTagName);
 
         Tag savedtag = tagRepository.save(tag);
         return new TagResponse(savedtag);

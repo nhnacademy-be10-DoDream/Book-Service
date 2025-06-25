@@ -4,8 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import shop.dodream.book.dto.BookWithTagRequest;
-import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookTag;
 import shop.dodream.book.entity.BookTagId;
 import shop.dodream.book.entity.Tag;

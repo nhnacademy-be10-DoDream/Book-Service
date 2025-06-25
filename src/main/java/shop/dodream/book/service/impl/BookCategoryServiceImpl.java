@@ -31,14 +31,12 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private EntityManager entityManager;
 
     @Override @Transactional
-    public BookWithCategoriesResponse registerCategory(Long bookId, BookWithCategoriesRequest request) {
+    public BookWithCategoriesResponse registerCategory(Long bookId, List<Long> categoryIds) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        List<Long> categoryIds = request.getCategoryIds(); // 아무것도 보내지 않았을 경우 검사
-        if(categoryIds == null || categoryIds.isEmpty()) {
-            throw new CategoryMissingException();
-        }
+
+        //TODO 빈 리스트 체크 필요
 
         Set<Long> requestCategoryIds = new HashSet<>(categoryIds); // 새로 등록할 카테고리
         Set<Long> existingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId); // 이미 책에 등록된 카테고리
@@ -154,9 +152,8 @@ public class BookCategoryServiceImpl implements BookCategoryService {
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
         Set<Long> categoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId);
-        if(categoryIds == null || categoryIds.isEmpty()) {
-            throw new CategoryMissingException();
-        }
+
+        //TODO 빈 리스트 체크 필요
 
         List<CategoryFlatProjection> flatCategories = categoryRepository.findAllFlat();
 
@@ -212,8 +209,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     }
 
     @Override @Transactional
-    public BookWithCategoryResponse updateCategoryByBook(Long bookId, Long categoryId, BookWithCategoryRequest request){
-        Long newCategoryId = request.getCategoryId();
+    public Long updateCategoryByBook(Long bookId, Long categoryId, Long newCategoryId) {
 
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
@@ -231,12 +227,11 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         bookCategoryRepository.delete(bookCategory);
         bookCategoryRepository.save(new BookCategory(book, category));
 
-        return new BookWithCategoryResponse(request.getCategoryId());
+        return newCategoryId;
     }
 
     @Override @Transactional
-    public void deleteCategoriesByBook(Long bookId, BookWithCategoriesRequest request){
-        List<Long> categoryIds = request.getCategoryIds();
+    public void deleteCategoriesByBook(Long bookId, List<Long> categoryIds) {
         if (categoryIds == null || categoryIds.isEmpty()) {
             return;
         }

@@ -12,33 +12,32 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/tags")
 public class TagController {
     private final TagService tagService;
 
     // 태그 등록
-    @PostMapping("/admin/tags")
-    public ResponseEntity<TagResponse> createTag(@RequestBody @Valid TagRequest request) {
-        TagResponse response = tagService.createTag(request);
+    @PostMapping
+    public ResponseEntity<TagResponse> createTag(@RequestParam String newTagName) {
+        TagResponse response = tagService.createTag(newTagName);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 전체 태그 조회
-    @GetMapping("/tags")
-    public ResponseEntity<List<TagResponse>> getTags() {
-        List<TagResponse> tags = tagService.getTags();
-        return ResponseEntity.status(HttpStatus.OK).body(tags);
+    @GetMapping
+    public List<TagResponse> getTags() {
+        return tagService.getTags();
     }
 
     // 태그 수정
-    @PatchMapping("/admin/tags/{tag-id}")
-    public ResponseEntity<TagResponse> updateTag(@PathVariable("tag-id") Long tagId,
-                                                 @RequestBody @Valid TagRequest request) {
-        TagResponse response = tagService.updateTag(tagId, request);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    @PatchMapping("/{tag-id}")
+    public TagResponse updateTag(@PathVariable("tag-id") Long tagId,
+                                                 @RequestParam String newTagName) {
+        return tagService.updateTag(tagId, newTagName);
     }
 
     // 태그 삭제
-    @DeleteMapping("/admin/tags/{tag-id}")
+    @DeleteMapping("/{tag-id}")
     public ResponseEntity<Void> deleteTag(@PathVariable("tag-id") Long tagId) {
         tagService.deleteTag(tagId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
