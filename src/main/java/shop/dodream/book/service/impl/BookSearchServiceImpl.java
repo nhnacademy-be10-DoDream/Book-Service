@@ -12,13 +12,6 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import shop.dodream.book.dto.BookDocument;
-import shop.dodream.book.dto.BookItemResponse;
-import shop.dodream.book.dto.BookRegisterResponse;
-import shop.dodream.book.dto.BookSearchResponse;
-import shop.dodream.book.entity.Book;
-import shop.dodream.book.exception.BookSearchException;
-import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookSearchService;
 
 
