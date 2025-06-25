@@ -1,4 +1,4 @@
-package shop.dodream.book.config;
+package shop.dodream.book.core.config;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
