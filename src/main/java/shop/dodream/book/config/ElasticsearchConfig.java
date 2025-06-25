@@ -5,6 +5,7 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.elasticsearch.client.RestClient;
@@ -18,6 +19,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 
 
 @Configuration
+@Slf4j
 public class ElasticsearchConfig{
 
 
@@ -33,6 +35,9 @@ public class ElasticsearchConfig{
 
     @Bean
     public ElasticsearchClient elasticsearchClient() {
+        log.info("username is {}", username);
+        log.info("password is {}", password);
+        log.info("host is {}", host);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -49,6 +54,8 @@ public class ElasticsearchConfig{
                 );
 
         RestClient restClient = restClientBuilder.build();
+
+        log.info("restClientBuilder is {}", restClientBuilder);
 
         return new ElasticsearchClient(
                 new RestClientTransport(restClient, mapper)
