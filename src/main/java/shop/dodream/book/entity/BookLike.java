@@ -5,13 +5,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Table(name = "book_like", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "book_id"})
 })
@@ -30,6 +28,8 @@ public class BookLike {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-
-
+    public BookLike(String userId, Book book) {
+        this.userId = userId;
+        this.book = book;
+    }
 }

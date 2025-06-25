@@ -31,16 +31,13 @@ public class BookLikeServiceImpl implements BookLikeService {
     @Override
     @Transactional
     public void registerBookLike(Long bookId, String userId) {
-
         if (bookLikeRepository.existsByBookIdAndUserId(bookId,userId)) {
             throw new BookLikeAlreadyRegisterException();
         }
 
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
-        BookLike bookLike = new BookLike();
-        bookLike.setUserId(userId);
-        bookLike.setBook(book);
+        BookLike bookLike = new BookLike(userId, book);
 
         bookLikeRepository.save(bookLike);
 //        bookRepository.incrementLikCount(bookId);
