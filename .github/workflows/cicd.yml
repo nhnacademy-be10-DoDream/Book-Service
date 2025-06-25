@@ -64,6 +64,15 @@ jobs:
             sleep 1
           done
 
+      - name: 🌐 Test connection to Elasticsearch
+        run: |
+          echo "Trying to connect to http://s4.java21.net:9200..."
+          if ! curl -v http://s4.java21.net:9200; then
+            echo "❌ Failed to connect to Elasticsearch"
+            exit 1
+          fi
+
+
       - name: 🛠️ Build with Maven
         run: mvn -B clean package -DskipTests
 
