@@ -12,6 +12,8 @@ public interface BookLikeRepository extends JpaRepository<BookLike, Long>, BookL
 
     Optional<BookLike> findByBookIdAndUserId(Long bookId, String userId);
 
+    Long countByBookId(Long bookId);
+
 
 
 

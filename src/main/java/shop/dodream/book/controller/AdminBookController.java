@@ -24,17 +24,15 @@ public class AdminBookController {
 
 
     @GetMapping
-    public ResponseEntity<List<BookListResponse>> getAllBooks(){
-        List<BookListResponse> bookListResponses = bookService.getAllBooks();
-        return ResponseEntity.ok(bookListResponses);
+    public List<BookListResponse> getAllBooks(){
+        return bookService.getAllBooks();
     }
 
 
 
     @GetMapping("{book-id}")
-    public ResponseEntity<AdminBookDetailResponse> getBookById(@PathVariable("book-id") Long bookId){
-        AdminBookDetailResponse adminBookDetailResponse = bookService.getBookByIdForAdmin(bookId);
-        return ResponseEntity.ok(adminBookDetailResponse);
+    public AdminBookDetailResponse getBookById(@PathVariable("book-id") Long bookId){
+        return bookService.getBookByIdForAdmin(bookId);
     }
 
     @PatchMapping("{book-id}")
