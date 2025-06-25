@@ -64,6 +64,10 @@ jobs:
             sleep 1
           done
 
+          echo "🔍 Fetching config from Config Server..."
+          curl --fail http://localhost:10332/book/ci | grep -E 'elasticsearch|redis|datasource' || echo "❌ Failed to fetch or grep config"
+
+
       - name: 🌐 Test connection to Elasticsearch
         run: |
           echo "Trying to connect to http://s4.java21.net:9200..."
