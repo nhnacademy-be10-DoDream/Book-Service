@@ -1,6 +1,5 @@
 package shop.dodream.book.repository;
 
-import shop.dodream.book.dto.BookLikeCountResponse;
 import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.UserBookDetailResponse;
 
@@ -12,11 +11,11 @@ public interface BookQuerydslRepository {
 
     Optional<UserBookDetailResponse> findBookDetailForUserById(Long bookId);
 
-    void incrementLikCount(Long bookId);
+//    void incrementLikCount(Long bookId);
+//
+//    void decreaseLikeCount(Long bookId);
 
-    void decreaseLikeCount(Long bookId);
-
-    Optional<BookLikeCountResponse> findLikeCountByBookId(Long bookId);
+//    Optional<BookLikeCountResponse> findLikeCountByBookId(Long bookId);
 
     List<BookListResponse> findVisibleBooksByIds(List<Long> ids);
 }

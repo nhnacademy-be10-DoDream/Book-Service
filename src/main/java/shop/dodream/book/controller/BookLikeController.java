@@ -4,7 +4,6 @@ package shop.dodream.book.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.BookLikeResponse;
 import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.service.BookLikeService;
 
@@ -27,11 +26,10 @@ public class BookLikeController {
 
     // 로그인한 사용자 특정 도서 좋아요 여부 조회
     @GetMapping("/books/{book-id}/me")
-    public ResponseEntity<BookLikeResponse> bookLikeFindMe(@PathVariable("book-id") Long bookId,
+    public Boolean bookLikeFindMe(@PathVariable("book-id") Long bookId,
                                                     @RequestHeader("X-USER-ID") String userId){
-        BookLikeResponse bookLikeResponse = bookLikeService.bookLikeFindMe(bookId, userId);
 
-        return ResponseEntity.ok(bookLikeResponse);
+        return bookLikeService.bookLikeFindMe(bookId, userId);
     }
 
 
@@ -46,11 +44,14 @@ public class BookLikeController {
 
     // 좋아요한 도서 목록 조회
     @GetMapping("/users/me/likes/books")
-    public ResponseEntity<List<BookListResponse>> getLikedBooks(@RequestHeader("X-USER-ID") String userId){
-        List<BookListResponse> bookListResponses = bookLikeService.getLikedBooksByUserId(userId);
-
-        return ResponseEntity.ok(bookListResponses);
+    public List<BookListResponse> getLikedBooks(@RequestHeader("X-USER-ID") String userId){
+        return bookLikeService.getLikedBooksByUserId(userId);
     }
 
+    // 도서 좋아요 수 조회
+    @GetMapping("/books/{book-id}/likes/count")
+    public Long getBookLikeCount(@PathVariable("book-id") Long bookId){
+        return bookLikeService.getBookLikeCount(bookId);
+    }
 
 }

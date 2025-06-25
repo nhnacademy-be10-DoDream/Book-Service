@@ -18,10 +18,9 @@ public class BookInternalController {
     private final BookService bookService;
 
     @PostMapping("/decrease-bookCount")
-    public ResponseEntity<BookCountDecreaseResponse> decreaseBookCount(@Validated @RequestBody BookCountDecreaseRequest request){
-        BookCountDecreaseResponse response = bookService.decreaseBookCount(request);
+    public BookCountDecreaseResponse decreaseBookCount(@Validated @RequestBody BookCountDecreaseRequest request){
 
-        return ResponseEntity.ok(response);
+        return bookService.decreaseBookCount(request);
     }
 
 }

@@ -6,7 +6,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookLikeCountResponse;
 import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.UserBookDetailResponse;
 import shop.dodream.book.entity.BookStatus;
@@ -73,40 +72,40 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
 
     }
 
-    @Override
-    public void incrementLikCount(Long bookId) {
-        QBook book = QBook.book;
+//    @Override
+//    public void incrementLikCount(Long bookId) {
+//        QBook book = QBook.book;
+//
+//         queryFactory
+//            .update(book)
+//            .set(book.likeCount, book.likeCount.add(1))
+//            .where(book.id.eq(bookId))
+//            .execute();
+//    }
+//
+//    @Override
+//    public void decreaseLikeCount(Long bookId) {
+//        QBook book = QBook.book;
+//
+//         queryFactory
+//            .update(book)
+//            .set(book.likeCount, book.likeCount.subtract(1))
+//            .where(book.id.eq(bookId).and(book.likeCount.gt(0)))
+//            .execute();
+//    }
 
-         queryFactory
-            .update(book)
-            .set(book.likeCount, book.likeCount.add(1))
-            .where(book.id.eq(bookId))
-            .execute();
-    }
-
-    @Override
-    public void decreaseLikeCount(Long bookId) {
-        QBook book = QBook.book;
-
-         queryFactory
-            .update(book)
-            .set(book.likeCount, book.likeCount.subtract(1))
-            .where(book.id.eq(bookId).and(book.likeCount.gt(0)))
-            .execute();
-    }
-
-    @Override
-    public Optional<BookLikeCountResponse> findLikeCountByBookId(Long bookId) {
-
-        QBook book = QBook.book;
-        return  Optional.ofNullable(
-                queryFactory
-                .select(Projections.constructor(BookLikeCountResponse.class, book.likeCount))
-                .from(book)
-                .where(book.id.eq(bookId))
-                .fetchOne()
-        );
-    }
+//    @Override
+//    public Optional<BookLikeCountResponse> findLikeCountByBookId(Long bookId) {
+//
+//        QBook book = QBook.book;
+//        return  Optional.ofNullable(
+//                queryFactory
+//                .select(Projections.constructor(BookLikeCountResponse.class, book.likeCount))
+//                .from(book)
+//                .where(book.id.eq(bookId))
+//                .fetchOne()
+//        );
+//    }
 
     @Override
     public List<BookListResponse> findVisibleBooksByIds(List<Long> ids) {

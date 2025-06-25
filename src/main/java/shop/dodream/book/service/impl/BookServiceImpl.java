@@ -3,7 +3,6 @@ package shop.dodream.book.service.impl;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import shop.dodream.book.core.mapper.BookMapper;
 import shop.dodream.book.core.properties.NaverBookProperties;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.entity.Book;
@@ -28,7 +27,6 @@ public class BookServiceImpl implements BookService {
     private final NaverBookClient naverBookClient;
     private final BookRepository bookRepository;
     private final NaverBookProperties properties;
-    private final BookMapper bookMapper;
     private final MinioUploader minioUploader;
     private final BookElasticsearchRepository bookElasticsearchRepository;
 
@@ -104,9 +102,8 @@ public class BookServiceImpl implements BookService {
             throw new BookAlreadyRemovedException();
         }
 
-        // MapStruct로 기본 필드 매핑 널값은 기존값 유지
-        bookMapper.updateBookFromDto(request, book);
 
+        book.update(request);
 
         // 정가 or 할인가가 변경 되엇으면 할인율 재계산
         if (request.getRegularPrice() != null || request.getSalePrice() != null){
@@ -155,12 +152,12 @@ public class BookServiceImpl implements BookService {
 
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public BookLikeCountResponse getBookLikeCount(Long bookId) {
-        return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
-
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public BookLikeCountResponse getBookLikeCount(Long bookId) {
+//        return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
+//
+//    }
 
 
     @Override

@@ -23,7 +23,7 @@ public interface BookService {
 
     BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request);
 
-    BookLikeCountResponse getBookLikeCount(Long bookId);
+//    BookLikeCountResponse getBookLikeCount(Long bookId);
 
     List<BookListResponse> findAllByIds(List<Long> ids);
 }
