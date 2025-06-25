@@ -20,13 +20,13 @@ import org.springframework.context.annotation.Configuration;
 public class ElasticsearchConfig{
 
 
-    @Value("${elasticsearch.uris}")
+    @Value("${spring.elasticsearch.uris}")
     private String host;
 
-    @Value("${elasticsearch.username}")
+    @Value("${spring.elasticsearch.username}")
     private String userId;
 
-    @Value("${elasticsearch.password}")
+    @Value("${spring.elasticsearch.password}")
     private String userPassword;
 
 
@@ -52,6 +52,7 @@ public class ElasticsearchConfig{
         return new ElasticsearchClient(
                 new RestClientTransport(restClient, mapper)
         );
+
     }
 
 
