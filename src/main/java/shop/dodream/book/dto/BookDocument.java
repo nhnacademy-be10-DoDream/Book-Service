@@ -1,15 +1,16 @@
 package shop.dodream.book.dto;
 
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 import shop.dodream.book.entity.Book;
-import shop.dodream.book.entity.BookStatus;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+
 
 @Data
 @Document(indexName = "dodream_books")
@@ -17,14 +18,14 @@ import java.time.ZonedDateTime;
 @Mapping(mappingPath = "elasticsearch/mapping.json")
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BookDocument {
-    @Id
-    private String id;
 
+    @Id
     @Field(type = FieldType.Long)
     private Long bookId;
 
-    @Field(type = FieldType.Text, analyzer = "korean_with_icu", searchAnalyzer = "korean_with_icu")
+    @Field(type = FieldType.Text)
     private String title;
 
     @Field(type = FieldType.Text)
@@ -36,59 +37,23 @@ public class BookDocument {
     @Field(type = FieldType.Keyword)
     private String publisher;
 
-    @Field(type = FieldType.Date)
-    private LocalDate publishedAt;
-
-    @Field(type = FieldType.Keyword)
-    private String isbn;
-
-    @Field(type = FieldType.Long)
-    private Long regularPrice;
-
-    @Field(type = FieldType.Keyword)
-    private BookStatus status;
-
     @Field(type = FieldType.Long)
     private Long salePrice;
 
-    @Field(type = FieldType.Boolean)
-    private Boolean isGiftable;
-
     @Field(type = FieldType.Date)
-    private ZonedDateTime createdAt;
+    private LocalDate publishedAt;
 
-    @Field(type = FieldType.Long)
-    private Long bookCount;
 
-    @Field(type = FieldType.Long)
-    private Long discountRate;
-
-    @Field(type = FieldType.Long)
-    private Long salesCount;
-
-    @Field(type = FieldType.Double)
-    private Double rating;
-
-    @Field(type = FieldType.Long)
-    private Long reviewCount;
 
 
     public BookDocument(Book book) {
-        this.id = String.valueOf(book.getId());
         this.bookId = book.getId();
         this.title = book.getTitle();
         this.description = book.getDescription();
         this.author = book.getAuthor();
         this.publisher = book.getPublisher();
-        this.publishedAt = book.getPublishedAt();
-        this.isbn = book.getIsbn();
-        this.regularPrice = book.getRegularPrice();
-        this.status = book.getStatus();
         this.salePrice = book.getSalePrice();
-        this.isGiftable = book.getIsGiftable();
-        this.createdAt = book.getCreatedAt();
-        this.bookCount = book.getBookCount();
-        this.discountRate = book.getDiscountRate();
+        this.publishedAt = book.getPublishedAt();
 
     }
 

@@ -19,8 +19,7 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
-    @Autowired
-    private BookSearchService bookSearchService;
+
 
 
     @GetMapping("{book-id}")

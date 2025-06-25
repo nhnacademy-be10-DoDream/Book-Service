@@ -1,64 +1,29 @@
 {
   "properties": {
+    "bookId": {
+      "type": "long"
+    },
     "title": {
       "type": "text",
-      "fields": {
-        "nori": {
-          "type": "text",
-          "analyzer": "korean_with_icu"
-        },
-        "jaso": {
-          "type": "text",
-          "analyzer": "jaso_index_analyzer",
-          "search_analyzer": "jaso_search_analyzer"
-        },
-        "synonym": {
-          "type": "text",
-          "analyzer": "synonym_analyzer"
-        }
-      }
+      "analyzer": "korean"
     },
     "description": {
-      "type": "text"
+      "type": "text",
+      "analyzer": "korean"
     },
     "author": {
-      "type": "keyword"
+      "type": "keyword",
+      "analyzer": "korean"
     },
     "publisher": {
-      "type": "keyword"
-    },
-    "publishedAt": {
-      "type": "date"
-    },
-    "isbn": {
       "type": "keyword"
     },
     "salePrice": {
       "type": "long"
     },
-    "bookId": {
-      "type": "long"
-    },
-    "regularPrice": {
-      "type": "long"
-    },
-    "status": {
-      "type": "text",
-      "fields": {
-        "keyword": {
-          "type": "keyword",
-          "ignore_above": 256
-        }
-      }
-    },
-    "isGiftable": {
-      "type": "boolean"
-    },
-    "createdAt": {
-      "type": "date"
-    },
-    "bookCount": {
-      "type": "long"
+    "publishedAt": {
+      "type": "date",
+      "format": "yyyy-MM-dd"
     }
   }
 }
