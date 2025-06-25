@@ -1,4 +1,4 @@
-package shop.dodream.book.config;
+package shop.dodream.book.core.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

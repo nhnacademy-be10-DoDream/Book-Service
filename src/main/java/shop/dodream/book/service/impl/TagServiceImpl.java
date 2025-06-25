@@ -3,12 +3,9 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.TagRequest;
 import shop.dodream.book.dto.TagResponse;
-import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.Tag;
-import shop.dodream.book.exception.TagIdNotFoundException;
-import shop.dodream.book.exception.TagNameIsNullException;
+import shop.dodream.book.exception.TagNotFoundException;
 import shop.dodream.book.repository.BookTagRepository;
 import shop.dodream.book.repository.TagRepository;
 import shop.dodream.book.service.TagService;
@@ -23,12 +20,9 @@ public class TagServiceImpl implements TagService {
     private final BookTagRepository bookTagRepository;
 
     @Override @Transactional
-    public TagResponse createTag(TagRequest request){
-        if(request.getTagName() == null || request.getTagName().isEmpty()){
-            throw new TagNameIsNullException();
-        }
+    public TagResponse createTag(String newTagName){
         Tag tag = new Tag();
-        tag.setTagName(request.getTagName());
+        tag.setTagName(newTagName);
         Tag savedtag = tagRepository.save(tag);
         return new TagResponse(savedtag);
     }
@@ -43,10 +37,10 @@ public class TagServiceImpl implements TagService {
 
 
     @Override @Transactional
-    public TagResponse updateTag(Long tagId, TagRequest request){
+    public TagResponse updateTag(Long tagId, String newTagName){
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagIdNotFoundException(tagId));
-        tag.setTagName(request.getTagName());
+                .orElseThrow(() -> new TagNotFoundException(tagId));
+        tag.setTagName(newTagName);
 
         Tag savedtag = tagRepository.save(tag);
         return new TagResponse(savedtag);
@@ -55,7 +49,7 @@ public class TagServiceImpl implements TagService {
     @Override @Transactional
     public void deleteTag(Long tagId){
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagIdNotFoundException(tagId));
+                .orElseThrow(() -> new TagNotFoundException(tagId));
         tagRepository.delete(tag);
     }
 }

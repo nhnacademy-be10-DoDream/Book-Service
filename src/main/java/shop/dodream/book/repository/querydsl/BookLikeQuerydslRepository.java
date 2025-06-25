@@ -1,4 +1,4 @@
-package shop.dodream.book.repository;
+package shop.dodream.book.repository.querydsl;
 
 import shop.dodream.book.dto.BookListResponse;
 

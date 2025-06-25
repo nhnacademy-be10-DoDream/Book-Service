@@ -1,7 +1,7 @@
 package shop.dodream.book.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,31 +13,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/books")
+@RequiredArgsConstructor
 public class AdminBookController {
-
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookRegisterResponse> registerBook(@Validated @RequestBody BookRegisterRequest request){
-
-        BookRegisterResponse response = bookService.registerBookByIsbn(request);
-        return ResponseEntity.ok(response);
+    public BookRegisterResponse registerBook(@Validated @RequestBody BookRegisterRequest request){
+        return bookService.registerBookByIsbn(request);
     }
 
 
     @GetMapping
-    public ResponseEntity<List<BookListResponse>> getAllBooks(){
-        List<BookListResponse> bookListResponses = bookService.getAllBooks();
-        return ResponseEntity.ok(bookListResponses);
+    public List<BookListResponse> getAllBooks(){
+        return bookService.getAllBooks();
     }
 
 
 
     @GetMapping("{book-id}")
-    public ResponseEntity<AdminBookDetailResponse> getBookById(@PathVariable("book-id") Long bookId){
-        AdminBookDetailResponse adminBookDetailResponse = bookService.getBookByIdForAdmin(bookId);
-        return ResponseEntity.ok(adminBookDetailResponse);
+    public AdminBookDetailResponse getBookById(@PathVariable("book-id") Long bookId){
+        return bookService.getBookByIdForAdmin(bookId);
     }
 
     @PatchMapping("{book-id}")
@@ -52,11 +47,5 @@ public class AdminBookController {
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
-
-
 
 }

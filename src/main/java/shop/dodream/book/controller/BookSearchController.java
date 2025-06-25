@@ -14,13 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookSearchController {
-
     private final BookSearchService bookSearchService;
 
     @GetMapping("/search")
-    public ResponseEntity<List<BookItemResponse>> searchBooks(@RequestParam String keyword,
+    public List<BookItemResponse> searchBooks(@RequestParam String keyword,
                                                               @RequestParam(value = "sort", required = false, defaultValue = "")String sort) {
-        List<BookItemResponse> bookItemResponse = bookSearchService.searchBooks(keyword, sort);
-        return ResponseEntity.status(HttpStatus.OK).body(bookItemResponse);
+        return bookSearchService.searchBooks(keyword, sort);
     }
 }

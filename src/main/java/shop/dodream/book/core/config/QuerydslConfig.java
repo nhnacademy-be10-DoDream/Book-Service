@@ -1,4 +1,4 @@
-package shop.dodream.book.config;
+package shop.dodream.book.core.config;
 
 
 import com.querydsl.jpa.impl.JPAQueryFactory;

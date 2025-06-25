@@ -4,9 +4,11 @@ package shop.dodream.book.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
 import java.time.LocalDate;
@@ -31,5 +33,7 @@ public class BookUpdateRequest {
 
     @Min(value = 0, message = "수량은 0이상이어야합니다.")
     private Long bookCount;
+
+
 
 }
