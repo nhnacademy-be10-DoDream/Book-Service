@@ -2,12 +2,12 @@
 POST http://localhost:8080/books/reindex
 
 ### 검색
-GET http://localhost:8080/books/search?keyword=ㅈㅂ
+GET http://localhost:8080/books/search?keyword=스프링&sort=lowPrice
 
 ###
 
 # curl "http://localhost:9200/books/_search?pretty"
-GET http://localhost:9200/search?pretty
+GET http://s4.java21.net:9200/books/_search?pretty
 
 ###
 

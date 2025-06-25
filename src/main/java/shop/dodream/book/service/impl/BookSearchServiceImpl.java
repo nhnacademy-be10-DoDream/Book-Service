@@ -1,112 +1,75 @@
 package shop.dodream.book.service.impl;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 import shop.dodream.book.dto.BookDocument;
 import shop.dodream.book.dto.BookItemResponse;
-import shop.dodream.book.dto.BookRegisterResponse;
-import shop.dodream.book.dto.BookSearchResponse;
-import shop.dodream.book.entity.Book;
-import shop.dodream.book.exception.BookSearchException;
-import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookSearchService;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
 public class BookSearchServiceImpl implements BookSearchService {
-    private final BookRepository bookRepository;
-    private final ElasticsearchClient esClient;
-    private final ElasticsearchOperations elasticsearchOperations;
 
-    public void indexAllBooks() {
-        List<Book> books = bookRepository.findAll();
+    private final ElasticsearchClient elasticsearchClient;
 
-        for (Book book : books) {
-            try {
-                BookRegisterResponse doc = new BookRegisterResponse(book);
-
-                var response = esClient.index(i -> i
-                        .index("books")
-                        .id(book.getId().toString())
-                        .document(doc)
-                );
-            } catch (IOException e) {
-                System.err.println("인덱싱 실패: " + book.getTitle());
-            }
-        }
-    }
-
-    public BookSearchResponse searchBooks(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return new BookSearchResponse(0, Collections.emptyList());
-        }
-
+    @Override
+    public List<BookItemResponse> searchBooks(String keyword, String sort) {
         try {
-            SearchResponse<BookDocument> response = esClient.search(s -> s
-                            .index("books")
-                            .query(q -> {
-                                BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
+            // 1. 검색 쿼리 (Multi Match + 가중치)
+            Query query = new Query.Builder()
+                    .multiMatch(new MultiMatchQuery.Builder()
+                            .query(keyword)
+                            .fields("title^100", "author^50", "description^10")
+                            .build())
+                    .build();
 
-                                boolQueryBuilder.should(sh -> sh
-                                        .multiMatch(mm -> mm
-                                                .fields("title.nori^5", "description^1", "author^2", "publisher^1.5")
-                                                .query(keyword)
-                                                .analyzer("korean_with_icu")
-                                        )
-                                );
+            // 2. 정렬 조건 설정
+            SortOptions sortOption = switch (sort) {
+                case "popularity" -> new SortOptions.Builder().field(f -> f.field("viewCount").order(SortOrder.Desc)).build();
+                case "recent"     -> new SortOptions.Builder().field(f -> f.field("publishedAt").order(SortOrder.Desc)).build();
+                case "lowPrice"   -> new SortOptions.Builder().field(f -> f.field("salePrice").order(SortOrder.Asc)).build();
+                case "highPrice"  -> new SortOptions.Builder().field(f -> f.field("salePrice").order(SortOrder.Desc)).build();
+                case "rating"     -> new SortOptions.Builder().field(f -> f.field("ratingAvg").order(SortOrder.Desc)).build();
+                case "review"     -> new SortOptions.Builder().field(f -> f.field("reviewCount").order(SortOrder.Desc)).build();
+                default           -> null;
+            };
 
-                                String chosungQuery = keyword.replace(" ", "");
-                                if (!chosungQuery.isEmpty()) {
-                                    boolQueryBuilder.should(sh -> sh
-                                            .prefix(p -> p
-                                                    .field("title.jaso")
-                                                    .value(chosungQuery)
-                                                    .boost(3.0f)
-                                            )
-                                    );
-                                }
+            // 3. SearchRequest 생성
+            SearchRequest.Builder requestBuilder = new SearchRequest.Builder()
+                    .index("dodream_books") // 실제 인덱스 이름 사용
+                    .query(query)
+                    .size(20);
 
-                                boolQueryBuilder.should(sh -> sh
-                                        .match(m -> m
-                                                .field("title.synonym")
-                                                .query(keyword)
-                                                .analyzer("synonym_analyzer")
-                                                .boost(4.0f)
-                                        )
-                                );
+            if (sortOption != null) {
+                requestBuilder.sort(sortOption);
+            }
 
-                                boolQueryBuilder.minimumShouldMatch("1");
+            SearchResponse<BookDocument> response = elasticsearchClient.search(
+                    requestBuilder.build(),
+                    BookDocument.class
+            );
 
-                                return q.bool(boolQueryBuilder.build());
-                            })
-
-                            .sort(so -> so.score(score -> score.order(SortOrder.Desc)))
-                    // .size(10) // 페이지당 개수
-                    // .from(0)  // 시작 위치
-                    , BookDocument.class);
-
-            List<BookItemResponse> bookItems = response.hits().hits().stream()
-                    .map(hit -> new BookItemResponse(Objects.requireNonNull(hit.source())))
-                    .collect(Collectors.toList());
-
-            return new BookSearchResponse(response.hits().total().value(), bookItems);
+            // 4. 결과 매핑
+            return response.hits().hits().stream()
+                    .map(Hit::source)
+                    .map(BookItemResponse::new)
+                    .toList();
 
         } catch (IOException e) {
-            throw new BookSearchException(e);
+            e.printStackTrace();
+            return Collections.emptyList();
         }
     }
 }

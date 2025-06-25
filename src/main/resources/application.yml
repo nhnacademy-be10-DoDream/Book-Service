@@ -1,5 +1,4 @@
 # application.yml
-
 spring:
   application:
     name: book-service # auth -> 본인의 서비스 명

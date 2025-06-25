@@ -1,11 +1,13 @@
 package shop.dodream.book.service;
 
-import org.springframework.data.elasticsearch.core.SearchHits;
-import shop.dodream.book.dto.BookDocument;
-import shop.dodream.book.dto.BookSearchResponse;
+
+import shop.dodream.book.dto.BookItemResponse;
+
+import java.util.List;
+
+
 
 public interface BookSearchService {
-    void indexAllBooks();
-    BookSearchResponse searchBooks(String keyword);
+    List<BookItemResponse> searchBooks(String keyword, String sort);
 
 }

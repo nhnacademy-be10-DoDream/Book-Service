@@ -8,6 +8,7 @@ import co.elastic.clients.util.ObjectBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
+import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.util.MinioUploader;
@@ -27,9 +29,6 @@ import shop.dodream.book.util.MinioUploader;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -41,6 +40,7 @@ public class BookServiceImpl implements BookService {
     private final NaverBookProperties properties;
     private final BookMapper bookMapper;
     private final MinioUploader minioUploader;
+    private final BookElasticsearchRepository bookElasticsearchRepository;
 
     @Override
     @Transactional
@@ -75,6 +75,7 @@ public class BookServiceImpl implements BookService {
         request.applyTo(book);
 
         Book savedBook = bookRepository.save(book);
+        bookElasticsearchRepository.save(new BookDocument(savedBook));
 
 
         return new BookRegisterResponse(savedBook);
