@@ -1,14 +1,17 @@
 package shop.dodream.book.core.advice;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import shop.dodream.book.exception.ResourceConflictException;
 import shop.dodream.book.exception.ResourceNotFoundException;
@@ -27,12 +30,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      */
     @Nullable
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request
-    ) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
         URI type = URI.create("/errors/method-argument-not-valid");
         String detail = "Invalid request content.";
 
@@ -120,16 +121,37 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(
-            Exception ex,
-            @Nullable Object body,
-            HttpHeaders headers,
-            HttpStatusCode statusCode,
-            WebRequest request
-    ) {
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex,
+                                                             @Nullable Object body,
+                                                             HttpHeaders headers,
+                                                             HttpStatusCode statusCode,
+                                                             WebRequest request) {
         if (statusCode.is5xxServerError()) {
             log.error(ex.getLocalizedMessage(), ex);
         }
         return super.handleExceptionInternal(ex, body, headers, statusCode, request);
     }
+
+    @Override
+    protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex,
+                                                                            HttpHeaders headers,
+                                                                            HttpStatusCode status,
+                                                                            WebRequest request) {
+        URI type = URI.create("/errors/method-argument-not-valid");
+        String detail = "Invalid request content.";
+
+        List<String> errors = new ArrayList<>();
+        for (ParameterValidationResult result : ex.getAllValidationResults()) {
+            for (MessageSourceResolvable resolvable : result.getResolvableErrors()) {
+                errors.add(resolvable.getDefaultMessage());
+            }
+        }
+
+        ProblemDetail body = createProblemDetail(ex, status, detail, null, null, request);
+        body.setType(type);
+        body.setProperty("invalidFiles", errors);
+
+        return handleExceptionInternal(ex, body, headers, status, request);
+    }
+
 }
