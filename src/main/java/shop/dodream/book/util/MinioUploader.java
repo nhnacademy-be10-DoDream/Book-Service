@@ -10,7 +10,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -25,7 +24,7 @@ import java.util.UUID;
 public class MinioUploader {
     private final S3Client s3Client;
 
-    public String uploadFromUrl(String bucketName, String keyPrefix, String imageUrl) throws IOException {
+    public String uploadFromUrl(String bucketName, String keyPrefix, String imageUrl) {
         try {
             URL url = URI.create(imageUrl).toURL();
             String key = UUID.randomUUID() + ".png";
