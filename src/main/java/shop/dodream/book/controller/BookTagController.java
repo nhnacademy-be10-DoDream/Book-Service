@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.service.BookTagService;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +27,12 @@ public class BookTagController {
 
     @GetMapping("/books/{book-id}/tags")
     public BookWithTagsResponse getTagsByBook(@PathVariable("book-id") Long bookId) {
-        return bookTagService.getTagsByBook(bookId);
+        return bookTagService.getTagsByBookId(bookId);
+    }
+
+    @GetMapping("/tag/{tag-id}/books")
+    public List<BookListResponse> getBooksByTag(@PathVariable("tag-id") Long tagId) {
+        return bookTagService.getBooksByTagId(tagId);
     }
 
     @PatchMapping("/books/{book-id}/tags/{tag-id}")

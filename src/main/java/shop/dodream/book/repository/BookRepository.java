@@ -7,8 +7,5 @@ import shop.dodream.book.repository.querydsl.BookQuerydslRepository;
 
 
 public interface BookRepository extends JpaRepository<Book, Long>, BookQuerydslRepository {
-
-
     boolean existsByIsbn(String isbn);
-
 }

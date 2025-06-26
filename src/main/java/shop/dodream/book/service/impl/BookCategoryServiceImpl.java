@@ -31,14 +31,14 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private EntityManager entityManager;
 
     @Override @Transactional
-    public BookWithCategoriesResponse registerCategory(Long bookId, List<Long> categoryIds) {
+    public BookWithCategoriesResponse registerCategory(Long bookId, IdsListRequest categoryIds) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
 
         //TODO 빈 리스트 체크 필요
 
-        Set<Long> requestCategoryIds = new HashSet<>(categoryIds); // 새로 등록할 카테고리
+        Set<Long> requestCategoryIds = new HashSet<>(categoryIds.getIds()); // 새로 등록할 카테고리
         Set<Long> existingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId); // 이미 책에 등록된 카테고리
 
         Set<Long> intersection = new HashSet<>(existingCategoryIds); // 중복 카테고리 검사
@@ -47,7 +47,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             throw new CategoryAlreadyRegisteredException(intersection);
         }
 
-        int totalCount = existingCategoryIds.size() + categoryIds.size(); // 카테고리 10 Over 예외
+        int totalCount = existingCategoryIds.size() + categoryIds.getIds().size(); // 카테고리 10 Over 예외
         if (totalCount > 10) {
             throw new CategoryRegisterOverException();
         }
@@ -231,15 +231,15 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     }
 
     @Override @Transactional
-    public void deleteCategoriesByBook(Long bookId, List<Long> categoryIds) {
-        if (categoryIds == null || categoryIds.isEmpty()) {
+    public void deleteCategoriesByBook(Long bookId, IdsListRequest categoryIds) {
+        if (categoryIds == null || categoryIds.getIds().isEmpty()) {
             return;
         }
-        List<Long> existingCategoryIds = bookCategoryRepository.findExistingCategoryIds(bookId, categoryIds);
+        List<Long> existingCategoryIds = bookCategoryRepository.findExistingCategoryIds(bookId, categoryIds.getIds());
         if (existingCategoryIds.isEmpty()) {
-            throw new BookCategoriesNotFoundException(bookId, categoryIds);
+            throw new BookCategoriesNotFoundException(bookId, categoryIds.getIds());
         }
-        bookCategoryRepository.deleteByBookIdAndCategoryIds(bookId, categoryIds);
+        bookCategoryRepository.deleteByBookIdAndCategoryIds(bookId, categoryIds.getIds());
     }
 
     private CategoryTreeResponse copyNode(CategoryTreeResponse response) {

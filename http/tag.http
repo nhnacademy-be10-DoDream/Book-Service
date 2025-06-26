@@ -1,5 +1,5 @@
 ### 태그 생성
-POST http://localhost:8080/tags?newTagName=신간추천
+POST http://localhost:8080/tags?newTagName=신간
 Content-Type: application/json
 
 

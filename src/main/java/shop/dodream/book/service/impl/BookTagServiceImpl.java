@@ -3,6 +3,7 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.BookWithTagResponse;
 import shop.dodream.book.dto.BookWithTagsResponse;
 import shop.dodream.book.dto.TagResponse;
@@ -46,7 +47,7 @@ public class BookTagServiceImpl implements BookTagService {
     }
 
     @Override @Transactional(readOnly = true)
-    public BookWithTagsResponse getTagsByBook(Long bookId){
+    public BookWithTagsResponse getTagsByBookId(Long bookId){
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
@@ -57,6 +58,27 @@ public class BookTagServiceImpl implements BookTagService {
                 .toList();
 
         return new BookWithTagsResponse(book.getId(), tagResponses);
+    }
+
+    @Override @Transactional(readOnly = true)
+    public List<BookListResponse> getBooksByTagId(Long tagId){
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new TagNotFoundException(tagId));
+
+        List<Long> bookIds = bookTagRepository.findBookIdsByTagId(tagId);
+        List<Book> books = bookRepository.findAllById(bookIds);
+
+        return books.stream()
+                .map(book -> new BookListResponse(
+                        book.getId(),
+                        book.getTitle(),
+                        book.getAuthor(),
+                        book.getIsbn(),
+                        book.getRegularPrice(),
+                        book.getSalePrice(),
+                        book.getBookUrl()
+                ))
+                .toList();
     }
 
     @Override @Transactional
