@@ -18,4 +18,6 @@ public interface BookTagRepository extends JpaRepository<BookTag, BookTagId> {
 
     @Query("SELECT bt.book.id FROM BookTag bt WHERE bt.tag.id = :tagId")
     List<Long> findBookIdsByTagId(@Param("tagId") Long tagId);
+
+    List<Long> findByTagId(Long tagId);
 }

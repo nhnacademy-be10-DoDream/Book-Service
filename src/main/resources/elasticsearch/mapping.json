@@ -24,6 +24,15 @@
     "publishedAt": {
       "type": "date",
       "format": "yyyy-MM-dd"
+    },
+    "viewCount": {
+      "type": "long"
+    },
+    "ratingAvg": {
+      "type": "long"
+    },
+    "reviewCount": {
+      "type": "long"
     }
   }
 }
