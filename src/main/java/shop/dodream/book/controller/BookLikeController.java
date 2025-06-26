@@ -4,7 +4,7 @@ package shop.dodream.book.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.BookListResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookLikeService;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class BookLikeController {
 
     // 좋아요한 도서 목록 조회
     @GetMapping("/users/me/likes/books")
-    public List<BookListResponse> getLikedBooks(@RequestHeader("X-USER-ID") String userId){
+    public List<BookListResponseRecord> getLikedBooks(@RequestHeader("X-USER-ID") String userId){
         return bookLikeService.getLikedBooksByUserId(userId);
     }
 

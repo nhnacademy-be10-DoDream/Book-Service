@@ -4,6 +4,6 @@ import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
 
-public interface BookLikeQuerydslRepository {
-    List<BookListResponseRecord> findLikedBooksByUserId(String userId);
+public interface BookTagQuerydslRepository {
+    List<BookListResponseRecord> findBookListByTagId(Long tagId);
 }

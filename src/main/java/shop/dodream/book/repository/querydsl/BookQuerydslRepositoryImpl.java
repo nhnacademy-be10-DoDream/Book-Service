@@ -1,18 +1,23 @@
 package shop.dodream.book.repository.querydsl;
 
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookListResponse;
-import shop.dodream.book.dto.UserBookDetailResponse;
+import shop.dodream.book.dto.projection.BookDetailResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
+import shop.dodream.book.dto.projection.QBookDetailResponse;
+import shop.dodream.book.dto.projection.QBookListResponseRecord;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.entity.QBook;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static shop.dodream.book.entity.QBook.book;
+import static shop.dodream.book.entity.QImage.image;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,111 +27,104 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<BookListResponse> findAllBy() {
-        QBook book = QBook.book;
-
-        return queryFactory
-                .select(Projections.constructor(
-                        BookListResponse.class,
+    public List<BookListResponseRecord> findAllBy() {
+        return queryFactory.from(book)
+                .leftJoin(book.images, image).where(image.isThumbnail.eq(true))
+                .select(new QBookListResponseRecord(
                         book.id,
                         book.title,
                         book.author,
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        book.bookUrl
+                        image.uuid
                 ))
-                .from(book)
                 .fetch();
     }
 
-
     @Override
-    public Optional<UserBookDetailResponse> findBookDetailForUserById(Long bookId) {
-        QBook book = QBook.book;
-
-        return Optional.ofNullable(
-                queryFactory
-                        .select(Projections.constructor(
-                                UserBookDetailResponse.class,
-                                book.title,
-                                book.author,
-                                book.description,
-                                book.publisher,
-                                book.isbn,
-                                book.publishedAt,
-                                book.salePrice,
-                                book.regularPrice,
-                                book.isGiftable,
-                                book.bookUrl,
-                                book.discountRate,
-                                book.likeCount
-                        ))
-                        .from(book)
-                        .where(
-                                book.id.eq(bookId),
-                                book.status.ne(BookStatus.REMOVED)
-                        )
-                        .fetchOne()
-        );
-
-    }
-
-//    @Override
-//    public void incrementLikCount(Long bookId) {
-//        QBook book = QBook.book;
-//
-//         queryFactory
-//            .update(book)
-//            .set(book.likeCount, book.likeCount.add(1))
-//            .where(book.id.eq(bookId))
-//            .execute();
-//    }
-//
-//    @Override
-//    public void decreaseLikeCount(Long bookId) {
-//        QBook book = QBook.book;
-//
-//         queryFactory
-//            .update(book)
-//            .set(book.likeCount, book.likeCount.subtract(1))
-//            .where(book.id.eq(bookId).and(book.likeCount.gt(0)))
-//            .execute();
-//    }
-
-//    @Override
-//    public Optional<BookLikeCountResponse> findLikeCountByBookId(Long bookId) {
-//
-//        QBook book = QBook.book;
-//        return  Optional.ofNullable(
-//                queryFactory
-//                .select(Projections.constructor(BookLikeCountResponse.class, book.likeCount))
-//                .from(book)
-//                .where(book.id.eq(bookId))
-//                .fetchOne()
-//        );
-//    }
-
-    @Override
-    public List<BookListResponse> findVisibleBooksByIds(List<Long> ids) {
-        QBook book = QBook.book;
-
-        return queryFactory
-                .select(Projections.constructor(
-                        BookListResponse.class,
-                        book.id,
-                        book.title,
-                        book.author,
-                        book.isbn,
-                        book.regularPrice,
-                        book.salePrice,
-                        book.bookUrl
-                ))
-                .from(book)
+    public List<BookListResponseRecord> findVisibleBooksByIds(List<Long> ids) {
+        return queryFactory.from(book)
+                .leftJoin(book.images, image).where(image.isThumbnail.eq(true))
                 .where(
                         book.id.in(ids),
                         book.status.ne(BookStatus.REMOVED)
                 )
+                .select(new QBookListResponseRecord(
+                        book.id,
+                        book.title,
+                        book.author,
+                        book.isbn,
+                        book.regularPrice,
+                        book.salePrice,
+                        image.uuid
+                ))
                 .fetch();
+    }
+
+
+    @Override
+    public Optional<BookDetailResponse> findBookDetailForUser(Long bookId) {
+        return queryFactory.from(book)
+                        .leftJoin(book.images, image)
+                        .where(
+                                book.id.eq(bookId),
+                                book.status.ne(BookStatus.REMOVED)
+                        )
+                        .transform(
+                                groupBy(book.id).list(
+                                        new QBookDetailResponse(
+                                                book.id,
+                                                book.title,
+                                                book.author,
+                                                book.description,
+                                                book.publisher,
+                                                book.isbn,
+                                                book.publishedAt,
+                                                book.salePrice,
+                                                book.regularPrice,
+                                                book.isGiftable,
+                                                list(image.uuid),
+                                                book.discountRate,
+                                                book.likeCount
+                                        )
+                                )
+                        ).stream()
+                .findFirst();
+    }
+
+    @Override
+    public Optional<BookDetailResponse> findBookDetailForAdmin(Long bookId) {
+        return queryFactory.from(book)
+                .leftJoin(book.images, image)
+                .where(
+                        book.id.eq(bookId),
+                        book.status.ne(BookStatus.REMOVED)
+                )
+                .transform(
+                        groupBy(book.id).list(
+                                new QBookDetailResponse(
+                                        book.id,
+                                        book.title,
+                                        book.author,
+                                        book.description,
+                                        book.publisher,
+                                        book.isbn,
+                                        book.publishedAt,
+                                        book.salePrice,
+                                        book.regularPrice,
+                                        book.isGiftable,
+                                        list(image.uuid),
+                                        book.discountRate,
+                                        book.likeCount,
+                                        book.status,
+                                        book.createdAt,
+                                        book.searchCount,
+                                        book.viewCount,
+                                        book.bookCount
+                                )
+                        )
+                ).stream()
+                .findFirst();
     }
 }

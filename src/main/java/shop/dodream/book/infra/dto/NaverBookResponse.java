@@ -4,7 +4,6 @@ package shop.dodream.book.infra.dto;
 import lombok.Getter;
 import lombok.Setter;
 import shop.dodream.book.entity.Book;
-import shop.dodream.book.util.BookUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -28,19 +27,16 @@ public class NaverBookResponse {
 
 
         public Book toPartialEntity() {
-            Book book = new Book();
-            book.setTitle(title);
-            book.setBookUrl(image);
-            book.setAuthor(BookUtils.removeSpecialChars(author));
-            book.setSalePrice(Long.parseLong(discount));
-            book.setPublisher(publisher);
-            book.setPublishedAt(pubdate);
-            book.setIsbn(isbn);
-            return book;
+            return new Book(
+                    title,
+                    author,
+                    Long.parseLong(discount),
+                    publisher,
+                    pubdate,
+                    isbn
+            );
         }
     }
-
-
 
 
 }

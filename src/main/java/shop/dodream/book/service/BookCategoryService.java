@@ -1,13 +1,14 @@
 package shop.dodream.book.service;
 
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
 
 public interface BookCategoryService {
-    BookWithCategoriesResponse registerCategory(Long BookId, IdsListRequest categoryIds);
+    BookWithCategoriesResponse registerCategory(Long bookId, IdsListRequest categoryIds);
     List<CategoryTreeResponse> getCategoriesByBookId(Long bookId);
-    List<BookListResponse> getBooksByCategoryId(Long categoryId);
-    Long updateCategoryByBook(Long BookId, Long categoryId, Long newCategoryId);
+    List<BookListResponseRecord> getBooksByCategoryId(Long categoryId);
+    Long updateCategoryByBook(Long bookId, Long categoryId, Long newCategoryId);
     void deleteCategoriesByBook(Long bookId, IdsListRequest categoryIds);
 }
