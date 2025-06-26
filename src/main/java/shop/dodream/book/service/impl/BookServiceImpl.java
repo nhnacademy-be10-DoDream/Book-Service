@@ -144,7 +144,10 @@ public class BookServiceImpl implements BookService {
             }
         }
 
+
         updateStatusByBookCount(book);
+
+
     }
 
     @Override
