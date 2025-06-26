@@ -2,7 +2,9 @@
 POST http://localhost:8080/books/1/categories
 Content-Type: application/json
 
-[3]
+{
+  "ids": []
+}
 
 ### 해당 도서의 카테고리 조회
 GET http://localhost:8080/books/1/categories

@@ -18,7 +18,7 @@ public class BookCategoryController {
 
     @PostMapping("/books/{book-id}/categories")
     public ResponseEntity<BookWithCategoriesResponse> registerCategory(@PathVariable("book-id") Long bookId,
-                                                                       @RequestBody List< Long> categoryIds) {
+                                                                       @RequestBody IdsListRequest categoryIds) {
         BookWithCategoriesResponse response = bookCategoryService.registerCategory(bookId, categoryIds);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -42,7 +42,7 @@ public class BookCategoryController {
 
     @DeleteMapping("/books/{book-id}/categories")
     public ResponseEntity<Void> deleteCategoriesByBook(@PathVariable("book-id") Long bookId,
-                                                       @RequestBody List< Long> categoryIds){
+                                                       @RequestBody IdsListRequest categoryIds){
         bookCategoryService.deleteCategoriesByBook(bookId, categoryIds);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
