@@ -30,19 +30,19 @@ public class AdminBookController {
 
 
 
-    @GetMapping("{book-id}")
+    @GetMapping("/{book-id}")
     public AdminBookDetailResponse getBookById(@PathVariable("book-id") Long bookId){
         return bookService.getBookByIdForAdmin(bookId);
     }
 
-    @PatchMapping("{book-id}")
+    @PatchMapping("/{book-id}")
     public ResponseEntity<Void> updateBook(@PathVariable("book-id") Long bookId,
                                            @Validated @RequestBody BookUpdateRequest request){
         bookService.updateBook(bookId, request);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{book-id}")
+    @DeleteMapping("/{book-id}")
     public ResponseEntity<Void> deleteBook(@PathVariable("book-id") Long bookId){
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();

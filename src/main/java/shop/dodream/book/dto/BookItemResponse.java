@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ public class BookItemResponse {
     private String author;
     private String publisher;
     private Long salePrice;
-    private LocalDate publishedAt;
+    private Date publishedAt;
 
 
     public BookItemResponse(BookDocument document) {

@@ -2,12 +2,11 @@ package shop.dodream.book.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Getter
 @AllArgsConstructor
@@ -20,7 +19,7 @@ public class AdminBookDetailResponse {
     private String description;
     private String author;
     private String publisher;
-    private LocalDate publishedAt;
+    private Date publishedAt;
     private String isbn;
     private Long regularPrice;
     private BookStatus status;
