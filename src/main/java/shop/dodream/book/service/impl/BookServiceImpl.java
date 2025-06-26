@@ -1,8 +1,8 @@
 package shop.dodream.book.service.impl;
 
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.core.properties.NaverBookProperties;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookDetailResponse;
@@ -16,8 +16,7 @@ import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookService;
-import shop.dodream.book.util.MinioUploader;
-
+import shop.dodream.book.service.FileService;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,12 +25,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-
     private final NaverBookClient naverBookClient;
     private final BookRepository bookRepository;
     private final NaverBookProperties properties;
-    private final MinioUploader minioUploader;
     private final BookElasticsearchRepository bookElasticsearchRepository;
+    private final FileService fileService;
 
     @Override
     @Transactional
@@ -55,7 +53,7 @@ public class BookServiceImpl implements BookService {
 
         String imageUrl;
         try {
-            imageUrl = minioUploader.uploadFromUrl(item.getImage());
+            imageUrl = fileService.uploadBookImageFromUrl(item.getImage());
         } catch (IOException e) {
             throw new MinioImageUploadException();
         }

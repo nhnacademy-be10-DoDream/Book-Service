@@ -2,55 +2,91 @@ package shop.dodream.book.util;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import shop.dodream.book.exception.MinioImageUploadException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class MinioUploader {
-
     private final S3Client s3Client;
 
-    @Value("${minio.book-bucket}")
-    private String bucketName;
+    public String uploadFromUrl(String bucketName, String keyPrefix, String imageUrl) throws IOException {
+        try {
+            URL url = URI.create(imageUrl).toURL();
+            String key = UUID.randomUUID() + ".png";
+            try (InputStream inputStream = url.openStream()) {
+                byte[] content = inputStream.readAllBytes();
 
-    @Value("${minio.endpoint}")
-    private String endpoint;
+                s3Client.putObject(
+                        PutObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(keyPrefix + key)
+                                .contentType("image/png")
+                                .contentLength((long) content.length)
+                                .build(),
+                        RequestBody.fromBytes(content)
+                );
+                return key;
+            }
+        }catch (Exception e) {
+            log.error("MinIO 오류 발생 : {}", e.getMessage());
+            throw new MinioImageUploadException();
+        }
+    }
 
-    public String uploadFromUrl(String imageUrl) throws IOException {
-        try (InputStream inputStream = new URL(imageUrl).openStream()) {
-            String fileName = UUID.randomUUID() + ".jpg";
-            byte[] bytes = inputStream.readAllBytes();
+    public List<String> uploadFiles(String bucketName, String keyPrefix, List<MultipartFile> files) {
+        List<String> uploadedKeys = new ArrayList<>(files.size());
 
+        for (MultipartFile file : files) {
+            String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(fileName)
-                    .contentType("image/jpeg")
-                    .build();
+            String key = UUID.randomUUID() + extension;
+            try {
+                s3Client.putObject(
+                        PutObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(keyPrefix + key)
+                                .contentType(file.getContentType())
+                                .contentLength(file.getSize())
+                                .build(),
+                        RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+                );
 
-            log.info("PutObject 호출 시작");
+                uploadedKeys.add(key);
+            } catch (Exception e) {
+                log.error("파일 저장 실패(경로 : {}, 파일명: {})", keyPrefix, key);
+            }
+        }
 
-            PutObjectResponse response = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
+        return uploadedKeys;
+    }
 
-            log.info("PutObject 호출 완료");
-            log.info("PutObject 응답 전체: {}", response);
-
-            return endpoint+"/" + bucketName + "/" + fileName;
-
-        } catch (IOException e) {
-            log.error("MinIO 이미지 업로드 실패", e);
-            throw e;
+    public void deleteFiles(String bucketName, String keyPrefix, List<String> keys) {
+        for (String key : keys) {
+            try {
+                s3Client.deleteObject(DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(keyPrefix + key)
+                        .build());
+            } catch (Exception e) {
+                log.error("삭제 실패 (경로 : {}, 파일명: {})", keyPrefix, key);
+            }
         }
     }
 }

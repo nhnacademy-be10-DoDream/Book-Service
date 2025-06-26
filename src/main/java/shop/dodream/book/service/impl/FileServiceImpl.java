@@ -5,68 +5,77 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import shop.dodream.book.service.FileService;
+import shop.dodream.book.util.MinioUploader;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.function.Supplier;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FileServiceImpl {
-    private final S3Client s3Client;
-    @Value("${minio.review-bucket}")
+public class FileServiceImpl implements FileService {
+    @Value("${minio.bucket}")
     private String bucketName;
+    @Value("${minio.review-prefix}")
+    private String bookPrefix;
+    @Value("${minio.book-prefix}")
+    private String reviewPrefix;
 
+    private final MinioUploader minioUploader;
 
-    public List<String> uploadFiles(List<MultipartFile> files) {
-        if (Objects.isNull(files) || files.isEmpty()) {
+    public String uploadBookImageFromUrl(String imageUrl) throws IOException {
+        String keyPrefix = getBookPrefix();
+        return minioUploader.uploadFromUrl(bucketName, keyPrefix, imageUrl);
+    }
+
+    private List<String> uploadFiles(List<MultipartFile> files, Supplier<String> prefixGenerator) {
+        if (isEmptyFileList(files)) {
             return List.of();
         }
-        List<String> uploadedKeys = new ArrayList<>(files.size());
-
-        for (MultipartFile file : files) {
-            String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-
-            String key = UUID.randomUUID() + extension;
-            try {
-                s3Client.putObject(
-                        PutObjectRequest.builder()
-                                .bucket(bucketName)
-                                .key(key)
-                                .contentType(file.getContentType())
-                                .contentLength(file.getSize())
-                                .build(),
-                        RequestBody.fromInputStream(file.getInputStream(), file.getSize())
-                );
-
-                uploadedKeys.add(key);
-            } catch (Exception e) {
-                log.error("파일 저장 실패");
-                // 적절한 로직 필요
-            }
-        }
-
-        return uploadedKeys;
+        String keyPrefix = prefixGenerator.get();
+        return minioUploader.uploadFiles(bucketName, keyPrefix, files);
     }
 
-    public void deleteFiles(List<String> keys) {
-        for (String key : keys) {
-            try {
-                s3Client.deleteObject(DeleteObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .build());
-            } catch (Exception e) {
-                log.error("삭제 실패: {}", key);
-            }
+    private void deleteFiles(List<String> imgUrls, Supplier<String> prefixGenerator) {
+        if (isEmptyStringList(imgUrls)) {
+            return;
         }
+        String keyPrefix = prefixGenerator.get();
+        minioUploader.deleteFiles(bucketName, keyPrefix, imgUrls);
     }
 
+    public List<String> uploadBookImageFromFiles(List<MultipartFile> files) {
+        return uploadFiles(files, this::getBookPrefix);
+    }
+
+    public void deleteBookImage(List<String> imgUrls) {
+        deleteFiles(imgUrls, this::getBookPrefix);
+    }
+
+    public List<String> uploadReviewImageFromFiles(List<MultipartFile> files) {
+        return uploadFiles(files, this::getReviewPrefix);
+    }
+
+    public void deleteReviewImage(List<String> imgUrls) {
+        deleteFiles(imgUrls, this::getReviewPrefix);
+    }
+
+    private boolean isEmptyFileList(List<MultipartFile> files) {
+        return Objects.isNull(files) || files.isEmpty();
+    }
+
+    private boolean isEmptyStringList(List<String> list) {
+        return Objects.isNull(list) || list.isEmpty();
+    }
+
+    private String getBookPrefix() {
+        return String.format("/%s/", bookPrefix);
+    }
+
+    private String getReviewPrefix() {
+        return String.format("/%s/", reviewPrefix);
+    }
 }
