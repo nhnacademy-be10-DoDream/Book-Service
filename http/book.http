@@ -3,7 +3,7 @@ POST http://localhost:8080/admin/books
 Content-Type: application/json
 
 {
-  "isbn": "9791192987354",
+  "isbn": "9791140711963",
   "description" : "직접 설명을 등록해야함...",
   "discountRate": 0
 }

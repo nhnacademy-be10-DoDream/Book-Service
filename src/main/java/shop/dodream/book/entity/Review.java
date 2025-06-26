@@ -3,7 +3,7 @@ package shop.dodream.book.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import shop.dodream.book.command.ReviewUpdateCommand;
+import shop.dodream.book.dto.ReviewUpdateRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,17 +47,22 @@ public class Review extends BaseTimeEntity{
     @Column(updatable = false)
     private String userId;
 
-    public List<String> update(ReviewUpdateCommand command) {
-        this.content = command.getContent();
-        this.rating = command.getRating();
+    public List<String> update(ReviewUpdateRequest request) {
+        if ((request.getRating() * 2) % 1 != 0) {
+            throw new IllegalArgumentException("0 ~ 5 사이, 0.5 단위의 값을 사용해야 합니다");
+        }
 
-        if (Objects.nonNull(command.getImages())) {
+        byte ratingScale = (byte)(request.getRating()* 2);
+        this.content = request.getContent();
+        this.rating = ratingScale;
+
+        if (Objects.nonNull(request.getImages())) {
             Set<String> existImages = images.stream()
                     .map(Image::getUuid)
                     .collect(Collectors.toSet());
 
             Set<String> deletedImages = existImages.stream()
-                    .filter(img -> !command.getImages().contains(img))
+                    .filter(img -> !request.getImages().contains(img))
                     .collect(Collectors.toSet());
 
            images.removeIf(img -> deletedImages.contains(img.getUuid()));
@@ -76,7 +81,7 @@ public class Review extends BaseTimeEntity{
         this.images = new ArrayList<>();
     }
 
-    public void addReviewImage(List<Image> reviewImages) {
+    public void addImage(List<Image> reviewImages) {
         images.addAll(reviewImages);
     }
 }
