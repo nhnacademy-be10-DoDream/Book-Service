@@ -2,7 +2,7 @@
 POST http://localhost:8080/books/reindex
 
 ### 검색
-GET http://localhost:8080/books/search?keyword=nhn
+GET http://localhost:8080/books/search?keyword=벤저민
 
 ###
 

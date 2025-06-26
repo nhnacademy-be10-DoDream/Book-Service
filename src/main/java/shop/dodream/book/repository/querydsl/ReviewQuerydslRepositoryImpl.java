@@ -1,5 +1,6 @@
 package shop.dodream.book.repository.querydsl;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import shop.dodream.book.dto.projection.QReviewResponseRecord;
@@ -154,5 +155,28 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                                 )
                         )
                 );
+    }
+
+    @Override
+    public Object[] getReviewStats(Long bookId) {
+        Tuple result = queryFactory
+                .select(
+                    review.count(),
+                    review.rating.avg()
+                )
+                .from(review)
+                .where(review.book.id.eq(bookId))
+                .fetchOne();
+        if (result == null){
+            return new Object[]{0L, 0f};
+        }
+
+        Long count = result.get(review.count());
+        Double avg = result.get(review.rating.avg());
+
+        return new Object[]{
+                count != null ? count : 0L,
+                avg != null ? avg : 0f
+        };
     }
 }

@@ -14,4 +14,5 @@ public interface ReviewQuerydslRepository {
     List<ReviewResponseRecord> getAllBy();
     List<ReviewResponseRecord> getAllByUserId(String userId);
     List<ReviewResponseRecord> getAllByBookId(long bookId);
+    Object[] getReviewStats(Long bookId);
 }

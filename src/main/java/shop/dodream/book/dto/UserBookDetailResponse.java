@@ -3,6 +3,7 @@ package shop.dodream.book.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 @Getter
@@ -14,7 +15,7 @@ public class UserBookDetailResponse {
     private String description;
     private String publisher;
     private String isbn;
-    private LocalDate publishedAt;
+    private Date publishedAt;
     private Long salePrice;
     private Long regularPrice;
     private Boolean isGiftable;

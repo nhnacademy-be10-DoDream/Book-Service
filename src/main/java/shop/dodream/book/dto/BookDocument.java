@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 import shop.dodream.book.entity.Book;
+import shop.dodream.book.entity.Review;
 
 import java.util.Date;
 
@@ -56,7 +57,7 @@ public class BookDocument {
 
 
 
-    public BookDocument(Book book) {
+    public BookDocument(Book book, Float ratingAvg, Long reviewCount ) {
         this.bookId = book.getId();
         this.title = book.getTitle();
         this.description = book.getDescription();
@@ -64,6 +65,9 @@ public class BookDocument {
         this.publisher = book.getPublisher();
         this.salePrice = book.getSalePrice();
         this.publishedAt = book.getPublishedAt();
+        this.viewCount = book.getViewCount();
+        this.ratingAvg = ratingAvg;
+        this.reviewCount = reviewCount;
 
     }
 

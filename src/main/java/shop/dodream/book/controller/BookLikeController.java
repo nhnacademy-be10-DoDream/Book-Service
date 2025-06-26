@@ -17,6 +17,7 @@ public class BookLikeController {
 
 
     // 좋아요 등록
+    // TODO 삭제된 도서는 좋아요 안되게끔
     @PostMapping("/books/{book-id}/likes")
     public ResponseEntity<Void> registerBookLike(@PathVariable("book-id") Long bookId,
                                           @RequestHeader("X-USER-ID") String userId){
