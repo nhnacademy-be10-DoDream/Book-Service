@@ -3,7 +3,7 @@ POST http://localhost:8080/categories
 Content-Type: application/json
 
 {
-  "categoryName": "ags",
+  "categoryName": "agss",
   "depth": 1,
   "parentId": null
 }

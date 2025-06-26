@@ -40,6 +40,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 
         Set<Long> requestCategoryIds = new HashSet<>(categoryIds.getIds()); // 새로 등록할 카테고리
         Set<Long> existingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId); // 이미 책에 등록된 카테고리
+        System.out.println(existingCategoryIds);
 
         Set<Long> intersection = new HashSet<>(existingCategoryIds); // 중복 카테고리 검사
         intersection.retainAll(requestCategoryIds);
@@ -217,7 +218,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         Category category = categoryRepository.findById(newCategoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(newCategoryId));
 
-        BookCategory bookCategory = bookCategoryRepository.findExistingCategoryId(bookId, categoryId)
+        BookCategory bookCategory = bookCategoryRepository.findExistingCategory(bookId, categoryId)
                 .orElseThrow(() -> new BookCategoryNotFoundException(bookId, categoryId));
 
         if (bookCategoryRepository.existsByBookIdAndCategoryId(bookId, newCategoryId)) {

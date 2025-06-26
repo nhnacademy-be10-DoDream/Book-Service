@@ -51,7 +51,7 @@ public class BookTagServiceImpl implements BookTagService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        List<Tag> tags = tagRepository.findAllByBookId(bookId);
+        List<Tag> tags = bookTagRepository.findAllByBookId(bookId);
 
         List<TagResponse> tagResponses = tags.stream()
                 .map(TagResponse::new)
@@ -65,8 +65,7 @@ public class BookTagServiceImpl implements BookTagService {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new TagNotFoundException(tagId));
 
-        List<Long> bookIds = bookTagRepository.findBookIdsByTagId(tagId);
-        List<Book> books = bookRepository.findAllById(bookIds);
+        List<Book> books = bookTagRepository.findAllByTagId(tagId);
 
         return books.stream()
                 .map(book -> new BookListResponse(

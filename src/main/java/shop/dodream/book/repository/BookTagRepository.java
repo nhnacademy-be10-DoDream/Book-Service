@@ -7,17 +7,13 @@ import org.springframework.stereotype.Repository;
 import shop.dodream.book.entity.BookTag;
 import shop.dodream.book.entity.BookTagId;
 import shop.dodream.book.entity.Tag;
+import shop.dodream.book.repository.querydsl.BookTagRepositoryCustom;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookTagRepository extends JpaRepository<BookTag, BookTagId> {
+public interface BookTagRepository extends JpaRepository<BookTag, BookTagId>, BookTagRepositoryCustom {
     boolean existsByBookIdAndTagId(Long bookId, Long tagId);
     Optional<BookTag> findByBookIdAndTagId(Long bookId, Long tagId);
-
-    @Query("SELECT bt.book.id FROM BookTag bt WHERE bt.tag.id = :tagId")
-    List<Long> findBookIdsByTagId(@Param("tagId") Long tagId);
-
-    List<Long> findByTagId(Long tagId);
 }
