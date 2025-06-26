@@ -1,40 +1,38 @@
 {
-  "mappings": {
-    "properties": {
-      "bookId": {
-        "type": "long"
-      },
-      "title": {
-        "type": "text",
-        "analyzer": "korean"
-      },
-      "description": {
-        "type": "text",
-        "analyzer": "korean"
-      },
-      "author": {
-        "type": "text",
-        "analyzer": "korean"
-      },
-      "publisher": {
-        "type": "keyword"
-      },
-      "salePrice": {
-        "type": "long"
-      },
-      "publishedAt": {
-        "type": "date",
-        "format": "yyyy-MM-dd"
-      },
-      "viewCount": {
-        "type": "long"
-      },
-      "ratingAvg": {
-        "type": "float"
-      },
-      "reviewCount": {
-        "type": "long"
-      }
+  "properties": {
+    "bookId": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "author": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "publisher": {
+      "type": "keyword"
+    },
+    "salePrice": {
+      "type": "long"
+    },
+    "publishedAt": {
+      "type": "date",
+      "format": "yyyy-MM-dd"
+    },
+    "viewCount": {
+      "type": "long"
+    },
+    "ratingAvg": {
+      "type": "float"
+    },
+    "reviewCount": {
+      "type": "long"
     }
   }
 }

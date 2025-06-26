@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.dto.BookUpdateRequest;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +49,7 @@ public class Book extends BaseTimeEntity{
 
     @Setter
     @Column(nullable = false)
-    private Date publishedAt;
+    private LocalDate publishedAt;
 
     @Setter
     @Column(unique = true, nullable = false)
@@ -99,7 +100,7 @@ public class Book extends BaseTimeEntity{
     @Column(nullable = false)
     private Long likeCount;
 
-    public Book(String title, String author, Long salePrice, String publisher, Date publishedAt, String isbn) {
+    public Book(String title, String author, Long salePrice, String publisher, LocalDate publishedAt, String isbn) {
         this.title = title;
         this.author = author;
         this.salePrice = salePrice;

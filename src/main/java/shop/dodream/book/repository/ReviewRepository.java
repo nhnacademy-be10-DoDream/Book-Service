@@ -19,6 +19,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewQue
 
     void deleteByReviewIdAndUserId(long reviewId, String userId);
 
-
-    long countByBook_Id(Long bookId);
 }

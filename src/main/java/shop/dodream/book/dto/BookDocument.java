@@ -6,10 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
+import shop.dodream.book.dto.projection.ReviewStatsRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.Review;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Optional;
 
 
 @Data
@@ -41,7 +44,7 @@ public class BookDocument {
     private Long salePrice;
 
     @Field(type = FieldType.Date)
-    private Date publishedAt;
+    private LocalDate publishedAt;
 
     @Field(type = FieldType.Long)
     private Long viewCount;
@@ -57,7 +60,7 @@ public class BookDocument {
 
 
 
-    public BookDocument(Book book, Float ratingAvg, Long reviewCount ) {
+    public BookDocument(Book book, ReviewStatsRecord reviewStatsRecord) {
         this.bookId = book.getId();
         this.title = book.getTitle();
         this.description = book.getDescription();
@@ -66,8 +69,8 @@ public class BookDocument {
         this.salePrice = book.getSalePrice();
         this.publishedAt = book.getPublishedAt();
         this.viewCount = book.getViewCount();
-        this.ratingAvg = ratingAvg;
-        this.reviewCount = reviewCount;
+        this.ratingAvg = Optional.ofNullable(reviewStatsRecord.ratingAvg()).orElse(0.0f);
+        this.reviewCount = reviewStatsRecord.reviewCount();
 
     }
 

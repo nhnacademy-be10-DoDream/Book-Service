@@ -23,7 +23,7 @@ public class Review extends BaseTimeEntity{
     @Max(10)
     @Min(0)
     @Column(columnDefinition = "TINYINT")
-    private byte rating;
+    private Short rating;
 
     @Setter
     @NotBlank
@@ -48,13 +48,9 @@ public class Review extends BaseTimeEntity{
     private String userId;
 
     public List<String> update(ReviewUpdateRequest request) {
-        if ((request.getRating() * 2) % 1 != 0) {
-            throw new IllegalArgumentException("0 ~ 5 사이, 0.5 단위의 값을 사용해야 합니다");
-        }
 
-        byte ratingScale = (byte)(request.getRating()* 2);
         this.content = request.getContent();
-        this.rating = ratingScale;
+        this.rating = request.getRating();
 
         if (Objects.nonNull(request.getImages())) {
             Set<String> existImages = images.stream()
@@ -73,7 +69,7 @@ public class Review extends BaseTimeEntity{
     }
 
 
-    public Review(byte rating, String content, String userID, Book book) {
+    public Review(Short rating, String content, String userID, Book book) {
         this.book = book;
         this.rating = rating;
         this.content = content;

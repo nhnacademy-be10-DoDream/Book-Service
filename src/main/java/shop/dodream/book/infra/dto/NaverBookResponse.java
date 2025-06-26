@@ -1,10 +1,15 @@
 package shop.dodream.book.infra.dto;
 
 
+import co.elastic.clients.util.DateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import shop.dodream.book.entity.Book;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -20,9 +25,10 @@ public class NaverBookResponse {
         private String title;
         private String image;
         private String author;
-        private String discount;
+        private Long discount;
         private String publisher;
-        private Date pubdate;
+        @JsonFormat(pattern = "yyyyMMdd")
+        private LocalDate pubdate;
         private String isbn;
 
 
@@ -30,7 +36,7 @@ public class NaverBookResponse {
             return new Book(
                     title,
                     author,
-                    Long.parseLong(discount),
+                    discount,
                     publisher,
                     pubdate,
                     isbn
