@@ -3,7 +3,7 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookListResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookLike;
 import shop.dodream.book.entity.BookStatus;
@@ -40,8 +40,6 @@ public class BookLikeServiceImpl implements BookLikeService {
         BookLike bookLike = new BookLike(userId, book);
 
         bookLikeRepository.save(bookLike);
-//        bookRepository.incrementLikCount(bookId);
-
 
     }
 
@@ -51,9 +49,7 @@ public class BookLikeServiceImpl implements BookLikeService {
     public Boolean bookLikeFindMe(Long bookId, String userId) {
         bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
-        Boolean bookLiked = bookLikeRepository.existsByBookIdAndUserId(bookId,userId);
-
-        return bookLiked;
+        return bookLikeRepository.existsByBookIdAndUserId(bookId,userId);
 
     }
 
@@ -70,15 +66,13 @@ public class BookLikeServiceImpl implements BookLikeService {
 
 
         bookLikeRepository.delete(bookLike);
-//        bookRepository.decreaseLikeCount(bookId);
-
 
     }
 
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookListResponse> getLikedBooksByUserId(String userId) {
+    public List<BookListResponseRecord> getLikedBooksByUserId(String userId) {
 
         return bookLikeRepository.findLikedBooksByUserId(userId);
     }

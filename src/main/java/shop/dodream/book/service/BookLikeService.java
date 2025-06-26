@@ -1,6 +1,6 @@
 package shop.dodream.book.service;
 
-import shop.dodream.book.dto.BookListResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
 
@@ -13,8 +13,7 @@ public interface BookLikeService {
 
     void bookLikeDelete(Long bookId, String userId);
 
-    List<BookListResponse> getLikedBooksByUserId (String userId);
-
+    List<BookListResponseRecord> getLikedBooksByUserId (String userId);
 
     Long getBookLikeCount(Long bookId);
 

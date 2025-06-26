@@ -5,15 +5,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import shop.dodream.book.core.properties.NaverBookProperties;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookDetailResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.entity.Review;
+import shop.dodream.book.entity.Image;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
-import shop.dodream.book.repository.ReviewRepository;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.util.MinioUploader;
 
@@ -31,11 +32,10 @@ public class BookServiceImpl implements BookService {
     private final NaverBookProperties properties;
     private final MinioUploader minioUploader;
     private final BookElasticsearchRepository bookElasticsearchRepository;
-    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
-    public BookRegisterResponse registerBookByIsbn(BookRegisterRequest request) {
+    public void registerBookByIsbn(BookRegisterRequest request) {
         if (bookRepository.existsByIsbn(request.getIsbn())){
             throw new DuplicateIsbnException(request.getIsbn());
         }
@@ -53,42 +53,62 @@ public class BookServiceImpl implements BookService {
 
         NaverBookResponse.Item item = items.getFirst();
 
+        String imageUrl;
         try {
-            minioUploader.uploadFromUrl(item.getImage());
+            imageUrl = minioUploader.uploadFromUrl(item.getImage());
         } catch (IOException e) {
             throw new MinioImageUploadException();
         }
 
         Book book = item.toPartialEntity();
+        Image bookImage = new Image(book, imageUrl, true);
+        book.addImages(List.of(bookImage));
+
         request.applyTo(book);
 
         Book savedBook = bookRepository.save(book);
-
-        Book
-        bookElasticsearchRepository.save(new BookDocument(savedBook, ratingAvg, reviewCount));
-
-        return new BookRegisterResponse(savedBook);
+        bookElasticsearchRepository.save(new BookDocument(savedBook));
     }
 
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookListResponse> getAllBooks() {
+    public List<BookListResponseRecord> getAllBooks() {
         return bookRepository.findAllBy();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AdminBookDetailResponse getBookByIdForAdmin(Long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
-        return new AdminBookDetailResponse(book);
+    public List<BookListResponseRecord> findAllByIds(List<Long> ids) {
+        return bookRepository.findVisibleBooksByIds(ids);
+    }
+
+    private void updateStatusByBookCount(Book book) {
+        if (book.getStatus() != BookStatus.REMOVED) {
+            long count = book.getBookCount();
+            if (count == 0) {
+                book.setStatus(BookStatus.SOLD_OUT);
+            } else if (count <= 5) {
+                book.setStatus(BookStatus.LOW_STOCK);
+            } else {
+                book.setStatus(BookStatus.SELL);
+            }
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookDetailResponse getBookByIdForAdmin(Long bookId) {
+        return bookRepository.findBookDetailForAdmin(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
 
     @Override
     @Transactional(readOnly = true)
-    public UserBookDetailResponse getBookByIdForUser(Long bookId) {
-        return bookRepository.findBookDetailForUserById(bookId).orElseThrow(()-> new BookNotFoundException(bookId));
+    public BookDetailResponse getBookByIdForUser(Long bookId) {
+        return bookRepository.findBookDetailForUser(bookId)
+                .orElseThrow(()-> new BookNotFoundException(bookId));
     }
 
 
@@ -146,35 +166,7 @@ public class BookServiceImpl implements BookService {
 
         updateStatusByBookCount(book);
 
-        BookCountDecreaseResponse decreaseResponse = new BookCountDecreaseResponse(book.getId(), book.getBookCount(), book.getStatus() == BookStatus.SELL);
-        return decreaseResponse;
-
+        return new BookCountDecreaseResponse(book.getId(), book.getBookCount(), book.getStatus() == BookStatus.SELL);
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public BookLikeCountResponse getBookLikeCount(Long bookId) {
-//        return bookRepository.findLikeCountByBookId(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
-//
-//    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<BookListResponse> findAllByIds(List<Long> ids) {
-        return bookRepository.findVisibleBooksByIds(ids);
-    }
-
-    private void updateStatusByBookCount(Book book) {
-        if (book.getStatus() != BookStatus.REMOVED) {
-            long count = book.getBookCount();
-            if (count == 0) {
-                book.setStatus(BookStatus.SOLD_OUT);
-            } else if (count <= 5) {
-                book.setStatus(BookStatus.LOW_STOCK);
-            } else {
-                book.setStatus(BookStatus.SELL);
-            }
-        }
-    }
 }

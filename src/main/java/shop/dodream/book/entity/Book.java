@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.dto.BookUpdateRequest;
 
-import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Entity
@@ -22,7 +23,7 @@ import java.util.Optional;
         @Index(name = "idx_search_count", columnList = "searchCount"),
         @Index(name = "idx_view_count", columnList = "viewCount")
 })
-public class Book {
+public class Book extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,10 +73,6 @@ public class Book {
 
     @Setter
     @Column(nullable = false)
-    private ZonedDateTime createdAt;
-
-    @Setter
-    @Column(nullable = false)
     private Long searchCount;
 
     @Setter
@@ -86,8 +83,13 @@ public class Book {
     @Column(nullable = false)
     private Long bookCount;
 
-    @Setter
-    private String bookUrl;
+    @Getter
+    @OneToMany(
+            mappedBy = "book",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<Image> images;
 
     @Setter
     @Column(nullable = false)
@@ -96,6 +98,16 @@ public class Book {
     @Setter
     @Column(nullable = false)
     private Long likeCount;
+
+    public Book(String title, String author, Long salePrice, String publisher, Date publishedAt, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.salePrice = salePrice;
+        this.publisher = publisher;
+        this.publishedAt = publishedAt;
+        this.isbn = isbn;
+        this.images = new ArrayList<>();
+    }
 
 
     public void update(BookUpdateRequest bookUpdateRequest) {
@@ -124,6 +136,7 @@ public class Book {
                 .ifPresent(this::setBookCount);
     }
 
-
-
+    public void addImages(List<Image> reviewImages) {
+        images.addAll(reviewImages);
+    }
 }
