@@ -36,19 +36,6 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-      elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
-        ports:
-          - 9200:9200
-        env:
-          discovery.type: single-node
-          xpack.security.enabled: false  # 인증 비활성화 (CI 용도)
-        options: >-
-          --health-cmd="curl -f http://localhost:9200/_cluster/health || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -77,6 +64,18 @@ jobs:
             sleep 1
           done
 
+          echo "🔍 Fetching config from Config Server..."
+          curl --fail http://localhost:10332/book/ci | grep -E 'elasticsearch|redis|datasource' || echo "❌ Failed to fetch or grep config"
+
+
+      - name: 🌐 Test connection to Elasticsearch
+        run: |
+          echo "Trying to connect to http://s4.java21.net:9200..."
+          if ! curl -u ${{ secrets.ES_USERNAME }}:${{ secrets.ES_PASSWORD }} http://s4.java21.net:9200; then
+            echo "❌ Failed to connect to Elasticsearch"
+            exit 1
+          fi
+
       - name: 🛠️ Build with Maven
         run: mvn -B clean package -DskipTests
 
@@ -89,7 +88,7 @@ jobs:
                -jar target/*.jar &
           PID=$!
 
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl --fail --silent http://localhost:9999/actuator/health; then
               echo "✅ Health check 성공"
               kill $PID

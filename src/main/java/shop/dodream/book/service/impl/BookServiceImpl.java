@@ -50,25 +50,19 @@ public class BookServiceImpl implements BookService {
 
         NaverBookResponse.Item item = items.getFirst();
 
-        String uploadedImageUrl;
         try {
-            uploadedImageUrl = minioUploader.uploadFromUrl(item.getImage());
+            minioUploader.uploadFromUrl(item.getImage());
         } catch (IOException e) {
             throw new MinioImageUploadException();
         }
 
-
         Book book = item.toPartialEntity();
-        book.setBookUrl(uploadedImageUrl);
         request.applyTo(book);
 
         Book savedBook = bookRepository.save(book);
         bookElasticsearchRepository.save(new BookDocument(savedBook));
 
-
         return new BookRegisterResponse(savedBook);
-
-
     }
 
 

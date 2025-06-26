@@ -7,8 +7,8 @@ import lombok.Setter;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Getter
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class BookRegisterResponse {
     private String description;
     private String author;
     private String publisher;
-    private LocalDate publishedAt;
+    private Date publishedAt;
     private String isbn;
     private Long regularPrice;
     private BookStatus status;

@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.dto.BookUpdateRequest;
 
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
 @Table(name = "Book", indexes = {
         @Index(name = "idx_sale_price", columnList = "salePrice"),
@@ -30,54 +29,71 @@ public class Book {
     @Column(name = "book_id")
     private Long id;
 
+    @Setter
     @Column(nullable = false)
     private String title;
 
+    @Setter
     @Column(columnDefinition = "TEXT", nullable = false) // 타입 text로 설정
     private String description;
 
+    @Setter
     @Column(nullable = false)
     private String author;
 
+    @Setter
     @Column(nullable = false)
     private String publisher;
 
+    @Setter
     @Column(nullable = false)
-    private LocalDate publishedAt;
+    private Date publishedAt;
 
+    @Setter
     @Column(unique = true, nullable = false)
     private String isbn;
 
+    @Setter
     @Column(nullable = false)
     private Long regularPrice;
 
+    @Setter
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('SELL','SOLD_OUT','LOW_STOCK','REMOVED')")
+    @Column(nullable = false)
     private BookStatus status;
 
+    @Setter
     @Column(nullable = false)
     private Long salePrice;
 
+    @Setter
     @Column(nullable = false)
     private Boolean isGiftable;
 
+    @Setter
     @Column(nullable = false)
     private ZonedDateTime createdAt;
 
+    @Setter
     @Column(nullable = false)
     private Long searchCount;
 
+    @Setter
     @Column(nullable = false)
     private Long viewCount;
 
+    @Setter
     @Column(nullable = false)
     private Long bookCount;
 
+    @Setter
     private String bookUrl;
 
+    @Setter
     @Column(nullable = false)
     private Long discountRate;
 
+    @Setter
     @Column(nullable = false)
     private Long likeCount;
 

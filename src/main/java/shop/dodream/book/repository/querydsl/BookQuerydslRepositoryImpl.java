@@ -1,4 +1,4 @@
-package shop.dodream.book.repository;
+package shop.dodream.book.repository.querydsl;
 
 
 import com.querydsl.core.types.Projections;

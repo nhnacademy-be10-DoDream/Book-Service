@@ -1,4 +1,4 @@
-package shop.dodream.book.repository;
+package shop.dodream.book.repository.querydsl;
 
 
 import com.querydsl.core.types.Projections;
@@ -18,8 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookLikeQuerydslRepositoryImpl implements BookLikeQuerydslRepository{
-
-
     private final JPAQueryFactory queryFactory;
 
     @Override

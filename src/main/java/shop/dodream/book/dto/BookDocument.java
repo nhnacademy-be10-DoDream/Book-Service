@@ -1,6 +1,5 @@
 package shop.dodream.book.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 import shop.dodream.book.entity.Book;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 
 @Data
@@ -31,7 +30,7 @@ public class BookDocument {
     @Field(type = FieldType.Text)
     private String description;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String author;
 
     @Field(type = FieldType.Keyword)
@@ -41,7 +40,18 @@ public class BookDocument {
     private Long salePrice;
 
     @Field(type = FieldType.Date)
-    private LocalDate publishedAt;
+    private Date publishedAt;
+
+    @Field(type = FieldType.Long)
+    private Long viewCount;
+
+    @Field(type = FieldType.Float)
+    private Float ratingAvg;
+
+    @Field(type = FieldType.Long)
+    private Long reviewCount;
+
+
 
 
 
