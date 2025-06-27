@@ -1,6 +1,10 @@
 package shop.dodream.book.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +23,7 @@ public class BookCategoryController {
 
     @PostMapping("/books/{book-id}/categories")
     public ResponseEntity<BookWithCategoriesResponse> registerCategory(@PathVariable("book-id") Long bookId,
-                                                                       @RequestBody IdsListRequest categoryIds) {
+                                                                       @RequestBody @Valid IdsListRequest categoryIds) {
         BookWithCategoriesResponse response = bookCategoryService.registerCategory(bookId, categoryIds);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -30,11 +34,12 @@ public class BookCategoryController {
     }
 
     @GetMapping("/categories/{category-id}/books")
-    public List<BookListResponseRecord> getBooksByCategoryId(@PathVariable("category-id") Long categoryId) {
-        return bookCategoryService.getBooksByCategoryId(categoryId);
+    public Page<BookListResponseRecord> getBooksByCategoryId(@PathVariable("category-id") Long categoryId,
+                                                             @PageableDefault(size = 10) Pageable pageable) {
+        return bookCategoryService.getBooksByCategoryId(categoryId, pageable);
     }
 
-    @PatchMapping("/books/{book-id}/categories/{category-id}")
+    @PutMapping("/books/{book-id}/categories/{category-id}")
     public Long updateCategoryByBook(@PathVariable("book-id") Long bookId,
                                      @PathVariable("category-id") Long categoryId,
                                      @RequestParam(value = "new-category-id") Long newCategoryId) {

@@ -9,7 +9,7 @@ Content-Type: application/json
 
 
 ### 해당 태그의 도서 조회
-GET http://localhost:8080/tag/1/books
+GET http://localhost:8080/tags/1/books
 Content-Type: application/json
 
 

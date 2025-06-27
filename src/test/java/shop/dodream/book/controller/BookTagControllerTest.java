@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import shop.dodream.book.dto.BookWithTagResponse;
 import shop.dodream.book.dto.BookWithTagsResponse;
@@ -16,15 +20,12 @@ import shop.dodream.book.service.BookTagService;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookTagController.class)
-public class BookTagControllerTest {
+class BookTagControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -104,32 +105,35 @@ public class BookTagControllerTest {
         Long newRegularPrice2 = 102L;
         Long newSalePrice2 = 202L;
         String newBookUrl2 = "테스트 URL";
+        Pageable pageable = PageRequest.of(0, 10);
 
-        List<BookListResponseRecord> bookListResponseRecords = List.of(
+        List<BookListResponseRecord> content = List.of(
                 new BookListResponseRecord(newBookId1, newTitle1, newAuthor1, newIsbn1, newRegularPrice1, newSalePrice1, newBookUrl1),
                 new BookListResponseRecord(newBookId2, newTitle2, newAuthor2, newIsbn2, newRegularPrice2, newSalePrice2, newBookUrl2)
         );
 
-        when(bookTagService.getBooksByTagId(newTagId)).thenReturn(bookListResponseRecords);
+        Page<BookListResponseRecord> bookListResponseRecords = new PageImpl<>(content);
+
+        when(bookTagService.getBooksByTagId(newTagId, pageable)).thenReturn(bookListResponseRecords);
         mockMvc.perform(get("/tags/{tag-id}/books", newTagId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].bookId").value(newBookId1))
-                .andExpect(jsonPath("$[0].title").value(newTitle1))
-                .andExpect(jsonPath("$[0].author").value(newAuthor1))
-                .andExpect(jsonPath("$[0].isbn").value(newIsbn1))
-                .andExpect(jsonPath("$[0].regularPrice").value(newRegularPrice1))
-                .andExpect(jsonPath("$[0].salePrice").value(newSalePrice1))
-                .andExpect(jsonPath("$[0].bookUrl").value(newBookUrl1))
-                .andExpect(jsonPath("$[1].bookId").value(newBookId2))
-                .andExpect(jsonPath("$[1].title").value(newTitle2))
-                .andExpect(jsonPath("$[1].author").value(newAuthor2))
-                .andExpect(jsonPath("$[1].isbn").value(newIsbn2))
-                .andExpect(jsonPath("$[1].regularPrice").value(newRegularPrice2))
-                .andExpect(jsonPath("$[1].salePrice").value(newSalePrice2))
-                .andExpect(jsonPath("$[1].bookUrl").value(newBookUrl2));
+                .andExpect(jsonPath("$.content[0].bookId").value(newBookId1))
+                .andExpect(jsonPath("$.content[0].title").value(newTitle1))
+                .andExpect(jsonPath("$.content[0].author").value(newAuthor1))
+                .andExpect(jsonPath("$.content[0].isbn").value(newIsbn1))
+                .andExpect(jsonPath("$.content[0].regularPrice").value(newRegularPrice1))
+                .andExpect(jsonPath("$.content[0].salePrice").value(newSalePrice1))
+                .andExpect(jsonPath("$.content[0].bookUrl").value(newBookUrl1))
+                .andExpect(jsonPath("$.content[1].bookId").value(newBookId2))
+                .andExpect(jsonPath("$.content[1].title").value(newTitle2))
+                .andExpect(jsonPath("$.content[1].author").value(newAuthor2))
+                .andExpect(jsonPath("$.content[1].isbn").value(newIsbn2))
+                .andExpect(jsonPath("$.content[1].regularPrice").value(newRegularPrice2))
+                .andExpect(jsonPath("$.content[1].salePrice").value(newSalePrice2))
+                .andExpect(jsonPath("$.content[1].bookUrl").value(newBookUrl2));
 
 
-        verify(bookTagService, times(1)).getBooksByTagId(newTagId);
+        verify(bookTagService, times(1)).getBooksByTagId(newTagId, pageable);
     }
 
     @Test
@@ -143,7 +147,7 @@ public class BookTagControllerTest {
         BookWithTagResponse bookWithTagResponse = new BookWithTagResponse(newBookId, new TagResponse(newTagId, newTagName));
         when(bookTagService.updateTagByBook(newBookId, newTagId, registerTagId)).thenReturn(bookWithTagResponse);
 
-        mockMvc.perform(patch("/books/{book-id}/tags/{tag-id}", newBookId, newTagId)
+        mockMvc.perform(put("/books/{book-id}/tags/{tag-id}", newBookId, newTagId)
                 .param("newTagId", String.valueOf(registerTagId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookId").value(newBookId))

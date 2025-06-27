@@ -29,7 +29,7 @@ public class TagController {
     }
 
     // 태그 수정
-    @PatchMapping("/{tag-id}")
+    @PutMapping("/{tag-id}")
     public TagResponse updateTag(@PathVariable("tag-id") Long tagId,
                                                  @RequestParam String newTagName) {
         return tagService.updateTag(tagId, newTagName);

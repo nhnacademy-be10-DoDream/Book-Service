@@ -9,18 +9,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import shop.dodream.book.service.BookCategoryService;
 
 @WebMvcTest(BookCategoryController.class)
-public class BookCategoryControllerTest {
+class BookCategoryControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private BookCategoryService BookCategoryService;
+    private BookCategoryService bookCategoryService;
 
     @Test
     @DisplayName("도서 카테고리 추가")
     void registerCategory() throws Exception {
-
-
 
     }
 

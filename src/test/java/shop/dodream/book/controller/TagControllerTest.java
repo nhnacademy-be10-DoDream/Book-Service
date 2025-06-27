@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TagController.class)
-public class TagControllerTest {
+class TagControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -80,7 +80,7 @@ public class TagControllerTest {
         String newTagName = "수정 태그";
 
         when(tagService.updateTag(newTagId, newTagName)).thenReturn(new TagResponse(newTagId, newTagName));
-        mockMvc.perform(patch("/tags/{tag-id}", newTagId)
+        mockMvc.perform(put("/tags/{tag-id}", newTagId)
                 .param("newTagName", newTagName))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tagId").value(newTagId))

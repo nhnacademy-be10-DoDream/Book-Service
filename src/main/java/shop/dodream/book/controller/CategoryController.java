@@ -57,7 +57,7 @@ public class CategoryController {
     }
 
     // 카테고리 수정
-    @PatchMapping("/{category-id}")
+    @PutMapping("/{category-id}")
     public CategoryResponse updateCategory(@PathVariable("category-id") Long categoryId,
                                                            @RequestBody @Valid CategoryRequest request) {
         return categoryService.updateCategory(categoryId, request);
