@@ -70,6 +70,8 @@ public class MinioUploader {
                 uploadedKeys.add(key);
             } catch (Exception e) {
                 log.error("파일 저장 실패(경로 : {}, 파일명: {})", keyPrefix, key);
+                deleteFiles(bucketName, keyPrefix, uploadedKeys);
+                throw new MinioImageUploadException();
             }
         }
 

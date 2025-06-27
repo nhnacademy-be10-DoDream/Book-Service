@@ -1,8 +1,10 @@
 package shop.dodream.book.core.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
+import shop.dodream.book.core.properties.MinIOProperties;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -11,17 +13,11 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 
 import java.net.URI;
 
+@EnableRetry
 @Configuration
+@RequiredArgsConstructor
 public class MinioS3Config {
-
-    @Value("${minio.endpoint}")
-    private String endpoint;
-
-    @Value("${minio.access-key}")
-    private String accessKey;
-
-    @Value("${minio.secret-key}")
-    private String secretKey;
+    private final MinIOProperties ioProperties;
 
     @Bean
     public S3Client s3Client() {
@@ -30,10 +26,10 @@ public class MinioS3Config {
                 .build();
 
         return S3Client.builder()
-                .endpointOverride(URI.create(endpoint))
+                .endpointOverride(URI.create(ioProperties.getEndpoint()))
                 .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)
+                        AwsBasicCredentials.create(ioProperties.getAccessKey(), ioProperties.getSecretKey())
                 ))
                 .serviceConfiguration(s3Config)
                 .build();

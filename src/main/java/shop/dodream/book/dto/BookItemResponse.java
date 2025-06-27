@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -19,7 +18,7 @@ public class BookItemResponse {
     private String author;
     private String publisher;
     private Long salePrice;
-    private String publishedAt;
+    private Date publishedAt;
     private Long viewCount;
     private Float ratingAvg;
     private Long reviewCount;
