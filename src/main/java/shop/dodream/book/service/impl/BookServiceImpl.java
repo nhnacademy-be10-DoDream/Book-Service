@@ -101,6 +101,26 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
+    private void updateStatusByBookCount(Book book) {
+        if (book.getStatus() != BookStatus.REMOVED) {
+            long count = book.getBookCount();
+            if (count == 0) {
+                book.setStatus(BookStatus.SOLD_OUT);
+            } else if (count <= 5) {
+                book.setStatus(BookStatus.LOW_STOCK);
+            } else {
+                book.setStatus(BookStatus.SELL);
+            }
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookDetailResponse getBookByIdForAdmin(Long bookId) {
+        return bookRepository.findBookDetailForAdmin(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
+    }
+
 
     @Override
     @Transactional(readOnly = true)

@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.QBookListResponseRecord;
 import shop.dodream.book.entity.BookStatus;
+import shop.dodream.book.entity.QBookTag;
+import shop.dodream.book.entity.Tag;
 
 import java.util.List;
 
@@ -20,6 +22,17 @@ import static shop.dodream.book.entity.QImage.image;
 @Transactional(readOnly = true)
 public class BookTagQuerydslRepositoryImpl implements BookTagQuerydslRepository{
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<Tag> findAllByBookId(Long bookId) {
+        QBookTag bookTag = QBookTag.bookTag;
+
+        return queryFactory
+                .select(bookTag.tag)
+                .from(bookTag)
+                .where(bookTag.book.id.eq(bookId))
+                .fetch();
+    }
 
     @Override
     public List<BookListResponseRecord> findBookListByTagId(Long tagId) {
