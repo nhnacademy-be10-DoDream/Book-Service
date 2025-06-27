@@ -14,6 +14,7 @@ import shop.dodream.book.exception.BookNotFoundException;
 import shop.dodream.book.exception.ReviewNotFoundException;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.ReviewRepository;
+import shop.dodream.book.service.FileService;
 import shop.dodream.book.service.ReviewService;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
-    private final FileServiceImpl fileService;
+    private final FileService fileService;
 
     @Transactional
     public void createReview(Long bookId, String userId, ReviewCreateRequest reviewCreateRequest, List<MultipartFile> files) {
@@ -75,7 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = findWithImageByReviewId(reviewId);
 
         List<String> deleteKeys = review.update(reviewUpdateRequest);
-        fileService.deleteFiles(deleteKeys);
+        fileService.deleteReviewImage(deleteKeys);
 
         review.addImage(saveReviewImage(review, files));
     }
@@ -85,7 +86,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = findWithImageByReviewIdAndUserId(reviewId, userId);
 
         List<String> deleteKeys = review.update(reviewUpdateRequest);
-        fileService.deleteFiles(deleteKeys);
+        fileService.deleteReviewImage(deleteKeys);
 
         review.addImage(saveReviewImage(review, files));
     }
@@ -93,7 +94,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void deleteReview(Long reviewId) {
         List<String> imageKeys = reviewRepository.getImageUrlsByReviewId(reviewId);
-        fileService.deleteFiles(imageKeys);
+        fileService.deleteReviewImage(imageKeys);
 
         reviewRepository.deleteById(reviewId);
     }
@@ -101,7 +102,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void deleteReview(Long reviewId, String userId) {
         List<String> imageKeys = reviewRepository.getImageUrlsByReviewIdAndUserId(reviewId, userId);
-        fileService.deleteFiles(imageKeys);
+        fileService.deleteReviewImage(imageKeys);
 
         reviewRepository.deleteByReviewIdAndUserId(reviewId, userId);
     }
@@ -117,7 +118,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private List<Image> saveReviewImage(Review review, List<MultipartFile> files) {
-        List<String> images = fileService.uploadFiles(files);
+        List<String> images = fileService.uploadReviewImageFromFiles(files);
         List<Image> reviewImages = new ArrayList<>(images.size());
 
         for (String image : images) {

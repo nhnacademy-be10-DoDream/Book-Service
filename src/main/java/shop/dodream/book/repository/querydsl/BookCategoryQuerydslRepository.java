@@ -1,5 +1,4 @@
 package shop.dodream.book.repository.querydsl;
-
 import org.springframework.data.repository.query.Param;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.BookCategory;
