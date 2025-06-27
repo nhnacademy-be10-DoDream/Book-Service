@@ -7,7 +7,7 @@ import java.util.List;
 
 public record ReviewResponseRecord(
         long reviewId,
-        float rating,
+        Short rating,
         String content,
         ZonedDateTime createdAt,
         long bookId,

@@ -16,7 +16,7 @@ public class ReviewCreateRequest {
     @NotNull
     @Min(0)
     @Max(5)
-    private Double rating;
+    private Short rating;
 
     @NotBlank
     @Size(min = 5)
@@ -24,14 +24,11 @@ public class ReviewCreateRequest {
 
 
     public Review toEntity(Book book, String userId) {
-        if ((rating * 2) % 1 != 0) {
-            throw new IllegalArgumentException("0 ~ 5 사이, 0.5 단위의 값을 사용해야 합니다");
-        }
 
-        byte ratingScale = (byte)(rating * 2);
+
 
         return new Review(
-                ratingScale,
+                rating,
                 content,
                 userId,
                 book

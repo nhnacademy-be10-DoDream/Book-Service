@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.QBookListResponseRecord;
+
 import shop.dodream.book.entity.BookCategory;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.QBookCategory;

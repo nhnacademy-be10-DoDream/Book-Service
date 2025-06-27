@@ -1,9 +1,12 @@
 package shop.dodream.book.repository.querydsl;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import shop.dodream.book.dto.projection.QReviewResponseRecord;
+import shop.dodream.book.dto.projection.QReviewStatsRecord;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
+import shop.dodream.book.dto.projection.ReviewStatsRecord;
 import shop.dodream.book.entity.Review;
 
 import java.util.List;
@@ -33,9 +36,7 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                         groupBy(review.reviewId).list(
                                 new QReviewResponseRecord(
                                         review.reviewId,
-                                        review.rating
-                                                .divide(2)
-                                                .castToNum(Float.class),
+                                        review.rating,
                                         review.content,
                                         review.createdAt,
                                         review.book.id,
@@ -58,9 +59,7 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                         groupBy(review.reviewId).list(
                                 new QReviewResponseRecord(
                                         review.reviewId,
-                                        review.rating
-                                                .divide(2)
-                                                .castToNum(Float.class),
+                                        review.rating,
                                         review.content,
                                         review.createdAt,
                                         review.book.id,
@@ -99,9 +98,7 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                         groupBy(review.reviewId).list(
                                 new QReviewResponseRecord(
                                         review.reviewId,
-                                        review.rating
-                                                .divide(2)
-                                                .castToNum(Float.class),
+                                        review.rating,
                                         review.content,
                                         review.createdAt,
                                         review.book.id,
@@ -121,9 +118,7 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                         groupBy(review.reviewId).list(
                                 new QReviewResponseRecord(
                                         review.reviewId,
-                                        review.rating
-                                                .divide(2)
-                                                .castToNum(Float.class),
+                                        review.rating,
                                         review.content,
                                         review.createdAt,
                                         review.book.id,
@@ -143,9 +138,7 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                         groupBy(review.reviewId).list(
                                 new QReviewResponseRecord(
                                         review.reviewId,
-                                        review.rating
-                                                .divide(2)
-                                                .castToNum(Float.class),
+                                        review.rating,
                                         review.content,
                                         review.createdAt,
                                         review.book.id,
@@ -155,4 +148,21 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                         )
                 );
     }
+
+    @Override
+    public Optional<ReviewStatsRecord> getReviewStats(long bookId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .from(review)
+                        .where(review.book.id.eq(bookId))
+                        .select(new QReviewStatsRecord(
+                                review.count(),
+                                review.rating.avg().castToNum(Float.class)
+                        ))
+                        .fetchOne()
+        );
+    }
+
+
+
 }

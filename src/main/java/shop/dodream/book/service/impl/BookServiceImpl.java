@@ -1,12 +1,13 @@
 package shop.dodream.book.service.impl;
 
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.core.properties.NaverBookProperties;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
+import shop.dodream.book.dto.projection.ReviewStatsRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.Image;
@@ -15,23 +16,25 @@ import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
+import shop.dodream.book.repository.ReviewRepository;
 import shop.dodream.book.service.BookService;
-import shop.dodream.book.util.MinioUploader;
-
+import shop.dodream.book.service.FileService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-
     private final NaverBookClient naverBookClient;
     private final BookRepository bookRepository;
     private final NaverBookProperties properties;
-    private final MinioUploader minioUploader;
     private final BookElasticsearchRepository bookElasticsearchRepository;
+    private final ReviewRepository reviewRepository;
+    private final FileService fileService;
+
 
     @Override
     @Transactional
@@ -55,7 +58,7 @@ public class BookServiceImpl implements BookService {
 
         String imageUrl;
         try {
-            imageUrl = minioUploader.uploadFromUrl(item.getImage());
+            imageUrl = fileService.uploadBookImageFromUrl(item.getImage());
         } catch (IOException e) {
             throw new MinioImageUploadException();
         }
@@ -67,7 +70,9 @@ public class BookServiceImpl implements BookService {
         request.applyTo(book);
 
         Book savedBook = bookRepository.save(book);
-        bookElasticsearchRepository.save(new BookDocument(savedBook));
+
+        ReviewStatsRecord reviewStatsRecord= reviewRepository.getReviewStats(savedBook.getId()).orElse(new ReviewStatsRecord(0L, 0.0f));
+        bookElasticsearchRepository.save(new BookDocument(savedBook, reviewStatsRecord));
     }
 
 
@@ -138,7 +143,10 @@ public class BookServiceImpl implements BookService {
             }
         }
 
+
         updateStatusByBookCount(book);
+
+
     }
 
     @Override

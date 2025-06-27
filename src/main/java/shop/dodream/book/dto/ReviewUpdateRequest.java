@@ -14,9 +14,9 @@ import java.util.Set;
 public class ReviewUpdateRequest {
 
     @NotNull
-    @DecimalMin("0.0")
-    @DecimalMax("5.0")
-    private Float rating;
+    @Min(0)
+    @Max(5)
+    private Short rating;
 
     @NotBlank
     @Size(min = 5)

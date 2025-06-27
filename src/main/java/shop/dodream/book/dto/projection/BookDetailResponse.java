@@ -5,6 +5,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import shop.dodream.book.entity.BookStatus;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,7 @@ public class BookDetailResponse {
     private String description;
     private String publisher;
     private String isbn;
-    private Date publishedAt;
+    private LocalDate publishedAt;
     private Long salePrice;
     private Long regularPrice;
     private Boolean isGiftable;
@@ -34,7 +35,7 @@ public class BookDetailResponse {
 
     @QueryProjection
     public BookDetailResponse(Long bookId, String title, String author, String description, String publisher,
-                              String isbn, Date publishedAt, Long salePrice, Long regularPrice,
+                              String isbn, LocalDate publishedAt, Long salePrice, Long regularPrice,
                               Boolean isGiftable, List<String> bookUrls, Long discountRate, Long likeCount) {
         this.bookId = bookId;
         this.title = title;
@@ -53,7 +54,7 @@ public class BookDetailResponse {
 
     @QueryProjection
     public BookDetailResponse(Long bookId, String title, String author, String description, String publisher,
-                              String isbn, Date publishedAt, Long salePrice, Long regularPrice,
+                              String isbn, LocalDate publishedAt, Long salePrice, Long regularPrice,
                               Boolean isGiftable, List<String> bookUrls, Long discountRate, Long likeCount,
                               BookStatus status, ZonedDateTime createdAt, Long searchCount, Long viewCount, Long bookCount) {
         this.bookId = bookId;

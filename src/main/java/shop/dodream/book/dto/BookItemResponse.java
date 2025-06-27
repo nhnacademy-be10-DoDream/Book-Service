@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -18,7 +19,10 @@ public class BookItemResponse {
     private String author;
     private String publisher;
     private Long salePrice;
-    private Date publishedAt;
+    private String publishedAt;
+    private Long viewCount;
+    private Float ratingAvg;
+    private Long reviewCount;
 
 
     public BookItemResponse(BookDocument document) {
@@ -29,5 +33,8 @@ public class BookItemResponse {
         this.publisher = document.getPublisher();
         this.salePrice = document.getSalePrice();
         this.publishedAt = document.getPublishedAt();
+        this.viewCount = document.getViewCount();
+        this.ratingAvg = document.getRatingAvg();
+        this.reviewCount = document.getReviewCount();
     }
 }
