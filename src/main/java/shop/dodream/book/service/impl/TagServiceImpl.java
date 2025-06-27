@@ -1,6 +1,8 @@
 package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.TagResponse;
@@ -9,9 +11,6 @@ import shop.dodream.book.exception.TagNotFoundException;
 import shop.dodream.book.repository.BookTagRepository;
 import shop.dodream.book.repository.TagRepository;
 import shop.dodream.book.service.TagService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +27,9 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override @Transactional(readOnly = true)
-    public List<TagResponse> getTags(){
-        List<Tag> tags = tagRepository.findAll();
-        return tags.stream()
-                .map(TagResponse::new)
-                .collect(Collectors.toList());
+    public Page<TagResponse> getTags(Pageable pageable){
+        return tagRepository.findAll(pageable)
+                .map(TagResponse::new);
     }
 
 
