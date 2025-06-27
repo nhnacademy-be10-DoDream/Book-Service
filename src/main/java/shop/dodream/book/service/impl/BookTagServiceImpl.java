@@ -3,10 +3,10 @@ package shop.dodream.book.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookListResponse;
 import shop.dodream.book.dto.BookWithTagResponse;
 import shop.dodream.book.dto.BookWithTagsResponse;
 import shop.dodream.book.dto.TagResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookTag;
 import shop.dodream.book.entity.BookTagId;
@@ -51,7 +51,7 @@ public class BookTagServiceImpl implements BookTagService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        List<Tag> tags = tagRepository.findAllByBookId(bookId);
+        List<Tag> tags = bookTagRepository.findAllByBookId(bookId);
 
         List<TagResponse> tagResponses = tags.stream()
                 .map(TagResponse::new)
@@ -61,32 +61,21 @@ public class BookTagServiceImpl implements BookTagService {
     }
 
     @Override @Transactional(readOnly = true)
-    public List<BookListResponse> getBooksByTagId(Long tagId){
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagNotFoundException(tagId));
+    public List<BookListResponseRecord> getBooksByTagId(Long tagId){
+        if (!tagRepository.existsById(tagId)) {
+            throw new TagNotFoundException(tagId);
+        }
 
-        List<Long> bookIds = bookTagRepository.findBookIdsByTagId(tagId);
-        List<Book> books = bookRepository.findAllById(bookIds);
-
-        return books.stream()
-                .map(book -> new BookListResponse(
-                        book.getId(),
-                        book.getTitle(),
-                        book.getAuthor(),
-                        book.getIsbn(),
-                        book.getRegularPrice(),
-                        book.getSalePrice(),
-                        book.getBookUrl()
-                ))
-                .toList();
+        return bookTagRepository.findBookListByTagId(tagId);
     }
 
     @Override @Transactional
     public BookWithTagResponse updateTagByBook(Long bookId, Long tagId, Long newTagId){
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagNotFoundException(tagId));
+        if (!tagRepository.existsById(tagId)) {
+            throw new TagNotFoundException(tagId);
+        }
         Tag newTag = tagRepository.findById(newTagId)
                 .orElseThrow(() -> new TagNotFoundException(newTagId));
 
@@ -108,14 +97,16 @@ public class BookTagServiceImpl implements BookTagService {
 
     @Override @Transactional
     public void deleteTagByBook(Long bookId, Long tagId){
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(bookId));
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagNotFoundException(tagId));
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotFoundException(bookId);
+        }
+        if (!tagRepository.existsById(tagId)) {
+            throw new TagNotFoundException(tagId);
+        }
 
-        BookTagId bookTagId = new BookTagId(bookId, tagId);
-        BookTag bookTag = bookTagRepository.findById(bookTagId)
-                .orElseThrow(()-> new BookTagNotFoundException(bookId, tagId));
+        BookTag bookTag = bookTagRepository.findById(new BookTagId(bookId, tagId))
+                .orElseThrow(() -> new BookTagNotFoundException(bookId, tagId));
         bookTagRepository.delete(bookTag);
     }
+
 }

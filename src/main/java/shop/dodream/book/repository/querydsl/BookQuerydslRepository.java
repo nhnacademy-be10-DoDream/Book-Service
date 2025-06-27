@@ -1,21 +1,16 @@
 package shop.dodream.book.repository.querydsl;
 
-import shop.dodream.book.dto.BookListResponse;
-import shop.dodream.book.dto.UserBookDetailResponse;
+import shop.dodream.book.dto.projection.BookDetailResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BookQuerydslRepository {
-    List<BookListResponse> findAllBy();
+    List<BookListResponseRecord> findAllBy();
 
-    Optional<UserBookDetailResponse> findBookDetailForUserById(Long bookId);
+    List<BookListResponseRecord> findVisibleBooksByIds(List<Long> ids);
 
-//    void incrementLikCount(Long bookId);
-//
-//    void decreaseLikeCount(Long bookId);
-
-//    Optional<BookLikeCountResponse> findLikeCountByBookId(Long bookId);
-
-    List<BookListResponse> findVisibleBooksByIds(List<Long> ids);
+    Optional<BookDetailResponse> findBookDetailForAdmin(Long bookId);
+    Optional<BookDetailResponse> findBookDetailForUser(Long bookId);
 }

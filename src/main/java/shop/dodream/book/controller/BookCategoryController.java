@@ -1,12 +1,13 @@
 package shop.dodream.book.controller;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.BookWithCategoriesResponse;
+import shop.dodream.book.dto.CategoryTreeResponse;
+import shop.dodream.book.dto.IdsListRequest;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookCategoryService;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class BookCategoryController {
     }
 
     @GetMapping("/categories/{category-id}/books")
-    public List<BookListResponse> getBooksByCategoryId(@PathVariable("category-id") Long categoryId) {
+    public List<BookListResponseRecord> getBooksByCategoryId(@PathVariable("category-id") Long categoryId) {
         return bookCategoryService.getBooksByCategoryId(categoryId);
     }
 

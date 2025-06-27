@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.dto.projection.CategoryWithParentProjection;
 import shop.dodream.book.entity.Book;
@@ -40,6 +41,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 
         Set<Long> requestCategoryIds = new HashSet<>(categoryIds.getIds()); // 새로 등록할 카테고리
         Set<Long> existingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId); // 이미 책에 등록된 카테고리
+        System.out.println(existingCategoryIds);
 
         Set<Long> intersection = new HashSet<>(existingCategoryIds); // 중복 카테고리 검사
         intersection.retainAll(requestCategoryIds);
@@ -148,8 +150,9 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 
     @Override @Transactional(readOnly = true)
     public List<CategoryTreeResponse> getCategoriesByBookId(Long bookId){
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(bookId));
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotFoundException(bookId);
+        }
 
         Set<Long> categoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId);
 
@@ -189,23 +192,12 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     }
 
     @Override @Transactional(readOnly = true)
-    public List<BookListResponse> getBooksByCategoryId(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
-        List<Long> bookIds = bookCategoryRepository.findBookIdsByCategoryId(categoryId);
-        List<Book> books = bookRepository.findAllById(bookIds);
+    public List<BookListResponseRecord> getBooksByCategoryId(Long categoryId) {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotFoundException(categoryId);
+        }
 
-        return books.stream()
-                .map(book -> new BookListResponse(
-                        book.getId(),
-                        book.getTitle(),
-                        book.getAuthor(),
-                        book.getIsbn(),
-                        book.getRegularPrice(),
-                        book.getSalePrice(),
-                        book.getBookUrl()
-                ))
-                .toList();
+        return bookCategoryRepository.findBookListByCategoryId(categoryId);
     }
 
     @Override @Transactional
@@ -217,7 +209,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         Category category = categoryRepository.findById(newCategoryId)
                 .orElseThrow(() -> new CategoryNotFoundException(newCategoryId));
 
-        BookCategory bookCategory = bookCategoryRepository.findExistingCategoryId(bookId, categoryId)
+        BookCategory bookCategory = bookCategoryRepository.findExistingCategory(bookId, categoryId)
                 .orElseThrow(() -> new BookCategoryNotFoundException(bookId, categoryId));
 
         if (bookCategoryRepository.existsByBookIdAndCategoryId(bookId, newCategoryId)) {

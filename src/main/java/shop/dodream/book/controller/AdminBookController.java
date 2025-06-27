@@ -2,10 +2,13 @@ package shop.dodream.book.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookDetailResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -18,20 +21,19 @@ public class AdminBookController {
     private final BookService bookService;
 
     @PostMapping
-    public BookRegisterResponse registerBook(@Validated @RequestBody BookRegisterRequest request){
-        return bookService.registerBookByIsbn(request);
+    public ResponseEntity<Void> registerBook(@Validated @RequestBody BookRegisterRequest request){
+        bookService.registerBookByIsbn(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     @GetMapping
-    public List<BookListResponse> getAllBooks(){
+    public List<BookListResponseRecord> getAllBooks(){
         return bookService.getAllBooks();
     }
 
-
-
     @GetMapping("/{book-id}")
-    public AdminBookDetailResponse getBookById(@PathVariable("book-id") Long bookId){
+    public BookDetailResponse getBookById(@PathVariable("book-id") Long bookId){
         return bookService.getBookByIdForAdmin(bookId);
     }
 
@@ -47,11 +49,5 @@ public class AdminBookController {
         bookService.deleteBook(bookId);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
-
-
 
 }

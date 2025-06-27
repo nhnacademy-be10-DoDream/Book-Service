@@ -1,18 +1,19 @@
 package shop.dodream.book.repository.querydsl;
 
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookListResponse;
-
+import shop.dodream.book.dto.projection.BookListResponseRecord;
+import shop.dodream.book.dto.projection.QBookListResponseRecord;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.entity.QBook;
-import shop.dodream.book.entity.QBookLike;
 
 import java.util.List;
+
+import static shop.dodream.book.entity.QBook.book;
+import static shop.dodream.book.entity.QBookLike.bookLike;
+import static shop.dodream.book.entity.QImage.image;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,25 +22,24 @@ public class BookLikeQuerydslRepositoryImpl implements BookLikeQuerydslRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<BookListResponse> findLikedBooksByUserId(String userId) {
-    QBookLike bookLike = QBookLike.bookLike;
-    QBook book = QBook.book;
+    public List<BookListResponseRecord> findLikedBooksByUserId(String userId) {
 
-    return queryFactory
-            .select(Projections.constructor(
-                    BookListResponse.class,
+    return queryFactory.from(bookLike)
+            .leftJoin(bookLike.book, book)
+            .leftJoin(book.images, image).where(image.isThumbnail.eq(true))
+            .where(
+                    bookLike.userId.eq(userId),
+                    book.status.ne(BookStatus.REMOVED)
+            )
+            .select(new QBookListResponseRecord(
                     book.id,
                     book.title,
                     book.author,
                     book.isbn,
                     book.regularPrice,
                     book.salePrice,
-                    book.bookUrl
+                    image.uuid
             ))
-            .from(bookLike)
-            .join(bookLike.book, book)
-            .where(bookLike.userId.eq(userId),
-                    book.status.ne(BookStatus.REMOVED))
             .fetch();
     }
 }

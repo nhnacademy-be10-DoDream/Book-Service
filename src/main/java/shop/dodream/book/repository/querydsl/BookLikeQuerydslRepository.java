@@ -1,9 +1,9 @@
 package shop.dodream.book.repository.querydsl;
 
-import shop.dodream.book.dto.BookListResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
 
 public interface BookLikeQuerydslRepository {
-    List<BookListResponse> findLikedBooksByUserId(String userId);
+    List<BookListResponseRecord> findLikedBooksByUserId(String userId);
 }

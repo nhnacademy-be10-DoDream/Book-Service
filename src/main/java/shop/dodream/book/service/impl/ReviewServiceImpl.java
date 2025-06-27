@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review review = reviewCreateRequest.toEntity(book, userId);
 
-        review.addReviewImage(saveReviewImage(review, files));
+        review.addImage(saveReviewImage(review, files));
 
         reviewRepository.save(review);
     }
@@ -74,20 +74,20 @@ public class ReviewServiceImpl implements ReviewService {
     public void updateReview(Long reviewId, ReviewUpdateRequest reviewUpdateRequest, List<MultipartFile> files) {
         Review review = findWithImageByReviewId(reviewId);
 
-        List<String> deleteKeys = review.update(reviewUpdateRequest.toCommand());
+        List<String> deleteKeys = review.update(reviewUpdateRequest);
         fileService.deleteFiles(deleteKeys);
 
-        review.addReviewImage(saveReviewImage(review, files));
+        review.addImage(saveReviewImage(review, files));
     }
 
     @Transactional
     public void updateReview(Long reviewId, String userId, ReviewUpdateRequest reviewUpdateRequest, List<MultipartFile> files) {
         Review review = findWithImageByReviewIdAndUserId(reviewId, userId);
 
-        List<String> deleteKeys = review.update(reviewUpdateRequest.toCommand());
+        List<String> deleteKeys = review.update(reviewUpdateRequest);
         fileService.deleteFiles(deleteKeys);
 
-        review.addReviewImage(saveReviewImage(review, files));
+        review.addImage(saveReviewImage(review, files));
     }
 
     @Transactional
@@ -121,7 +121,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<Image> reviewImages = new ArrayList<>(images.size());
 
         for (String image : images) {
-            Image reviewImage = new Image(0, image, review);
+            Image reviewImage = new Image(review, image);
             reviewImages.add(reviewImage);
         }
 

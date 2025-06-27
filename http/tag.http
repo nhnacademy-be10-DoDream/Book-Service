@@ -1,10 +1,10 @@
 ### 태그 생성
-POST http://localhost:8080/tags?newTagName=신간
+POST http://localhost:8080/tags?newTagName=신간s
 Content-Type: application/json
 
 
 ### 전체 태그 조회
-GET http://localhost:8080/tags
+GET http://localhost:8080/tags?page=1&size=5
 Accept: application/json
 
 ### 태그 수정

@@ -1,12 +1,13 @@
 package shop.dodream.book.controller;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.BookWithTagResponse;
+import shop.dodream.book.dto.BookWithTagsResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookTagService;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class BookTagController {
     }
 
     @GetMapping("/tag/{tag-id}/books")
-    public List<BookListResponse> getBooksByTag(@PathVariable("tag-id") Long tagId) {
+    public List<BookListResponseRecord> getBooksByTag(@PathVariable("tag-id") Long tagId) {
         return bookTagService.getBooksByTagId(tagId);
     }
 
