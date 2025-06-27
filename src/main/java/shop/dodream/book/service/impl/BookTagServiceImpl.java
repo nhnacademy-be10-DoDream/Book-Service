@@ -51,7 +51,7 @@ public class BookTagServiceImpl implements BookTagService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        List<Tag> tags = tagRepository.findAllByBookId(bookId);
+        List<Tag> tags = bookTagRepository.findAllByBookId(bookId);
 
         List<TagResponse> tagResponses = tags.stream()
                 .map(TagResponse::new)
@@ -73,8 +73,9 @@ public class BookTagServiceImpl implements BookTagService {
     public BookWithTagResponse updateTagByBook(Long bookId, Long tagId, Long newTagId){
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagNotFoundException(tagId));
+        if (!tagRepository.existsById(tagId)) {
+            throw new TagNotFoundException(tagId);
+        }
         Tag newTag = tagRepository.findById(newTagId)
                 .orElseThrow(() -> new TagNotFoundException(newTagId));
 
@@ -96,14 +97,15 @@ public class BookTagServiceImpl implements BookTagService {
 
     @Override @Transactional
     public void deleteTagByBook(Long bookId, Long tagId){
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(bookId));
-        Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new TagNotFoundException(tagId));
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotFoundException(bookId);
+        }
+        if (!tagRepository.existsById(tagId)) {
+            throw new TagNotFoundException(tagId);
+        }
 
-        BookTagId bookTagId = new BookTagId(bookId, tagId);
-        BookTag bookTag = bookTagRepository.findById(bookTagId)
-                .orElseThrow(()-> new BookTagNotFoundException(bookId, tagId));
+        BookTag bookTag = bookTagRepository.findById(new BookTagId(bookId, tagId))
+                .orElseThrow(() -> new BookTagNotFoundException(bookId, tagId));
         bookTagRepository.delete(bookTag);
     }
 

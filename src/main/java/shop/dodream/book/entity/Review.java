@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseTimeEntity{
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reviewId;
 
