@@ -56,12 +56,15 @@ public class BookDocument {
     @Field(type = FieldType.Long)
     private Long reviewCount;
 
+    @Field(type = FieldType.Keyword)
+    private String categoryName;
 
 
 
 
 
-    public BookDocument(Book book, ReviewStatsRecord reviewStatsRecord) {
+
+    public BookDocument(Book book) {
         this.bookId = book.getId();
         this.title = book.getTitle();
         this.description = book.getDescription();
@@ -70,9 +73,8 @@ public class BookDocument {
         this.salePrice = book.getSalePrice();
         this.publishedAt = book.getPublishedAt().toString();
         this.viewCount = book.getViewCount();
-        this.ratingAvg = Optional.ofNullable(reviewStatsRecord.ratingAvg()).orElse(0.0f);
-        this.reviewCount = reviewStatsRecord.reviewCount();
-
+        this.ratingAvg = 0.0f;
+        this.reviewCount = 0L;
     }
 
 }

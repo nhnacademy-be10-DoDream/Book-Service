@@ -72,8 +72,7 @@ public class BookServiceImpl implements BookService {
 
         Book savedBook = bookRepository.save(book);
 
-        ReviewStatsRecord reviewStatsRecord= reviewRepository.getReviewStats(savedBook.getId()).orElse(new ReviewStatsRecord(0L, 0.0f));
-        bookElasticsearchRepository.save(new BookDocument(savedBook, reviewStatsRecord));
+        bookElasticsearchRepository.save(new BookDocument(savedBook));
     }
 
 
