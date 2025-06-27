@@ -50,7 +50,7 @@ public class CategoryController {
         return categoryService.getCategoriesRelated(categoryId);
     }
 
-    // 특정 깊이 카테고리 전체 조회
+    // 특정 카테고리 연관 카테고리 전체 조회
     @GetMapping("/{depth}/depth")
     public List<CategoryResponse> getCategoriesDepth(@PathVariable Long depth) {
         return categoryService.getCategoriesDepth(depth);

@@ -35,7 +35,7 @@ public class BookCategoryController {
     }
 
     @PatchMapping("/books/{book-id}/categories/{category-id}")
-    public Long getBooksByCategoryId(@PathVariable("book-id") Long bookId,
+    public Long updateCategoryByBook(@PathVariable("book-id") Long bookId,
                                      @PathVariable("category-id") Long categoryId,
                                      @RequestParam(value = "new-category-id") Long newCategoryId) {
         return bookCategoryService.updateCategoryByBook(bookId, categoryId, newCategoryId);

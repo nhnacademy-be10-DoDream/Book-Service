@@ -27,12 +27,12 @@ public class BookTagController {
     }
 
     @GetMapping("/books/{book-id}/tags")
-    public BookWithTagsResponse getTagsByBook(@PathVariable("book-id") Long bookId) {
+    public BookWithTagsResponse getTagsByBookId(@PathVariable("book-id") Long bookId) {
         return bookTagService.getTagsByBookId(bookId);
     }
 
-    @GetMapping("/tag/{tag-id}/books")
-    public List<BookListResponseRecord> getBooksByTag(@PathVariable("tag-id") Long tagId) {
+    @GetMapping("/tags/{tag-id}/books")
+    public List<BookListResponseRecord> getBooksByTagId(@PathVariable("tag-id") Long tagId) {
         return bookTagService.getBooksByTagId(tagId);
     }
 
