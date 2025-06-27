@@ -8,14 +8,12 @@ import shop.dodream.book.dto.projection.CategoryWithParentProjection;
 import shop.dodream.book.dto.projection.QCategoryFlatProjection;
 import shop.dodream.book.entity.QCategory;
 
-
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 public class CategoryRepositoryCustomImpl implements CategoryRepositoryCustom {
     private final JPAQueryFactory queryFactory; // 실제 쿼리를 만들어 실행하는 역할
-    private final QCategory category = QCategory.category; // 테이블, 컬럼, 관계를 코드로 표현하는 역할
+    private static final QCategory category = QCategory.category; // 테이블, 컬럼, 관계를 코드로 표현하는 역할
 
     @Override
     public List<CategoryFlatProjection> findAllFlat() {
@@ -32,7 +30,6 @@ public class CategoryRepositoryCustomImpl implements CategoryRepositoryCustom {
 
     @Override
     public List<CategoryWithParentProjection> findAllByIdsWithParent(List<Long> categoryIds) {
-        QCategory category = QCategory.category;
         QCategory parent = new QCategory("parent");
 
         return queryFactory
