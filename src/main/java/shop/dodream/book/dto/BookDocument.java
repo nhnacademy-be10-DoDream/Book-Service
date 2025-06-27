@@ -1,19 +1,18 @@
 package shop.dodream.book.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
-import shop.dodream.book.dto.projection.ReviewStatsRecord;
 import shop.dodream.book.entity.Book;
-import shop.dodream.book.entity.Review;
 
-import java.time.LocalDate;
+
+import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
+
 
 
 @Data
@@ -45,7 +44,7 @@ public class BookDocument {
     private Long salePrice;
 
     @Field(type = FieldType.Date)
-    private String publishedAt;
+    private Date publishedAt;
 
     @Field(type = FieldType.Long)
     private Long viewCount;
@@ -71,8 +70,9 @@ public class BookDocument {
         this.author = book.getAuthor();
         this.publisher = book.getPublisher();
         this.salePrice = book.getSalePrice();
-        this.publishedAt = book.getPublishedAt().toString();
-        this.viewCount = book.getViewCount();
+        this.publishedAt = Date.from(
+                book.getPublishedAt().atStartOfDay(ZoneId.systemDefault()).toInstant()
+        );        this.viewCount = book.getViewCount();
         this.ratingAvg = 0.0f;
         this.reviewCount = 0L;
     }

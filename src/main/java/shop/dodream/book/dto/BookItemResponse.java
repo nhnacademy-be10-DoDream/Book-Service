@@ -19,7 +19,7 @@ public class BookItemResponse {
     private String author;
     private String publisher;
     private Long salePrice;
-    private String publishedAt;
+    private Date publishedAt;
     private Long viewCount;
     private Float ratingAvg;
     private Long reviewCount;
