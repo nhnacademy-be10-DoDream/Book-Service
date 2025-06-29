@@ -3,6 +3,9 @@ package shop.dodream.book.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
@@ -35,14 +38,8 @@ public class BookTagQuerydslRepositoryImpl implements BookTagQuerydslRepository{
     }
 
     @Override
-    public List<BookListResponseRecord> findBookListByTagId(Long tagId) {
-        return queryFactory.from(bookTag)
-                .leftJoin(bookTag.book, book)
-                .leftJoin(book.images, image).where(image.isThumbnail.eq(true))
-                .where(
-                        bookTag.tag.id.eq(tagId),
-                        book.status.ne(BookStatus.REMOVED)
-                )
+    public Page<BookListResponseRecord> findBookListByTagId(Long tagId, Pageable pageable) {
+        List<BookListResponseRecord> content = queryFactory
                 .select(new QBookListResponseRecord(
                         book.id,
                         book.title,
@@ -52,6 +49,28 @@ public class BookTagQuerydslRepositoryImpl implements BookTagQuerydslRepository{
                         book.salePrice,
                         image.uuid
                 ))
+                .from(bookTag)
+                .leftJoin(bookTag.book, book)
+                .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
+                .where(
+                        bookTag.tag.id.eq(tagId),
+                        book.status.ne(BookStatus.REMOVED)
+                )
+                .offset(pageable.getOffset()) // 페이지 시작 위치
+                .limit(pageable.getPageSize()) // 페이지 크기
                 .fetch();
+
+        Long total = queryFactory
+                .select(book.id.count())
+                .from(bookTag)
+                .leftJoin(bookTag.book, book)
+                .where(
+                        bookTag.tag.id.eq(tagId),
+                        book.status.ne(BookStatus.REMOVED)
+                )
+                .fetchOne();
+        long safeTotal = total != null ? total : 0L;
+        return new PageImpl<>(content, pageable, safeTotal);
     }
+
 }
