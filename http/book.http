@@ -23,7 +23,7 @@ Content-Type: application/json
 
 
 ### 책 정보 수정
-PATCH http://localhost:8080/admin/books/1
+PUT http://localhost:8080/admin/books/1
 Content-Type: application/json
 
 {

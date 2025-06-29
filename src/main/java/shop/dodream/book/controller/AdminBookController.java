@@ -37,7 +37,7 @@ public class AdminBookController {
         return bookService.getBookByIdForAdmin(bookId);
     }
 
-    @PatchMapping("/{book-id}")
+    @PutMapping("/{book-id}")
     public ResponseEntity<Void> updateBook(@PathVariable("book-id") Long bookId,
                                            @Validated @RequestBody BookUpdateRequest request){
         bookService.updateBook(bookId, request);

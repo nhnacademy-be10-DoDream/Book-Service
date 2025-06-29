@@ -3,7 +3,7 @@ POST http://localhost:8080/categories
 Content-Type: application/json
 
 {
-  "categoryName": "agss",
+  "categoryName": "국내도서",
   "depth": 1,
   "parentId": null
 }

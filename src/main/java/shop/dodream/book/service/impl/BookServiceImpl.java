@@ -3,12 +3,10 @@ package shop.dodream.book.service.impl;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.core.properties.NaverBookProperties;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
-import shop.dodream.book.dto.projection.ReviewStatsRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.Image;
@@ -17,13 +15,13 @@ import shop.dodream.book.infra.client.NaverBookClient;
 import shop.dodream.book.infra.dto.NaverBookResponse;
 import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
-import shop.dodream.book.repository.ReviewRepository;
+import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.service.FileService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 
 @Service
@@ -33,8 +31,8 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final NaverBookProperties properties;
     private final BookElasticsearchRepository bookElasticsearchRepository;
-    private final ReviewRepository reviewRepository;
     private final FileService fileService;
+    private final BookDocumentUpdater bookDocumentUpdater;
 
 
     @Override
@@ -147,6 +145,15 @@ public class BookServiceImpl implements BookService {
 
         updateStatusByBookCount(book);
 
+        Map<String, Object> updateMap = request.toUpdateMap();
+        if (!updateMap.isEmpty()){
+            try {
+                bookDocumentUpdater.updateBookFields(bookId, updateMap);
+            }catch (Exception e){
+                throw new RuntimeException("Elasticsearch 문서 업데이트 실패", e);
+            }
+        }
+
 
     }
 
@@ -155,6 +162,7 @@ public class BookServiceImpl implements BookService {
     public void deleteBook(Long bookId) {
         Book book = bookRepository.findById(bookId).orElseThrow(()-> new BookNotFoundException(bookId));
         book.setStatus(BookStatus.REMOVED);
+        bookElasticsearchRepository.deleteById(bookId);
 
     }
 

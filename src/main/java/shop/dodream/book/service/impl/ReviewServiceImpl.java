@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.dto.ReviewCreateRequest;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
+import shop.dodream.book.dto.projection.ReviewStatsRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.Image;
 import shop.dodream.book.entity.Review;
@@ -14,11 +15,13 @@ import shop.dodream.book.exception.BookNotFoundException;
 import shop.dodream.book.exception.ReviewNotFoundException;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.ReviewRepository;
+import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.FileService;
 import shop.dodream.book.service.ReviewService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
     private final FileService fileService;
+    private final BookDocumentUpdater bookDocumentUpdater;
 
     @Transactional
     public void createReview(Long bookId, String userId, ReviewCreateRequest reviewCreateRequest, List<MultipartFile> files) {
@@ -42,6 +46,13 @@ public class ReviewServiceImpl implements ReviewService {
         review.addImage(saveReviewImage(review, files));
 
         reviewRepository.save(review);
+
+        try {
+            bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
+        }catch (Exception e){
+            throw new RuntimeException("리뷰 생성 중 ES 반영 실패 ", e);
+        }
+
     }
 
     @Transactional(readOnly = true)
@@ -105,6 +116,7 @@ public class ReviewServiceImpl implements ReviewService {
         fileService.deleteReviewImage(imageKeys);
 
         reviewRepository.deleteByReviewIdAndUserId(reviewId, userId);
+
     }
 
     private Review findWithImageByReviewId(Long reviewId) {
