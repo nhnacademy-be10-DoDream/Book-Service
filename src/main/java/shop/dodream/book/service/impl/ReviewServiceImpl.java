@@ -23,7 +23,6 @@ import shop.dodream.book.service.ReviewService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,15 +49,10 @@ public class ReviewServiceImpl implements ReviewService {
         try {
             review.addImages(createReviewImages(review, uploadedImageKeys));
             reviewRepository.save(review);
+            bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
         }catch (Exception e) {
             eventPublisher.publishEvent(new ImageDeleteEvent(uploadedImageKeys));
             throw e;
-        }
-
-        try {
-            bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
-        }catch (Exception e){
-            throw new RuntimeException("리뷰 생성 중 ES 반영 실패 ", e);
         }
 
     }
@@ -114,7 +108,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     public void deleteReview(Long reviewId) {
-        List<String> deleteKeys = reviewRepository.getImageUrlsByReviewId(reviewId);
+        Review review = findWithImageByReviewId(reviewId);
+
+        List<String> deleteKeys = review.getImages().stream()
+                .map(Image::getUuid)
+                .toList();
 
         eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
 
@@ -123,7 +121,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     public void deleteReview(Long reviewId, String userId) {
-        List<String> deleteKeys = reviewRepository.getImageUrlsByReviewIdAndUserId(reviewId, userId);
+        Review review = findWithImageByReviewIdAndUserId(reviewId, userId);
+
+        List<String> deleteKeys = review.getImages().stream()
+                .map(Image::getUuid)
+                .toList();
 
         eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
 
@@ -150,5 +152,4 @@ public class ReviewServiceImpl implements ReviewService {
 
         return reviewImages;
     }
-
 }
