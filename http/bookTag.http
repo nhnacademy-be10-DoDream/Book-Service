@@ -4,17 +4,17 @@ Content-Type: application/json
 
 
 ### 해당 도서의 태그 조회
-GET http://localhost:8080/books/1/tags
+GET http://localhost:8080/public/books/1/tags
 Content-Type: application/json
 
 
 ### 해당 태그의 도서 조회
-GET http://localhost:8080/tags/1/books
+GET http://localhost:8080/public/tags/1/books
 Content-Type: application/json
 
 
 ### 해당 도서의 태그 수정
-PATCH http://localhost:8080/books/1/tags/1?newTagId=3
+PUT http://localhost:8080/books/1/tags/1?newTagId=3
 Content-Type: application/json
 
 

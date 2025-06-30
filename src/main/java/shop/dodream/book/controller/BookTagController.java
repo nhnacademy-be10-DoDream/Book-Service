@@ -27,12 +27,12 @@ public class BookTagController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/books/{book-id}/tags")
+    @GetMapping("/public/books/{book-id}/tags")
     public BookWithTagsResponse getTagsByBookId(@PathVariable("book-id") Long bookId) {
         return bookTagService.getTagsByBookId(bookId);
     }
 
-    @GetMapping("/tags/{tag-id}/books")
+    @GetMapping("/public/tags/{tag-id}/books")
     public Page<BookListResponseRecord> getBooksByTagId(@PathVariable("tag-id") Long tagId,
                                                         @PageableDefault(size = 10) Pageable pageable) {
         return bookTagService.getBooksByTagId(tagId, pageable);

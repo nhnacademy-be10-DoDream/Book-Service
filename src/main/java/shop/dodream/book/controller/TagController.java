@@ -11,32 +11,31 @@ import shop.dodream.book.service.TagService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tags")
 public class TagController {
     private final TagService tagService;
 
     // 태그 등록
-    @PostMapping
+    @PostMapping("/tags")
     public ResponseEntity<TagResponse> createTag(@RequestParam String newTagName) {
         TagResponse response = tagService.createTag(newTagName);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 전체 태그 조회
-    @GetMapping
+    @GetMapping("/public/tags")
     public Page<TagResponse> getTags(Pageable pageable) {
         return tagService.getTags(pageable);
     }
 
     // 태그 수정
-    @PutMapping("/{tag-id}")
+    @PutMapping("/tags/{tag-id}")
     public TagResponse updateTag(@PathVariable("tag-id") Long tagId,
                                                  @RequestParam String newTagName) {
         return tagService.updateTag(tagId, newTagName);
     }
 
     // 태그 삭제
-    @DeleteMapping("/{tag-id}")
+    @DeleteMapping("/tags/{tag-id}")
     public ResponseEntity<Void> deleteTag(@PathVariable("tag-id") Long tagId) {
         tagService.deleteTag(tagId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

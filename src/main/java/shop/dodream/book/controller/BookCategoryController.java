@@ -28,12 +28,12 @@ public class BookCategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/books/{book-id}/categories")
+    @GetMapping("/public/books/{book-id}/categories")
     public List<CategoryTreeResponse> getCategoriesByBookId(@PathVariable("book-id") Long bookId) {
         return bookCategoryService.getCategoriesByBookId(bookId);
     }
 
-    @GetMapping("/categories/{category-id}/books")
+    @GetMapping("/public/categories/{category-id}/books")
     public Page<BookListResponseRecord> getBooksByCategoryId(@PathVariable("category-id") Long categoryId,
                                                              @PageableDefault(size = 10) Pageable pageable) {
         return bookCategoryService.getBooksByCategoryId(categoryId, pageable);

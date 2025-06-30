@@ -59,7 +59,7 @@ class TagControllerTest {
         );
         Page<TagResponse> page = new PageImpl<>(tags);
         when(tagService.getTags(any(Pageable.class))).thenReturn(page);
-        mockMvc.perform(get("/tags")
+        mockMvc.perform(get("/public/tags")
                 .param("page", "0")
                 .param("size", "2")
                 .param("sort", "tagName,asc"))
