@@ -36,6 +36,7 @@ public class BookServiceImpl implements BookService {
     private final BookDocumentUpdater bookDocumentUpdater;
     private final ApplicationEventPublisher eventPublisher;
 
+
     @Override
     @Transactional
     public void registerBookByIsbn(BookRegisterRequest request) {
@@ -72,6 +73,7 @@ public class BookServiceImpl implements BookService {
             eventPublisher.publishEvent(new ImageDeleteEvent(imageUrl));
             throw e;
         }
+
 
     }
 

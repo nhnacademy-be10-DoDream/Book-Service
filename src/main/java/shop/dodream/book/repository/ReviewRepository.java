@@ -14,9 +14,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewQue
     @EntityGraph(attributePaths = "images")
     Optional<Review> findWithImageByReviewIdAndUserId(long reviewId, String userId);
 
-    @EntityGraph(attributePaths = {"images", "user"})
-    Optional<Review> findWithImageAndUserByReviewId(long reviewId);
-
     void deleteByReviewIdAndUserId(long reviewId, String userId);
-
 }

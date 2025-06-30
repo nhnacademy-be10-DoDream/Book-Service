@@ -1,9 +1,9 @@
 package shop.dodream.book.service.impl;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
@@ -32,10 +32,8 @@ public class BookSearchServiceImpl implements BookSearchService {
 
             MultiMatchQuery multiMatchQuery = new MultiMatchQuery.Builder()
                     .query(keyword)
-                    .fields("title^100", "author^50", "description^10")
+                    .fields("title^100", "author^50", "categoryNames^10", "description^5")
                     .build();
-
-            SortOptions sortOption = sortType.toSortOption();
 
             if (sortType == BookSortType.RATING) {
                 query = new Query.Builder()
@@ -54,6 +52,7 @@ public class BookSearchServiceImpl implements BookSearchService {
             }
 
 
+            SortOptions sortOption = sortType.toSortOption();
 
             SearchRequest request = new SearchRequest.Builder()
                     .index("dodream_books")

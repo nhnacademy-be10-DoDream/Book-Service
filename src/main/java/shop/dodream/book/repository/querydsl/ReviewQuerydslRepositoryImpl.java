@@ -69,25 +69,6 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
-    public List<String> getImageUrlsByReviewId(long reviewId) {
-        return queryFactory.from(image)
-                .where(image.review.reviewId.eq(reviewId))
-                .select(image.uuid)
-                .fetch();
-    }
-
-    @Override
-    public List<String> getImageUrlsByReviewIdAndUserId(long reviewId, String userId) {
-        return queryFactory.from(image)
-                .join(image.review, review)
-                .where(image.review.reviewId.eq(reviewId)
-                        .and(review.userId.eq(userId)))
-                .select(image.uuid)
-                .fetch();
-
-    }
-
-    @Override
     public List<ReviewResponseRecord> getAllBy() {
         return queryFactory.from(review)
                 .leftJoin(review.images, image)
