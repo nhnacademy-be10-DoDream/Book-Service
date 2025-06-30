@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class AladdinBookProperties {
     private String baseUrl;
     private String ttbkey;
-    private String isbn;
+    private String itemIdType;
     private String output;
     private String version;
 }

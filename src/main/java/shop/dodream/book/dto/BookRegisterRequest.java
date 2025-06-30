@@ -37,10 +37,10 @@ public class BookRegisterRequest {
 
     public Book toEntity(AladdinBookResponse aladdinBookResponse){
 
-        AladdinBookResponse.Item bookItem = aladdinBookResponse.getItems().getFirst();
+        AladdinBookResponse.Item bookItem = aladdinBookResponse.getItem().getFirst();
 
-        long regularPrice = aladdinBookResponse.getItems().getFirst().getPriceStandard();
-        long salePrice = aladdinBookResponse.getItems().getFirst().getPriceSales();
+        long regularPrice = aladdinBookResponse.getItem().getFirst().getPriceStandard();
+        long salePrice = aladdinBookResponse.getItem().getFirst().getPriceSales();
 
         // 할인율 계산
         long discountRate = 0L;
@@ -53,7 +53,7 @@ public class BookRegisterRequest {
                 bookItem.getDescription(),
                 bookItem.getAuthor(),
                 bookItem.getPublisher(),
-                bookItem.getPubdate(),
+                bookItem.getPubDate(),
                 isbn,
                 regularPrice,
                 BookStatus.SELL,

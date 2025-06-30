@@ -46,7 +46,7 @@ public class BookServiceImpl implements BookService {
 
         AladdinBookResponse aladdinBookResponse = aladdinBookClient.searchBook(
                 properties.getTtbkey(),
-                properties.getIsbn(),
+                properties.getItemIdType(),
                 request.getIsbn(),
                 properties.getOutput(),
                 properties.getVersion()
@@ -56,9 +56,9 @@ public class BookServiceImpl implements BookService {
             throw new AladdinBookNotFoundException(request.getIsbn());
         }
 
-        AladdinBookResponse.Item item = aladdinBookResponse.getItems().getFirst();
+        AladdinBookResponse.Item item = aladdinBookResponse.getItem().getFirst();
 
-        String imageUrl = fileService.uploadBookImageFromUrl(item.getImage());
+        String imageUrl = fileService.uploadBookImageFromUrl(item.getCover());
         try {
             Book book = request.toEntity(aladdinBookResponse);
 
@@ -70,7 +70,7 @@ public class BookServiceImpl implements BookService {
 
             bookElasticsearchRepository.save(new BookDocument(savedBook));
         }catch (Exception e) {
-            eventPublisher.publishEvent(new ImageDeleteEvent(imageUrl));
+            eventPublisher.publishEvent(new ImageDeleteEvent(List.of(imageUrl)));
             throw e;
         }
 

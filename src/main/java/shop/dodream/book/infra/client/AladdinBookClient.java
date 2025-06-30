@@ -14,8 +14,8 @@ public interface AladdinBookClient {
     @GetMapping(value = "/ItemLookUp.aspx?", consumes = MediaType.APPLICATION_JSON_VALUE)
     AladdinBookResponse searchBook(
             @RequestParam("ttbkey") String ttbkey,
-            @RequestParam("itemIdType") String isbn,
-            @RequestParam("ItemId") String itemId,
+            @RequestParam("itemIdType") String itemIdType,
+            @RequestParam("itemId") String isbn,
             @RequestParam("output") String output,
             @RequestParam("Version") String version
     );

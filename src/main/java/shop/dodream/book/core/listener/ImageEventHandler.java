@@ -26,7 +26,7 @@ public class ImageEventHandler {
             maxAttempts = 5,
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
-    public void handleImageDeleted(BookImageDeleteEvent event) {
+    public void handleBookImageDeleted(BookImageDeleteEvent event) {
         try {
             fileService.deleteReviewImage(event.deleteKeys());
             log.info("파일 삭제 완료 - (bookId: {}, 기존 파일 삭제: {} 개)", event.bookId(), event.deleteKeys().size());

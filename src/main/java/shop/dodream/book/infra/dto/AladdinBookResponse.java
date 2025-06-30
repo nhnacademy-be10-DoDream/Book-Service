@@ -13,7 +13,7 @@ import java.util.List;
 public class AladdinBookResponse {
     private Integer errorCode;
     private String errorMessage;
-    private List<Item> items;
+    private List<Item> item;
 
 
     @Getter
@@ -25,7 +25,7 @@ public class AladdinBookResponse {
         private String publisher;
 //        private String isbn13;
         @JsonFormat(pattern = "yyyyMMdd")
-        private LocalDate pubdate;
+        private LocalDate pubDate;
         private Long priceStandard; // 정가
         private Long priceSales; // 판매가
         private String cover; //이미지 url
