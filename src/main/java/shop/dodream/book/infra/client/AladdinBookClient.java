@@ -15,7 +15,7 @@ public interface AladdinBookClient {
     AladdinBookResponse searchBook(
             @RequestParam("ttbkey") String ttbkey,
             @RequestParam("itemIdType") String itemIdType,
-            @RequestParam("itemId") String isbn,
+            @RequestParam("ItemId") String isbn,
             @RequestParam("output") String output,
             @RequestParam("Version") String version
     );
