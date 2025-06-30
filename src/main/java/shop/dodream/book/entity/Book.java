@@ -9,10 +9,7 @@ import lombok.Setter;
 import shop.dodream.book.dto.BookUpdateRequest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Entity
 @AllArgsConstructor
@@ -21,7 +18,6 @@ import java.util.Optional;
 @Table(name = "Book", indexes = {
         @Index(name = "idx_sale_price", columnList = "salePrice"),
         @Index(name = "idx_created_at", columnList = "createdAt"),
-        @Index(name = "idx_search_count", columnList = "searchCount"),
         @Index(name = "idx_view_count", columnList = "viewCount")
 })
 public class Book extends BaseTimeEntity{
@@ -140,4 +136,7 @@ public class Book extends BaseTimeEntity{
     public void addImages(List<Image> reviewImages) {
         images.addAll(reviewImages);
     }
+
+
+
 }

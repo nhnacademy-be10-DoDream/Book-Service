@@ -2,7 +2,6 @@ package shop.dodream.book.repository.querydsl;
 
 
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
-import shop.dodream.book.dto.projection.ReviewStatsRecord;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,11 +9,7 @@ import java.util.Optional;
 public interface ReviewQuerydslRepository {
     Optional<ReviewResponseRecord> getByReviewId(long reviewId);
     Optional<ReviewResponseRecord> getByReviewIdAndUserId(long reviewId, String userId);
-    List<String> getImageUrlsByReviewId(long reviewId);
-    List<String> getImageUrlsByReviewIdAndUserId(long reviewId, String userId);
     List<ReviewResponseRecord> getAllBy();
     List<ReviewResponseRecord> getAllByUserId(String userId);
     List<ReviewResponseRecord> getAllByBookId(long bookId);
-    Optional<ReviewStatsRecord> getReviewStats(long bookId);
-
 }

@@ -2,13 +2,12 @@ package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import shop.dodream.book.core.properties.MinIOProperties;
 import shop.dodream.book.service.FileService;
 import shop.dodream.book.util.MinioUploader;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -17,18 +16,13 @@ import java.util.function.Supplier;
 @Service
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
-    @Value("${minio.bucket}")
-    private String bucketName;
-    @Value("${minio.review-prefix}")
-    private String bookPrefix;
-    @Value("${minio.book-prefix}")
-    private String reviewPrefix;
+    private final MinIOProperties ioProperties;
 
     private final MinioUploader minioUploader;
 
-    public String uploadBookImageFromUrl(String imageUrl) throws IOException {
+    public String uploadBookImageFromUrl(String imageUrl) {
         String keyPrefix = getBookPrefix();
-        return minioUploader.uploadFromUrl(bucketName, keyPrefix, imageUrl);
+        return minioUploader.uploadFromUrl(ioProperties.getBucket(), keyPrefix, imageUrl);
     }
 
     private List<String> uploadFiles(List<MultipartFile> files, Supplier<String> prefixGenerator) {
@@ -36,7 +30,7 @@ public class FileServiceImpl implements FileService {
             return List.of();
         }
         String keyPrefix = prefixGenerator.get();
-        return minioUploader.uploadFiles(bucketName, keyPrefix, files);
+        return minioUploader.uploadFiles(ioProperties.getBucket(), keyPrefix, files);
     }
 
     private void deleteFiles(List<String> imgUrls, Supplier<String> prefixGenerator) {
@@ -44,7 +38,7 @@ public class FileServiceImpl implements FileService {
             return;
         }
         String keyPrefix = prefixGenerator.get();
-        minioUploader.deleteFiles(bucketName, keyPrefix, imgUrls);
+        minioUploader.deleteFiles(ioProperties.getBucket(), keyPrefix, imgUrls);
     }
 
     public List<String> uploadBookImageFromFiles(List<MultipartFile> files) {
@@ -72,10 +66,10 @@ public class FileServiceImpl implements FileService {
     }
 
     private String getBookPrefix() {
-        return String.format("/%s/", bookPrefix);
+        return String.format("/%s/", ioProperties.getBookPrefix());
     }
 
     private String getReviewPrefix() {
-        return String.format("/%s/", reviewPrefix);
+        return String.format("/%s/", ioProperties.getReviewPrefix());
     }
 }

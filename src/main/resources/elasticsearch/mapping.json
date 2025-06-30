@@ -23,7 +23,7 @@
     },
     "publishedAt": {
       "type": "date",
-      "format": "yyyy-MM-dd"
+      "format": "strict_date_optional_time||epoch_millis"
     },
     "viewCount": {
       "type": "long"
@@ -33,6 +33,9 @@
     },
     "reviewCount": {
       "type": "long"
+    },
+    "categoryNames": {
+      "type": "keyword"
     }
   }
 }
