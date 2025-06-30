@@ -152,6 +152,8 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         bookCategoryRepository.delete(bookCategory);
         bookCategoryRepository.save(new BookCategory(book, category));
 
+        syncCategoriesToElasticsearch(bookId);
+
         return newCategoryId;
     }
 
@@ -165,6 +167,9 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             throw new BookCategoriesNotFoundException(bookId, categoryIds.getIds());
         }
         bookCategoryRepository.deleteByBookIdAndCategoryIds(bookId, categoryIds.getIds());
+
+        syncCategoriesToElasticsearch(bookId);
+
     }
 
     private CategoryTreeResponse copyNode(CategoryTreeResponse response) {
@@ -268,5 +273,21 @@ public class BookCategoryServiceImpl implements BookCategoryService {
                     Category categoryRef = entityManager.getReference(Category.class, dto.id());
                     return new BookCategory(new BookCategoryId(book.getId(), dto.id()), book, categoryRef);
                 }).toList();
+    }
+
+    private void syncCategoriesToElasticsearch(Long bookId) {
+        Set<Long> remainingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId);
+
+        List<String> remainingCategoryNames = remainingCategoryIds.stream()
+                .map(id -> categoryRepository.findById(id)
+                        .orElseThrow(() -> new CategoryNotFoundException(id))
+                        .getCategoryName())
+                .toList();
+
+        BookDocument document = bookElasticsearchRepository.findById(bookId)
+                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
+
+        document.setCategoryNames(remainingCategoryNames);
+        bookElasticsearchRepository.save(document);
     }
 }

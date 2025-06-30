@@ -3,7 +3,7 @@ POST http://localhost:8080/categories
 Content-Type: application/json
 
 {
-  "categoryName": "3",
+  "categoryName": "코드드",
   "depth": 1,
   "parentId": null
 }
