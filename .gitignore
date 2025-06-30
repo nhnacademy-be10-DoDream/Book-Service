@@ -36,6 +36,6 @@ build/
 src/main/resources/application-dev.yml
 src/main/resources/snippet-minio-dev.yml
 src/main/resources/snippet-mysql-dev.yml
-src/main/resources/snippet-naver-dev.yml
+src/main/resources/snippet-aladdin-dev.yml
 src/main/resources/snippet-elasticsearch-dev.yml
 src/main/resources/snippet-jpa-logging-dev.yml

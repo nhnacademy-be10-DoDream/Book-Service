@@ -35,6 +35,8 @@ public class BookSearchServiceImpl implements BookSearchService {
                     .fields("title^100", "author^50", "description^10")
                     .build();
 
+            SortOptions sortOption = sortType.toSortOption();
+
             if (sortType == BookSortType.RATING) {
                 query = new Query.Builder()
                         .bool(b -> b
@@ -52,7 +54,6 @@ public class BookSearchServiceImpl implements BookSearchService {
             }
 
 
-            SortOptions sortOption = sortType.toSortOption();
 
             SearchRequest request = new SearchRequest.Builder()
                     .index("dodream_books")

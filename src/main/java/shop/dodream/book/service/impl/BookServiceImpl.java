@@ -1,9 +1,11 @@
 package shop.dodream.book.service.impl;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import shop.dodream.book.core.properties.NaverBookProperties;
+import shop.dodream.book.core.event.ImageDeleteEvent;
+import shop.dodream.book.core.properties.AladdinBookProperties;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
@@ -11,15 +13,14 @@ import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.Image;
 import shop.dodream.book.exception.*;
-import shop.dodream.book.infra.client.NaverBookClient;
-import shop.dodream.book.infra.dto.NaverBookResponse;
+import shop.dodream.book.infra.client.AladdinBookClient;
+import shop.dodream.book.infra.dto.AladdinBookResponse;
 import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.service.FileService;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,13 +28,13 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-    private final NaverBookClient naverBookClient;
+    private final AladdinBookClient aladdinBookClient;
     private final BookRepository bookRepository;
-    private final NaverBookProperties properties;
+    private final AladdinBookProperties properties;
     private final BookElasticsearchRepository bookElasticsearchRepository;
     private final FileService fileService;
     private final BookDocumentUpdater bookDocumentUpdater;
-
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -42,37 +43,39 @@ public class BookServiceImpl implements BookService {
             throw new DuplicateIsbnException(request.getIsbn());
         }
 
-        NaverBookResponse naverBookResponse = naverBookClient.searchBook(
-                properties.getClientId(),
-                properties.getClientSecret(),
-                request.getIsbn()
+        AladdinBookResponse aladdinBookResponse = aladdinBookClient.searchBook(
+                properties.getTtbkey(),
+                properties.getIsbn(),
+                request.getIsbn(),
+                properties.getOutput(),
+                properties.getVersion()
         );
 
-        List<NaverBookResponse.Item> items = naverBookResponse.getItems();
-        if (items == null || items.isEmpty()){
-            throw new NaverBookNotFoundException(request.getIsbn());
+        if (aladdinBookResponse.getErrorCode() != null){
+            throw new AladdinBookNotFoundException(request.getIsbn());
         }
 
-        NaverBookResponse.Item item = items.getFirst();
+        AladdinBookResponse.Item item = aladdinBookResponse.getItems().getFirst();
 
-        String imageUrl;
+        String imageUrl = fileService.uploadBookImageFromUrl(item.getImage());
         try {
-            imageUrl = fileService.uploadBookImageFromUrl(item.getImage());
-        } catch (IOException e) {
-            throw new MinioImageUploadException();
+            Book book = request.toEntity(aladdinBookResponse);
+
+            Image bookImage = new Image(book, imageUrl, true);
+            book.addImages(List.of(bookImage));
+
+
+            Book savedBook = bookRepository.save(book);
+
+            bookElasticsearchRepository.save(new BookDocument(savedBook));
+        }catch (Exception e) {
+            eventPublisher.publishEvent(new ImageDeleteEvent(imageUrl));
+            throw e;
         }
-
-        Book book = item.toPartialEntity();
-        Image bookImage = new Image(book, imageUrl, true);
-        book.addImages(List.of(bookImage));
-
-        request.applyTo(book);
-
-        Book savedBook = bookRepository.save(book);
-
-        bookElasticsearchRepository.save(new BookDocument(savedBook));
 
     }
+
+
 
 
     @Override

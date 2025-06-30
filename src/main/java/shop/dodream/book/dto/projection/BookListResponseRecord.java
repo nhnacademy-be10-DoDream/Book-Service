@@ -9,6 +9,8 @@ public record BookListResponseRecord(
         String isbn,
         Long regularPrice,
         Long salePrice,
+
+        //TODO List 로 바꾸기
         String bookUrl
 
 ) {

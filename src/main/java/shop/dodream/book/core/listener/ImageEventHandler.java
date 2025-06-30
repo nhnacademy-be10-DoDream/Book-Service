@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import shop.dodream.book.core.event.BookImageDeleteEvent;
 import shop.dodream.book.core.event.ReviewImageDeleteEvent;
 import shop.dodream.book.service.FileService;
 
@@ -24,6 +25,21 @@ public class ImageEventHandler {
             maxAttempts = 5,
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
+    public void handleImageDeleted(BookImageDeleteEvent event) {
+        try {
+            fileService.deleteReviewImage(event.deleteKeys());
+            log.info("파일 삭제 완료 - (bookId: {}, 기존 파일 삭제: {} 개)", event.bookId(), event.deleteKeys().size());
+        } catch (Exception e) {
+            log.error("파일 삭제 실패 - (bookId: {}, keys: {})", event.bookId(), event.deleteKeys(), e);
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Retryable(
+            retryFor = {RuntimeException.class, IOException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 1000, multiplier = 2)
+    )
     public void handleImageDeleted(ReviewImageDeleteEvent event) {
         try {
             fileService.deleteReviewImage(event.deleteKeys());
@@ -32,4 +48,6 @@ public class ImageEventHandler {
             log.error("파일 삭제 실패 - (reviewId: {}, keys: {})", event.reviewId(), event.deleteKeys(), e);
         }
     }
+
+
 }

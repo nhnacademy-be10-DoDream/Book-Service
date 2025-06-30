@@ -50,16 +50,13 @@ public class ReviewServiceImpl implements ReviewService {
         try {
             review.addImages(createReviewImages(review, uploadedImageKeys));
             reviewRepository.save(review);
+            bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
         }catch (Exception e) {
             eventPublisher.publishEvent(new ImageDeleteEvent(uploadedImageKeys));
             throw e;
         }
 
-        try {
-            bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
-        }catch (Exception e){
-            throw new RuntimeException("리뷰 생성 중 ES 반영 실패 ", e);
-        }
+
 
     }
 
