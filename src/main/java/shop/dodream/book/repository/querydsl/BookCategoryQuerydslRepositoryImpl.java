@@ -3,17 +3,22 @@ package shop.dodream.book.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.QBookListResponseRecord;
-
 import shop.dodream.book.entity.BookCategory;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.QBookCategory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static shop.dodream.book.entity.QBook.book;
 import static shop.dodream.book.entity.QBookCategory.bookCategory;
@@ -26,14 +31,8 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<BookListResponseRecord> findBookListByCategoryId(Long categoryId) {
-        return queryFactory.from(bookCategory)
-                .leftJoin(bookCategory.book, book)
-                .leftJoin(book.images, image).where(image.isThumbnail.eq(true))
-                .where(
-                        bookCategory.category.id.eq(categoryId),
-                        book.status.ne(BookStatus.REMOVED)
-                )
+    public Page<BookListResponseRecord> findBookListByCategoryId(Long categoryId, Pageable pageable) {
+        List<BookListResponseRecord> content = queryFactory
                 .select(new QBookListResponseRecord(
                         book.id,
                         book.title,
@@ -43,7 +42,30 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
                         book.salePrice,
                         image.uuid
                 ))
+                .from(bookCategory)
+                .leftJoin(bookCategory.book, book)
+                .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
+                .where(
+                        bookCategory.category.id.eq(categoryId),
+                        book.status.ne(BookStatus.REMOVED)
+                )
+                .offset(pageable.getOffset()) // 페이징 시작 위치
+                .limit(pageable.getPageSize()) // 페이지 크기
                 .fetch();
+
+        Long total = queryFactory
+                .select(book.count())
+                .from(bookCategory)
+                .leftJoin(bookCategory.book, book)
+                .where(
+                        bookCategory.category.id.eq(categoryId),
+                        book.status.ne(BookStatus.REMOVED)
+                )
+                .fetchOne();
+
+        long safeTotal = total != null ? total : 0L;
+
+        return new PageImpl<>(content, pageable, safeTotal);
     }
 
     @Override

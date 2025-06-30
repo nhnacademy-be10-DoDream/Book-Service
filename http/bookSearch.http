@@ -2,8 +2,7 @@
 POST http://localhost:8080/books/reindex
 
 ### 검색
-GET http://localhost:8080/books/search?keyword=난중
-
+GET http://localhost:8080/books/search?keyword=귀멸
 ###
 
 # curl "http://localhost:9200/books/_search?pretty"

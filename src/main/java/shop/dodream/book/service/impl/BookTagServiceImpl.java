@@ -1,6 +1,8 @@
 package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.BookWithTagResponse;
@@ -61,12 +63,11 @@ public class BookTagServiceImpl implements BookTagService {
     }
 
     @Override @Transactional(readOnly = true)
-    public List<BookListResponseRecord> getBooksByTagId(Long tagId){
+    public Page<BookListResponseRecord> getBooksByTagId(Long tagId, Pageable pageable){
         if (!tagRepository.existsById(tagId)) {
             throw new TagNotFoundException(tagId);
         }
-
-        return bookTagRepository.findBookListByTagId(tagId);
+        return bookTagRepository.findBookListByTagId(tagId, pageable);
     }
 
     @Override @Transactional

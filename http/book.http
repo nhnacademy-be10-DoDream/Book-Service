@@ -3,7 +3,7 @@ POST http://localhost:8080/admin/books
 Content-Type: application/json
 
 {
-  "isbn": "8809943923627",
+  "isbn": "9791197378270",
   "description" : "직접 설명을 등록해야함...",
   "discountRate": 0
 }
@@ -23,7 +23,7 @@ Content-Type: application/json
 
 
 ### 책 정보 수정
-PATCH http://localhost:8080/admin/books/1
+PUT http://localhost:8080/admin/books/1
 Content-Type: application/json
 
 {

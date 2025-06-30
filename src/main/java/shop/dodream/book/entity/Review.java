@@ -5,10 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -54,19 +51,24 @@ public class Review extends BaseTimeEntity{
         this.rating = request.getRating();
 
         if (Objects.nonNull(request.getImages())) {
-            Set<String> existImages = images.stream()
-                    .map(Image::getUuid)
-                    .collect(Collectors.toSet());
+            Set<String> requestImages = new HashSet<>(request.getImages());
 
-            Set<String> deletedImages = existImages.stream()
-                    .filter(img -> !request.getImages().contains(img))
-                    .collect(Collectors.toSet());
+            Set<String> deletedImages = images.stream()
+                    .map(Image::getUuid).collect(Collectors.toSet());
+            deletedImages.removeAll(requestImages);
 
-           images.removeIf(img -> deletedImages.contains(img.getUuid()));
+            images.removeIf(img -> deletedImages.contains(img.getUuid()));
 
             return new ArrayList<>(deletedImages);
         }
-        return List.of();
+
+        List<String> allImages = images.stream()
+                .map(Image::getUuid)
+                .toList();
+
+        images.clear();
+
+        return allImages;
     }
 
 
@@ -78,7 +80,7 @@ public class Review extends BaseTimeEntity{
         this.images = new ArrayList<>();
     }
 
-    public void addImage(List<Image> reviewImages) {
+    public void addImages(List<Image> reviewImages) {
         images.addAll(reviewImages);
     }
 }

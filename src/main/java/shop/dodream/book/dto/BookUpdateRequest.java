@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -27,5 +29,17 @@ public class BookUpdateRequest {
 
     @Min(value = 0, message = "수량은 0이상이어야합니다.")
     private Long bookCount;
+
+    public Map<String, Object> toUpdateMap(){
+        Map<String, Object> map = new HashMap<>();
+        if (title != null) map.put("title", title);
+        if (description != null) map.put("description", description);
+        if (author != null) map.put("author", author);
+        if (publisher != null) map.put("publisher", publisher);
+        if (salePrice != null) map.put("salePrice", salePrice);
+        if (publishedAt != null) map.put("publishedAt", publishedAt);
+
+        return map;
+    }
 
 }

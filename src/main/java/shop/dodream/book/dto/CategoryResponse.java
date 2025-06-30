@@ -1,13 +1,9 @@
 package shop.dodream.book.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.entity.Category;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor

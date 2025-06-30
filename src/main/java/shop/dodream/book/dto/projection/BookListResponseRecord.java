@@ -13,5 +13,14 @@ public record BookListResponseRecord(
 
 ) {
     @QueryProjection
-    public BookListResponseRecord {}
+    public BookListResponseRecord(Long bookId, String title, String author, String isbn,
+                                  Long regularPrice, Long salePrice, String bookUrl) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.regularPrice = regularPrice;
+        this.salePrice = salePrice;
+        this.bookUrl = bookUrl;
+    }
 }

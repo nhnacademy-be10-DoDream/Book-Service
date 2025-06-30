@@ -2,7 +2,6 @@ package shop.dodream.book.entity;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertTrue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class Category {
     @Column(name = "category_id") @Getter
     private Long id;
 
-    @Column(nullable = false) @Setter
+    @Column(nullable = false, unique = true) @Setter
     private String categoryName;
 
     @Column(nullable = false) @Setter

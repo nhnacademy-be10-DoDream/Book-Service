@@ -8,7 +8,6 @@ import shop.dodream.book.entity.Category;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -21,7 +20,7 @@ public class CategoryTreeResponse extends CategoryResponse {
         super(category);
         this.children = category.getChildren().stream()
                 .map(CategoryTreeResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
     public CategoryTreeResponse(Long categoryId, String categoryName, Long depth, Long parentId) {
         super(categoryId, categoryName, depth, parentId);

@@ -1,9 +1,12 @@
 package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import shop.dodream.book.core.event.ImageDeleteEvent;
+import shop.dodream.book.core.event.ReviewImageDeleteEvent;
 import shop.dodream.book.dto.ReviewCreateRequest;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
@@ -14,18 +17,22 @@ import shop.dodream.book.exception.BookNotFoundException;
 import shop.dodream.book.exception.ReviewNotFoundException;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.ReviewRepository;
+import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.FileService;
 import shop.dodream.book.service.ReviewService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
+    private final ApplicationEventPublisher eventPublisher;
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
     private final FileService fileService;
+    private final BookDocumentUpdater bookDocumentUpdater;
 
     @Transactional
     public void createReview(Long bookId, String userId, ReviewCreateRequest reviewCreateRequest, List<MultipartFile> files) {
@@ -36,12 +43,24 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         Book book = bookRepository.getReferenceById(bookId);
-
         Review review = reviewCreateRequest.toEntity(book, userId);
 
-        review.addImage(saveReviewImage(review, files));
+        List<String> uploadedImageKeys = fileService.uploadReviewImageFromFiles(files);
 
-        reviewRepository.save(review);
+        try {
+            review.addImages(createReviewImages(review, uploadedImageKeys));
+            reviewRepository.save(review);
+        }catch (Exception e) {
+            eventPublisher.publishEvent(new ImageDeleteEvent(uploadedImageKeys));
+            throw e;
+        }
+
+        try {
+            bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
+        }catch (Exception e){
+            throw new RuntimeException("리뷰 생성 중 ES 반영 실패 ", e);
+        }
+
     }
 
     @Transactional(readOnly = true)
@@ -74,35 +93,39 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void updateReview(Long reviewId, ReviewUpdateRequest reviewUpdateRequest, List<MultipartFile> files) {
         Review review = findWithImageByReviewId(reviewId);
+        List<String> uploadedKeys = fileService.uploadReviewImageFromFiles(files);
 
         List<String> deleteKeys = review.update(reviewUpdateRequest);
-        fileService.deleteReviewImage(deleteKeys);
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
 
-        review.addImage(saveReviewImage(review, files));
+        review.addImages(createReviewImages(review, uploadedKeys));
     }
 
     @Transactional
     public void updateReview(Long reviewId, String userId, ReviewUpdateRequest reviewUpdateRequest, List<MultipartFile> files) {
         Review review = findWithImageByReviewIdAndUserId(reviewId, userId);
+        List<String> uploadedKeys = fileService.uploadReviewImageFromFiles(files);
 
         List<String> deleteKeys = review.update(reviewUpdateRequest);
-        fileService.deleteReviewImage(deleteKeys);
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
 
-        review.addImage(saveReviewImage(review, files));
+        review.addImages(createReviewImages(review, uploadedKeys));
     }
 
     @Transactional
     public void deleteReview(Long reviewId) {
-        List<String> imageKeys = reviewRepository.getImageUrlsByReviewId(reviewId);
-        fileService.deleteReviewImage(imageKeys);
+        List<String> deleteKeys = reviewRepository.getImageUrlsByReviewId(reviewId);
+
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
 
         reviewRepository.deleteById(reviewId);
     }
 
     @Transactional
     public void deleteReview(Long reviewId, String userId) {
-        List<String> imageKeys = reviewRepository.getImageUrlsByReviewIdAndUserId(reviewId, userId);
-        fileService.deleteReviewImage(imageKeys);
+        List<String> deleteKeys = reviewRepository.getImageUrlsByReviewIdAndUserId(reviewId, userId);
+
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
 
         reviewRepository.deleteByReviewIdAndUserId(reviewId, userId);
     }
@@ -117,12 +140,11 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(()-> new ReviewNotFoundException(reviewId));
     }
 
-    private List<Image> saveReviewImage(Review review, List<MultipartFile> files) {
-        List<String> images = fileService.uploadReviewImageFromFiles(files);
-        List<Image> reviewImages = new ArrayList<>(images.size());
+    private List<Image> createReviewImages(Review review, List<String> imageUrls) {
+        List<Image> reviewImages = new ArrayList<>(imageUrls.size());
 
-        for (String image : images) {
-            Image reviewImage = new Image(review, image);
+        for (String imageUrl : imageUrls) {
+            Image reviewImage = new Image(review, imageUrl);
             reviewImages.add(reviewImage);
         }
 

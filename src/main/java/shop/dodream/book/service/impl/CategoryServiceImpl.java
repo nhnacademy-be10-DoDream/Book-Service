@@ -8,17 +8,13 @@ import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.entity.Category;
-import shop.dodream.book.exception.CategoryDepthNotFoundException;
-import shop.dodream.book.exception.CategoryNotDeleteWithChildren;
-import shop.dodream.book.exception.CategoryNotFoundException;
-import shop.dodream.book.exception.InvalidParentCategoryException;
+import shop.dodream.book.exception.*;
 import shop.dodream.book.repository.BookCategoryRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.CategoryService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,19 +25,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {
-        // 관리자만 가능하게 할지????
+        if(categoryRepository.existsByCategoryName(request.getCategoryName())){
+            throw new CategoryAlreadyRegisteredException(request.getCategoryName());
+        }
         Category category = new Category();
         applyCategoryRequestToEntity(category, request);
         Category savedCategory = categoryRepository.save(category);
 
-//        if (request.getParentId() == null) {
-//            Category defaultChild = new Category();
-//            defaultChild.setCategoryName("기본 하위 카테고리");
-//            defaultChild.setDepth(2);
-//            defaultChild.setParent(category);
-//            categoryRepository.save(defaultChild);
-//            savedCategory.addChild(defaultChild);
-//        }
         return new CategoryTreeResponse(savedCategory);
     }
 
@@ -50,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
                 .map(CategoryResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override @Transactional(readOnly = true)
@@ -114,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return categories.stream()
                 .map(CategoryResponse::new)
-                .collect(Collectors.toList());
+                .toList();
 
     }
 
@@ -185,7 +175,7 @@ public class CategoryServiceImpl implements CategoryService {
                 if (parent != null) {
                     parent.getChildren().add(node);
                 } else {
-                    System.out.println("부모 노드 못 찾음 - nodeId: " + node.getCategoryId() + ", parentId: " + parentId);
+                    throw new CategoryNotFoundException(node.getCategoryId(), parentId);
                 }
             }
         }

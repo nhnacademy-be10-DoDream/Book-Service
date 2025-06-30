@@ -2,6 +2,9 @@ package shop.dodream.book.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,8 +12,6 @@ import shop.dodream.book.dto.BookWithTagResponse;
 import shop.dodream.book.dto.BookWithTagsResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookTagService;
-
-import java.util.List;
 
 
 @RestController
@@ -27,16 +28,17 @@ public class BookTagController {
     }
 
     @GetMapping("/books/{book-id}/tags")
-    public BookWithTagsResponse getTagsByBook(@PathVariable("book-id") Long bookId) {
+    public BookWithTagsResponse getTagsByBookId(@PathVariable("book-id") Long bookId) {
         return bookTagService.getTagsByBookId(bookId);
     }
 
-    @GetMapping("/tag/{tag-id}/books")
-    public List<BookListResponseRecord> getBooksByTag(@PathVariable("tag-id") Long tagId) {
-        return bookTagService.getBooksByTagId(tagId);
+    @GetMapping("/tags/{tag-id}/books")
+    public Page<BookListResponseRecord> getBooksByTagId(@PathVariable("tag-id") Long tagId,
+                                                        @PageableDefault(size = 10) Pageable pageable) {
+        return bookTagService.getBooksByTagId(tagId, pageable);
     }
 
-    @PatchMapping("/books/{book-id}/tags/{tag-id}")
+    @PutMapping("/books/{book-id}/tags/{tag-id}")
     public BookWithTagResponse updateTagByBook(@PathVariable("book-id") Long bookId,
                                                                @PathVariable("tag-id") Long tagId,
                                                                @RequestParam Long newTagId) {
