@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
-import shop.dodream.book.dto.projection.ReviewStatsRecord;
 import shop.dodream.book.entity.Book;
+
 
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
+
 
 
 @Data
@@ -42,7 +43,6 @@ public class BookDocument {
     @Field(type = FieldType.Long)
     private Long salePrice;
 
-
     @Field(type = FieldType.Date)
     private Date publishedAt;
 
@@ -55,12 +55,15 @@ public class BookDocument {
     @Field(type = FieldType.Long)
     private Long reviewCount;
 
+    @Field(type = FieldType.Keyword)
+    private String categoryName;
 
 
 
 
 
-    public BookDocument(Book book, ReviewStatsRecord reviewStatsRecord) {
+
+    public BookDocument(Book book) {
         this.bookId = book.getId();
         this.title = book.getTitle();
         this.description = book.getDescription();
@@ -69,11 +72,9 @@ public class BookDocument {
         this.salePrice = book.getSalePrice();
         this.publishedAt = Date.from(
                 book.getPublishedAt().atStartOfDay(ZoneId.systemDefault()).toInstant()
-        );
-        this.viewCount = book.getViewCount();
-        this.ratingAvg = Optional.ofNullable(reviewStatsRecord.ratingAvg()).orElse(0.0f);
-        this.reviewCount = reviewStatsRecord.reviewCount();
-
+        );        this.viewCount = book.getViewCount();
+        this.ratingAvg = 0.0f;
+        this.reviewCount = 0L;
     }
 
 }
