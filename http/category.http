@@ -3,9 +3,9 @@ POST http://localhost:8080/categories
 Content-Type: application/json
 
 {
-  "categoryName": "agss",
+  "categoryName": "3232",
   "depth": 1,
-  "parentId": null
+  "parentId": 2
 }
 
 
