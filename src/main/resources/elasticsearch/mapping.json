@@ -34,7 +34,7 @@
     "reviewCount": {
       "type": "long"
     },
-    "categoryName": {
+    "categoryNames": {
       "type": "keyword"
     }
   }
