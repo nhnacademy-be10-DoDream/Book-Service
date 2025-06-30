@@ -55,7 +55,7 @@ public class BookSearchServiceImpl implements BookSearchService {
             SortOptions sortOption = sortType.toSortOption();
 
             SearchRequest request = new SearchRequest.Builder()
-                    .index("dream_books")
+                    .index("dodream_books")
                     .query(query)
                     .size(20)
                     .sort(sortOption != null ? Collections.singletonList(sortOption) : Collections.emptyList())

@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @Data
-@Document(indexName = "dream_books")
+@Document(indexName = "dodream_books")
 @Setting(settingPath = "elasticsearch/setting.json")
 @Mapping(mappingPath = "elasticsearch/mapping.json")
 @NoArgsConstructor
