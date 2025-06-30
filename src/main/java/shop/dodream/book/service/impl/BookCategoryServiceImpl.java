@@ -7,10 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookWithCategoriesResponse;
-import shop.dodream.book.dto.CategoryResponse;
-import shop.dodream.book.dto.CategoryTreeResponse;
-import shop.dodream.book.dto.IdsListRequest;
+import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.dto.projection.CategoryWithParentProjection;
@@ -20,6 +17,7 @@ import shop.dodream.book.entity.BookCategoryId;
 import shop.dodream.book.entity.Category;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.repository.BookCategoryRepository;
+import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.BookCategoryService;
@@ -32,6 +30,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
+    private final BookElasticsearchRepository bookElasticsearchRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -71,6 +70,17 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         List<CategoryResponse> categoryResponses = initialCategories.stream()
                 .map(dto -> new CategoryResponse(dto.id(), dto.categoryName(), dto.depth(), dto.parentId()))
                 .toList();
+
+        List<String> categoryNames = initialCategories.stream()
+                .map(CategoryWithParentProjection::categoryName)
+                .toList();
+
+        BookDocument document = bookElasticsearchRepository.findById(bookId)
+                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
+
+        document.setCategoryNames(categoryNames);
+        bookElasticsearchRepository.save(document);
+
 
         return new BookWithCategoriesResponse(book.getId(), categoryResponses);
     }
