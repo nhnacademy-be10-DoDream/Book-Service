@@ -108,8 +108,8 @@ class BookTagControllerTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         List<BookListResponseRecord> content = List.of(
-                new BookListResponseRecord(newBookId1, newTitle1, newAuthor1, newIsbn1, newRegularPrice1, newSalePrice1, newBookUrl1),
-                new BookListResponseRecord(newBookId2, newTitle2, newAuthor2, newIsbn2, newRegularPrice2, newSalePrice2, newBookUrl2)
+//                new BookListResponseRecord(newBookId1, newTitle1, newAuthor1, newIsbn1, newRegularPrice1, newSalePrice1, newBookUrl1),
+//                new BookListResponseRecord(newBookId2, newTitle2, newAuthor2, newIsbn2, newRegularPrice2, newSalePrice2, newBookUrl2)
         );
 
         Page<BookListResponseRecord> bookListResponseRecords = new PageImpl<>(content);

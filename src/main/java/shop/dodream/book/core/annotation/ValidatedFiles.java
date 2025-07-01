@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ReviewFilesValidator.class)
-public @interface ValidatedReviewFiles {
+public @interface ValidatedFiles {
     String message() default "유효하지 않은 파일입니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

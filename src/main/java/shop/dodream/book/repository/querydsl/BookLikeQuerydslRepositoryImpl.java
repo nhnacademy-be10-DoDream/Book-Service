@@ -11,6 +11,7 @@ import shop.dodream.book.entity.BookStatus;
 
 import java.util.List;
 
+import static com.querydsl.core.group.GroupBy.list;
 import static shop.dodream.book.entity.QBook.book;
 import static shop.dodream.book.entity.QBookLike.bookLike;
 import static shop.dodream.book.entity.QImage.image;

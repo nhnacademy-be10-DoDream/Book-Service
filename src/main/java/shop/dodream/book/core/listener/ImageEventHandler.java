@@ -7,7 +7,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-import shop.dodream.book.core.event.ImageDeleteEvent;
 import shop.dodream.book.core.event.BookImageDeleteEvent;
 import shop.dodream.book.core.event.ReviewImageDeleteEvent;
 import shop.dodream.book.service.FileService;
@@ -28,26 +27,14 @@ public class ImageEventHandler {
     )
     public void handleBookImageDeleted(BookImageDeleteEvent event) {
         try {
-            fileService.deleteReviewImage(event.deleteKeys());
-            log.info("파일 삭제 완료 - (bookId: {}, 기존 파일 삭제: {} 개)", event.bookId(), event.deleteKeys().size());
+            fileService.deleteBookImage(event.deleteKeys());
+            log.info("파일 삭제 완료 - 기존 파일 삭제: {} 개", event.deleteKeys().size());
         } catch (Exception e) {
-            log.error("파일 삭제 실패 - (bookId: {}, keys: {})", event.bookId(), event.deleteKeys(), e);
+            log.error("파일 삭제 실패 - keys: {}", event.deleteKeys(), e);
         }
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Retryable(
-            retryFor = {RuntimeException.class, IOException.class},
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 1000, multiplier = 2)
-    )
-    public void handleImageDelete(ImageDeleteEvent event) {
-        try {
-            fileService.deleteReviewImage(event.deleteKeys());
-        } catch (Exception e) {
-            log.error("DB 저장 실패로 인한 MinIO 파일 삭제 실패 - (keys: {})", event.deleteKeys(), e);
-        }
-    }
+
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Retryable(
@@ -58,9 +45,9 @@ public class ImageEventHandler {
     public void handleReviewImageDelete(ReviewImageDeleteEvent event) {
         try {
             fileService.deleteReviewImage(event.deleteKeys());
-            log.info("파일 삭제 완료 - (reviewId: {}, 기존 파일 삭제: {} 개)", event.reviewId(), event.deleteKeys().size());
+            log.info("파일 삭제 완료 - 기존 파일 삭제: {} 개", event.deleteKeys().size());
         } catch (Exception e) {
-            log.error("파일 삭제 실패 - (reviewId: {}, keys: {})", event.reviewId(), event.deleteKeys(), e);
+            log.error("파일 삭제 실패 - keys: {}", event.deleteKeys(), e);
         }
     }
 

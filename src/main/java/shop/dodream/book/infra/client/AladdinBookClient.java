@@ -11,7 +11,7 @@ import shop.dodream.book.infra.dto.AladdinBookResponse;
 public interface AladdinBookClient {
 
 
-    @GetMapping(value = "/ItemLookUp.aspx?", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/ItemLookUp.aspx")
     AladdinBookResponse searchBook(
             @RequestParam("ttbkey") String ttbkey,
             @RequestParam("itemIdType") String itemIdType,

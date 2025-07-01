@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import shop.dodream.book.core.annotation.ValidatedReviewFiles;
+import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
 import shop.dodream.book.service.ReviewService;
@@ -37,7 +37,7 @@ public class AdminReviewController {
     @PutMapping("/reviews/{review-id}")
     public ResponseEntity<Void> updateReview(@PathVariable("review-id") Long reviewId,
                                              @Valid @RequestPart("review") ReviewUpdateRequest reviewUpdateRequest,
-                                             @ValidatedReviewFiles @RequestPart(value = "files", required = false) List<MultipartFile> files){
+                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files){
         reviewService.updateReview(reviewId, reviewUpdateRequest, files);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
