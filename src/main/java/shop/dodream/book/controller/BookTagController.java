@@ -31,13 +31,13 @@ public class BookTagController {
     }
 
     @Operation(summary = "도서의 태그 조회", description = "해당 도서에 등록된 태그를 조회합니다.")
-    @GetMapping("/books/{book-id}/tags")
+    @GetMapping("/public/books/{book-id}/tags")
     public BookWithTagsResponse getTagsByBookId(@PathVariable("book-id") Long bookId) {
         return bookTagService.getTagsByBookId(bookId);
     }
 
     @Operation(summary = "태그 기준 도서 조회 (페이징)", description = "특정 태그가 등록된 도서를 조회합니다. 페이징 지원.")
-    @GetMapping("/tags/{tag-id}/books")
+    @GetMapping("/public/tags/{tag-id}/books")
     public Page<BookListResponseRecord> getBooksByTagId(@PathVariable("tag-id") Long tagId,
                                                         @PageableDefault(size = 10) Pageable pageable) {
         return bookTagService.getBooksByTagId(tagId, pageable);
