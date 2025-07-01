@@ -37,8 +37,11 @@ public class BookLikeServiceImpl implements BookLikeService {
 
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
-        BookLike bookLike = new BookLike(userId, book);
+        if (book.getStatus() == BookStatus.REMOVED){
+            throw new BookAlreadyRemovedException();
+        }
 
+        BookLike bookLike = new BookLike(userId, book);
         bookLikeRepository.save(bookLike);
 
     }

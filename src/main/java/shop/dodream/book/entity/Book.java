@@ -111,7 +111,7 @@ public class Book extends BaseTimeEntity{
         this.images = new ArrayList<>();
     }
 
-    //알라딘용
+//    알라딘용
     public Book(String title, String description, String author, String publisher, LocalDate publishedAt, String isbn, Long regularPrice, BookStatus status, Long salePrice, Boolean isGiftable, Long viewCount, Long bookCount, Long discountRate) {
         this.title = title;
         this.description = description;
@@ -128,6 +128,8 @@ public class Book extends BaseTimeEntity{
         this.discountRate = discountRate;
         this.images = new ArrayList<>();
     }
+
+
 
     public List<String> update(BookUpdateRequest bookUpdateRequest) {
         List<String> deletedImageUuids = new ArrayList<>();
