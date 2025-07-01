@@ -4,11 +4,11 @@ Content-Type: application/json
 
 
 ### 전체 태그 조회
-GET http://localhost:8080/tags?page=1&size=5
+GET http://localhost:8080/public/tags?page=1&size=5
 Accept: application/json
 
 ### 태그 수정
-PATCH http://localhost:8080/tags/1?newTagName=신간
+PUT http://localhost:8080/tags/1?newTagName=신간
 Content-Type: application/json
 
 ### 태그 삭제
