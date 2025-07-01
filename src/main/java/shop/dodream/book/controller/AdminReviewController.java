@@ -30,7 +30,7 @@ public class AdminReviewController {
     }
 
     @GetMapping("/reviews/{review-id}")
-    public ReviewResponseRecord getReview(@PathVariable("review-id") Long reviewId){
+    public ReviewResponseRecord getReview(@PathVariable("review-id") Long reviewId) {
         return reviewService.getReview(reviewId);
     }
 
