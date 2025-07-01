@@ -2,8 +2,8 @@
 POST http://localhost:8080/admin/books/aladdin-api?isbn=9791157956579
 Content-Type: application/json
 
-### ISBN 으로 호출시 책 id랑 카테고리 id 줘야함
-GET http://localhost:8080/
+### ISBN 으로 조회
+GET http://localhost:8080/public/books/9791157956579
 
 
 

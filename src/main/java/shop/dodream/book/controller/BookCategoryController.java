@@ -33,13 +33,13 @@ public class BookCategoryController {
     }
 
     @Operation(summary = "도서의 카테고리 트리 조회", description = "도서에 등록된 카테고리 트리 구조를 조회합니다.")
-    @GetMapping("/books/{book-id}/categories")
+    @GetMapping("/public/books/{book-id}/categories")
     public List<CategoryTreeResponse> getCategoriesByBookId(@PathVariable("book-id") Long bookId) {
         return bookCategoryService.getCategoriesByBookId(bookId);
     }
 
     @Operation(summary = "카테고리에 속한 도서 조회(페이징)", description = "카테고리에 속한 도서 목록을 페이징 처리하여 조회합니다.")
-    @GetMapping("/categories/{category-id}/books")
+    @GetMapping("/public/categories/{category-id}/books")
     public Page<BookListResponseRecord> getBooksByCategoryId(@PathVariable("category-id") Long categoryId,
                                                              @PageableDefault(size = 10) Pageable pageable) {
         return bookCategoryService.getBooksByCategoryId(categoryId, pageable);

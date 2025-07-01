@@ -20,7 +20,7 @@ Accept: application/json
 
 
 ### 특정 카테고리에 하위 카테고리 조회
-GET http://localhost:8080/public/categories/2/children
+GET http://localhost:8080/public/categories/1/children
 Accept: application/json
 
 
@@ -47,6 +47,6 @@ Content-Type: application/json
 
 
 ### 카테고리 삭제
-DELETE http://localhost:8080/categories/3
+DELETE http://localhost:8080/categories/136
 
 
