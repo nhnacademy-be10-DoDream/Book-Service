@@ -1,12 +1,15 @@
 package shop.dodream.book.dto;
 
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Setter
@@ -30,6 +33,17 @@ public class BookUpdateRequest {
     @Min(value = 0, message = "수량은 0이상이어야합니다.")
     private Long bookCount;
 
+    private List<String> images;
+
+    @AssertTrue(message = "할인가는 정가보다 작거나 같아야 합니다.")
+    public boolean isSalePriceValid() {
+        if (regularPrice == null || salePrice == null) return true;
+        return salePrice <= regularPrice;
+    }
+
+
+
+
     public Map<String, Object> toUpdateMap(){
         Map<String, Object> map = new HashMap<>();
         if (title != null) map.put("title", title);
@@ -38,7 +52,6 @@ public class BookUpdateRequest {
         if (publisher != null) map.put("publisher", publisher);
         if (salePrice != null) map.put("salePrice", salePrice);
         if (publishedAt != null) map.put("publishedAt", publishedAt);
-
         return map;
     }
 

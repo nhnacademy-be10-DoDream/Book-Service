@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.querydsl.core.group.GroupBy.list;
 import static shop.dodream.book.entity.QBook.book;
 import static shop.dodream.book.entity.QBookCategory.bookCategory;
 import static shop.dodream.book.entity.QImage.image;

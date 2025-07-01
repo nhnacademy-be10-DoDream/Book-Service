@@ -85,8 +85,7 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                                                 book.regularPrice,
                                                 book.isGiftable,
                                                 list(image.uuid),
-                                                book.discountRate,
-                                                book.likeCount
+                                                book.discountRate
                                         )
                                 )
                         ).stream()
@@ -116,10 +115,8 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                                         book.isGiftable,
                                         list(image.uuid),
                                         book.discountRate,
-                                        book.likeCount,
                                         book.status,
                                         book.createdAt,
-                                        book.searchCount,
                                         book.viewCount,
                                         book.bookCount
                                 )

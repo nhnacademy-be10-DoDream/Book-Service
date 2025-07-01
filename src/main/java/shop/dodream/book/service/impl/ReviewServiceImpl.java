@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import shop.dodream.book.core.event.ImageDeleteEvent;
 import shop.dodream.book.core.event.ReviewImageDeleteEvent;
 import shop.dodream.book.dto.ReviewCreateRequest;
 import shop.dodream.book.dto.ReviewUpdateRequest;
@@ -51,9 +50,12 @@ public class ReviewServiceImpl implements ReviewService {
             reviewRepository.save(review);
             bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
         }catch (Exception e) {
-            eventPublisher.publishEvent(new ImageDeleteEvent(uploadedImageKeys));
+            eventPublisher.publishEvent(new ReviewImageDeleteEvent(uploadedImageKeys));
             throw e;
         }
+
+
+
 
     }
 
@@ -90,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<String> uploadedKeys = fileService.uploadReviewImageFromFiles(files);
 
         List<String> deleteKeys = review.update(reviewUpdateRequest);
-        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         review.addImages(createReviewImages(review, uploadedKeys));
     }
@@ -101,7 +103,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<String> uploadedKeys = fileService.uploadReviewImageFromFiles(files);
 
         List<String> deleteKeys = review.update(reviewUpdateRequest);
-        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         review.addImages(createReviewImages(review, uploadedKeys));
     }
@@ -114,7 +116,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(Image::getUuid)
                 .toList();
 
-        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         reviewRepository.deleteById(reviewId);
     }
@@ -127,9 +129,15 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(Image::getUuid)
                 .toList();
 
-        eventPublisher.publishEvent(new ReviewImageDeleteEvent(reviewId, deleteKeys));
+        eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         reviewRepository.deleteByReviewIdAndUserId(reviewId, userId);
+
+        try {
+            bookDocumentUpdater.decreaseReviewStatus(review.getBook().getId(), review.getRating());
+        }catch (Exception e) {
+            throw new RuntimeException("es 리뷰 삭제시 리뷰필드 업데이트 실패:", e);
+        }
     }
 
     private Review findWithImageByReviewId(Long reviewId) {

@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/public/books")
 @RequiredArgsConstructor
 @Tag(name = "Book", description = "도서 조회 API")
 public class BookController {

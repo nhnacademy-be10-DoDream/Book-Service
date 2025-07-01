@@ -3,6 +3,9 @@ package shop.dodream.book.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookRegisterRequest;
 import shop.dodream.book.dto.BookUpdateRequest;
+import org.springframework.web.multipart.MultipartFile;
+import shop.dodream.book.core.annotation.ValidatedFiles;
+import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookService;
@@ -24,10 +30,22 @@ import java.util.List;
 public class AdminBookController {
     private final BookService bookService;
 
-    @Operation(summary = "도서 등록", description = "ISBN을 기준으로 도서를 등록합니다.")
-    @PostMapping
-    public ResponseEntity<Void> registerBook(@Validated @RequestBody BookRegisterRequest request){
-        bookService.registerBookByIsbn(request);
+    @Operation(summary = "도서 등록 외부 API 등록", description = "ISBN을 기준으로 도서를 등록합니다.")
+    @PostMapping("/aladdin-api")
+    public ResponseEntity<Void> aladdinRegisterBook(
+            @RequestParam("isbn")
+            @NotBlank(message = "isbn 은 필수값입니다.")
+            @Pattern(regexp = "\\d{13}", message = "ISBN은 13자리 숫자여야합니다.")
+            String isbn){
+        bookService.registerBookByIsbn(isbn);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(summary = "도서 직접 등록", description = "ISBN을 기준으로 도서를 등록합니다.")
+    @PostMapping()
+    public ResponseEntity<Void> registerBook(@Valid @RequestPart("book") BookRegisterRequest bookRegisterRequest,
+                                             @ValidatedFiles @RequestPart(value = "files", required = false)List<MultipartFile> files){
+        bookService.registerBookDirect(bookRegisterRequest, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -46,8 +64,9 @@ public class AdminBookController {
     @Operation(summary = "도서 정보 수정", description = "도서의 정보를 수정합니다.")
     @PutMapping("/{book-id}")
     public ResponseEntity<Void> updateBook(@PathVariable("book-id") Long bookId,
-                                           @Validated @RequestBody BookUpdateRequest request){
-        bookService.updateBook(bookId, request);
+                                           @Validated @RequestBody BookUpdateRequest request,
+                                           @ValidatedFiles @RequestPart(value = "files", required = false)List<MultipartFile> files){
+        bookService.updateBook(bookId, request, files);
         return ResponseEntity.noContent().build();
     }
 

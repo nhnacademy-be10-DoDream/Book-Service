@@ -51,7 +51,7 @@ public class BookLikeController {
 
     // 좋아요한 도서 목록 조회
     @Operation(summary = "사용자가 좋아요한 도서 목록 조회", description = "로그인한 사용자가 좋아요한 도서 목록을 조회합니다.")
-    @GetMapping("/users/me/likes/books")
+    @GetMapping("/likes/me")
     public List<BookListResponseRecord> getLikedBooks(@RequestHeader("X-USER-ID") String userId){
         return bookLikeService.getLikedBooksByUserId(userId);
     }

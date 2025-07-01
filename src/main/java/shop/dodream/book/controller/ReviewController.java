@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import shop.dodream.book.core.annotation.ValidatedReviewFiles;
+import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.ReviewCreateRequest;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
@@ -33,7 +33,7 @@ public class ReviewController {
     public ResponseEntity<Void> creteReview(@PathVariable("book-id") Long bookId,
                                             @RequestHeader("X-USER-ID") String userId,
                                             @Valid @RequestPart("review") ReviewCreateRequest reviewCreateRequest,
-                                            @ValidatedReviewFiles @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+                                            @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         reviewService.createReview(bookId, userId, reviewCreateRequest, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -56,7 +56,7 @@ public class ReviewController {
     public ResponseEntity<Void> updateReview(@PathVariable("review-id") Long reviewId,
                                              @RequestHeader("X-USER-ID") String userId,
                                              @Valid @RequestPart("review") ReviewUpdateRequest reviewUpdateRequest,
-                                             @ValidatedReviewFiles @RequestPart(value = "files", required = false) List<MultipartFile> files){
+                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files){
         reviewService.updateReview(reviewId, userId, reviewUpdateRequest, files);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
