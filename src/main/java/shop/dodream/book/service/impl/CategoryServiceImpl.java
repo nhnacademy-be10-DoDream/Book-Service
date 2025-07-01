@@ -25,9 +25,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {
-        if(categoryRepository.existsByCategoryName(request.getCategoryName())){
-            throw new CategoryAlreadyRegisteredException(request.getCategoryName());
-        }
         Category category = new Category();
         applyCategoryRequestToEntity(category, request);
         Category savedCategory = categoryRepository.save(category);
