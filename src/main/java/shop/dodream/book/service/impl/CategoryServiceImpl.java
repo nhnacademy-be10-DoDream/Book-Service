@@ -7,7 +7,6 @@ import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
-import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.Category;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.repository.BookCategoryRepository;
@@ -16,7 +15,6 @@ import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.CategoryService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +25,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {
-        // 관리자만 가능하게 할지????
-        if (request.getCategoryName() == null || request.getCategoryName().isEmpty()) {
-            throw new CategoryNameIsNullException();
-        }
         Category category = new Category();
         applyCategoryRequestToEntity(category, request);
         Category savedCategory = categoryRepository.save(category);
 
-//        if (request.getParentId() == null) {
-//            Category defaultChild = new Category();
-//            defaultChild.setCategoryName("기본 하위 카테고리");
-//            defaultChild.setDepth(2);
-//            defaultChild.setParent(category);
-//            categoryRepository.save(defaultChild);
-//            savedCategory.addChild(defaultChild);
-//        }
         return new CategoryTreeResponse(savedCategory);
     }
 
@@ -51,13 +37,13 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
                 .map(CategoryResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override @Transactional(readOnly = true)
     public CategoryResponse getCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
         return new CategoryResponse(category);
     }
 
@@ -72,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
         // categoryId에 맞는 노드 반환
         CategoryTreeResponse targetNode = findNodeById(tree, categoryId);
         if (targetNode == null) { // 해당 노드가 없을때
-            throw new CategoryIdNotFoundException(categoryId);
+            throw new CategoryNotFoundException(categoryId);
         }
 
         List<CategoryTreeResponse> result = new ArrayList<>();
@@ -93,7 +79,7 @@ public class CategoryServiceImpl implements CategoryService {
         // categoryId에 맞는 노드 반환
         CategoryTreeResponse targetNode = findNodeById(tree, categoryId);
         if (targetNode == null) { // 해당 노드가 없을때
-            throw new CategoryIdNotFoundException(categoryId);
+            throw new CategoryNotFoundException(categoryId);
         }
 
         // 최상위 노드까지
@@ -115,14 +101,14 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return categories.stream()
                 .map(CategoryResponse::new)
-                .collect(Collectors.toList());
+                .toList();
 
     }
 
     @Override @Transactional
     public CategoryResponse updateCategory(Long categoryId, CategoryRequest request){
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
         if (request.getParentId() != null && categoryId.equals(request.getParentId())) {
             throw new InvalidParentCategoryException();
         }
@@ -140,7 +126,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override @Transactional
     public void deleteCategory(Long categoryId){
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryIdNotFoundException(categoryId));
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
         if (!category.getChildren().isEmpty()) {
             throw new CategoryNotDeleteWithChildren(categoryId);
         }
@@ -152,7 +138,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setCategoryName(request.getCategoryName());
         if (request.getParentId() != null) {
             Category parentCategory = categoryRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new CategoryParentIdNotFoundException(request.getParentId()));
+                    .orElseThrow(() -> new CategoryNotFoundException(category.getId(), request.getParentId()));
             category.setParent(parentCategory);
             category.setDepth(parentCategory.getDepth() + 1);
             parentCategory.addChild(category);
@@ -186,7 +172,7 @@ public class CategoryServiceImpl implements CategoryService {
                 if (parent != null) {
                     parent.getChildren().add(node);
                 } else {
-                    System.out.println("부모 노드 못 찾음 - nodeId: " + node.getCategoryId() + ", parentId: " + parentId);
+                    throw new CategoryNotFoundException(node.getCategoryId(), parentId);
                 }
             }
         }

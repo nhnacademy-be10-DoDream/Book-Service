@@ -1,20 +1,15 @@
 package shop.dodream.book.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import shop.dodream.book.dto.BookWithTagRequest;
-import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookTag;
 import shop.dodream.book.entity.BookTagId;
-import shop.dodream.book.entity.Tag;
+import shop.dodream.book.repository.querydsl.BookTagQuerydslRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookTagRepository extends JpaRepository<BookTag, BookTagId> {
+public interface BookTagRepository extends JpaRepository<BookTag, BookTagId>, BookTagQuerydslRepository {
     boolean existsByBookIdAndTagId(Long bookId, Long tagId);
     Optional<BookTag> findByBookIdAndTagId(Long bookId, Long tagId);
 }

@@ -1,29 +1,31 @@
 package shop.dodream.book.service;
 
-import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.dto.*;
-import shop.dodream.book.entity.Book;
-
+import shop.dodream.book.dto.projection.BookDetailResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
 
 public interface BookService {
 
-    BookRegisterResponse registerBookByIsbn(BookRegisterRequest request);
+    void registerBookByIsbn(String isbn);
 
-    List<BookListResponse> getAllBooks();
+    void registerBookDirect(BookRegisterRequest registerRequest, List<MultipartFile> files);
 
-    AdminBookDetailResponse getBookByIdForAdmin(Long bookId);
 
-    UserBookDetailResponse getBookByIdForUser(Long bookId);
+    List<BookListResponseRecord> getAllBooks();
 
-    void updateBook(Long bookId, BookUpdateRequest request);
+    List<BookListResponseRecord> findAllByIds(List<Long> ids);
+
+    BookDetailResponse getBookByIdForAdmin(Long bookId);
+
+    BookDetailResponse getBookByIdForUser(Long bookId);
+
+    void updateBook(Long bookId, BookUpdateRequest request, List<MultipartFile> files);
 
     void deleteBook(Long bookId);
 
     BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request);
 
-    BookLikeCountResponse getBookLikeCount(Long bookId);
-
-    List<BookListResponse> findAllByIds(List<Long> ids);
 }

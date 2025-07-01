@@ -1,19 +1,16 @@
 package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookLikeResponse;
-import shop.dodream.book.dto.BookListResponse;
+import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookLike;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.exception.BookAlreadyRemovedException;
-import shop.dodream.book.exception.BookIdNotFoundException;
 import shop.dodream.book.exception.BookLikeAlreadyRegisterException;
 import shop.dodream.book.exception.BookLikeNotFoundException;
-import shop.dodream.book.infra.dto.NaverBookResponse;
+import shop.dodream.book.exception.BookNotFoundException;
 import shop.dodream.book.repository.BookLikeRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookLikeService;
@@ -34,39 +31,32 @@ public class BookLikeServiceImpl implements BookLikeService {
     @Override
     @Transactional
     public void registerBookLike(Long bookId, String userId) {
-
         if (bookLikeRepository.existsByBookIdAndUserId(bookId,userId)) {
             throw new BookLikeAlreadyRegisterException();
         }
 
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
-        BookLike bookLike = new BookLike();
-        bookLike.setUserId(userId);
-        bookLike.setBook(book);
+        BookLike bookLike = new BookLike(userId, book);
 
         bookLikeRepository.save(bookLike);
-        bookRepository.incrementLikCount(bookId);
-
 
     }
 
 
     @Override
     @Transactional(readOnly = true)
-    public BookLikeResponse bookLikeFindMe(Long bookId, String userId) {
-        bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+    public Boolean bookLikeFindMe(Long bookId, String userId) {
+        bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
-        Boolean bookLiked = bookLikeRepository.existsByBookIdAndUserId(bookId,userId);
-
-        return new BookLikeResponse(bookLiked);
+        return bookLikeRepository.existsByBookIdAndUserId(bookId,userId);
 
     }
 
     @Override
     @Transactional
     public void bookLikeDelete(Long bookId, String userId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookIdNotFoundException(bookId));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
         if (book.getStatus() == BookStatus.REMOVED){
             throw new BookAlreadyRemovedException();
@@ -76,15 +66,21 @@ public class BookLikeServiceImpl implements BookLikeService {
 
 
         bookLikeRepository.delete(bookLike);
-        bookRepository.decreaseLikeCount(bookId);
-
 
     }
 
 
     @Override
-    public List<BookListResponse> getLikedBooksByUserId(String userId) {
+    @Transactional(readOnly = true)
+    public List<BookListResponseRecord> getLikedBooksByUserId(String userId) {
 
         return bookLikeRepository.findLikedBooksByUserId(userId);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long getBookLikeCount(Long bookId) {
+        return bookLikeRepository.countByBookId(bookId);
     }
 }

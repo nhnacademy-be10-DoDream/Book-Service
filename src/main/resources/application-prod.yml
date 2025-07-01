@@ -1,5 +1,3 @@
-# application-prod.yml
-
 spring:
   config:
     import: configserver:http://localhost:10332

@@ -2,6 +2,7 @@ package shop.dodream.book.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import shop.dodream.book.entity.BookLike;
+import shop.dodream.book.repository.querydsl.BookLikeQuerydslRepository;
 
 import java.util.Optional;
 
@@ -11,6 +12,8 @@ public interface BookLikeRepository extends JpaRepository<BookLike, Long>, BookL
     boolean existsByBookIdAndUserId(Long bookId, String userId);
 
     Optional<BookLike> findByBookIdAndUserId(Long bookId, String userId);
+
+    Long countByBookId(Long bookId);
 
 
 

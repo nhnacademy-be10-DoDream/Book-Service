@@ -1,19 +1,10 @@
-# application.yml
 spring:
   application:
-    name: book-service # auth -> 본인의 서비스 명
+    name: book-service
   profiles:
-    active: dev # dev or prod
-server:
-  port: 8080 # 10325 -> 본인의 포트번호
-
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      show-details: always
-
+    active: dev
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        auto_quote_keyword: true

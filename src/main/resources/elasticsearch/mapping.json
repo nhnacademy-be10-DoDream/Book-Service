@@ -12,7 +12,7 @@
       "analyzer": "korean"
     },
     "author": {
-      "type": "keyword",
+      "type": "text",
       "analyzer": "korean"
     },
     "publisher": {
@@ -23,7 +23,19 @@
     },
     "publishedAt": {
       "type": "date",
-      "format": "yyyy-MM-dd"
+      "format": "strict_date_optional_time||epoch_millis"
+    },
+    "viewCount": {
+      "type": "long"
+    },
+    "ratingAvg": {
+      "type": "float"
+    },
+    "reviewCount": {
+      "type": "long"
+    },
+    "categoryNames": {
+      "type": "keyword"
     }
   }
 }

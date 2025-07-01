@@ -1,51 +1,41 @@
 ### 카테고리 등록
-POST http://localhost:8080/admin/categories
+POST http://localhost:8080/categories
 Content-Type: application/json
 
 {
-  "categoryName": "마",
+  "categoryName": "JAVA",
   "depth": 1,
-  "parentId": 2
+  "parentId": null
 }
 
 
 ### 전체 카테고리 조회
-GET http://localhost:8080/categories
+GET http://localhost:8080/public/categories
 Accept: application/json
 
 
 ### 특정 카테고리 조회
-GET http://localhost:8080/categories/1
+GET http://localhost:8080/public/categories/2
 Accept: application/json
 
 
 ### 특정 카테고리에 하위 카테고리 조회
-GET http://localhost:8080/categories/2/children
+GET http://localhost:8080/public/categories/2/children
 Accept: application/json
 
 
 ### 특정 카테고리에 연관 카테고리 전체 조회
-GET http://localhost:8080/categories/3/related
+GET http://localhost:8080/public/categories/1/related
 Accept: application/json
 
 
 ### 특정 깊이 카테고리 조회
-GET http://localhost:8080/categories/3/depth
-Accept: application/json
-
-
-### 특정 도서의 카테고리 조회
-GET http://localhost:8080/books/1/categories
-Accept: application/json
-
-
-### 특정 카테고리에 속한 도서 조회
-GET http://localhost:8080/categories/2/books
+GET http://localhost:8080/public/categories/1/depth
 Accept: application/json
 
 
 ### 카테고리 수정
-PATCH http://localhost:8080/admin/categories/3
+PUT http://localhost:8080/categories/3
 Content-Type: application/json
 
 {
@@ -57,6 +47,6 @@ Content-Type: application/json
 
 
 ### 카테고리 삭제
-DELETE http://localhost:8080/admin/categories/3
+DELETE http://localhost:8080/categories/3
 
 
