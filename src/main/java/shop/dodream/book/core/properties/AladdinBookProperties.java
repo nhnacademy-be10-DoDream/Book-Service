@@ -8,9 +8,11 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 @Getter
 @Configuration
-@ConfigurationProperties(prefix = "naver.book")
-public class NaverBookProperties {
+@ConfigurationProperties(prefix = "aladdin.book")
+public class AladdinBookProperties {
     private String baseUrl;
-    private String clientId;
-    private String clientSecret;
+    private String ttbkey;
+    private String itemIdType;
+    private String output;
+    private String version;
 }

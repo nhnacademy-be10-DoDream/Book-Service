@@ -10,6 +10,7 @@ import shop.dodream.book.dto.BookUpdateRequest;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -68,9 +69,6 @@ public class Book extends BaseTimeEntity{
     @Column(nullable = false)
     private Boolean isGiftable;
 
-    @Setter
-    @Column(nullable = false)
-    private Long searchCount;
 
     @Setter
     @Column(nullable = false)
@@ -92,22 +90,48 @@ public class Book extends BaseTimeEntity{
     @Column(nullable = false)
     private Long discountRate;
 
-    @Setter
-    @Column(nullable = false)
-    private Long likeCount;
 
-    public Book(String title, String author, Long salePrice, String publisher, LocalDate publishedAt, String isbn) {
+
+
+    // 책 직접등록용
+    public Book(String title, String description, String author, String publisher, LocalDate publishedAt, String isbn, Long regularPrice, BookStatus status, Long salePrice, Boolean isGiftable, Long viewCount, Long bookCount) {
         this.title = title;
+        this.description = description;
         this.author = author;
-        this.salePrice = salePrice;
         this.publisher = publisher;
         this.publishedAt = publishedAt;
         this.isbn = isbn;
+        this.regularPrice = regularPrice;
+        this.status = status;
+        this.salePrice = salePrice;
+        this.isGiftable = isGiftable;
+        this.viewCount = viewCount;
+        this.bookCount = bookCount;
+        this.discountRate = calculateDiscountRate(regularPrice,salePrice);
         this.images = new ArrayList<>();
     }
 
+    //알라딘용
+    public Book(String title, String description, String author, String publisher, LocalDate publishedAt, String isbn, Long regularPrice, BookStatus status, Long salePrice, Boolean isGiftable, Long viewCount, Long bookCount, Long discountRate) {
+        this.title = title;
+        this.description = description;
+        this.author = author;
+        this.publisher = publisher;
+        this.publishedAt = publishedAt;
+        this.isbn = isbn;
+        this.regularPrice = regularPrice;
+        this.status = status;
+        this.salePrice = salePrice;
+        this.isGiftable = isGiftable;
+        this.viewCount = viewCount;
+        this.bookCount = bookCount;
+        this.discountRate = discountRate;
+        this.images = new ArrayList<>();
+    }
 
-    public void update(BookUpdateRequest bookUpdateRequest) {
+    public List<String> update(BookUpdateRequest bookUpdateRequest) {
+        List<String> deletedImageUuids = new ArrayList<>();
+
         Optional.ofNullable(bookUpdateRequest.getTitle())
                 .ifPresent(this::setTitle);
 
@@ -131,10 +155,37 @@ public class Book extends BaseTimeEntity{
 
         Optional.ofNullable(bookUpdateRequest.getBookCount())
                 .ifPresent(this::setBookCount);
+
+
+        this.discountRate = calculateDiscountRate(regularPrice, salePrice);
+
+
+        Optional.ofNullable(bookUpdateRequest.getImages()).ifPresent(requestImages -> {
+            Set<String> requestImageSet = new HashSet<>(requestImages);
+
+            Set<String> currentImageUuids = images.stream()
+                    .map(Image::getUuid)
+                    .collect(Collectors.toSet());
+
+            Set<String> toDelete = new HashSet<>(currentImageUuids);
+            toDelete.removeAll(requestImages);
+
+            images.removeIf(image -> toDelete.contains(image.getUuid()));
+
+            deletedImageUuids.addAll(toDelete);
+
+
+        });
+
+        return deletedImageUuids;
     }
 
     public void addImages(List<Image> reviewImages) {
         images.addAll(reviewImages);
+    }
+
+    private Long calculateDiscountRate(Long regularPrice, Long salePrice) {
+        return Math.round((1 - (double) salePrice / regularPrice) * 100);
     }
 
 

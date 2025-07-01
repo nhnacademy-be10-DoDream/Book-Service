@@ -4,13 +4,13 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import shop.dodream.book.core.annotation.ValidatedReviewFiles;
+import shop.dodream.book.core.annotation.ValidatedFiles;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class ReviewFilesValidator implements ConstraintValidator<ValidatedReviewFiles, List<MultipartFile>> {
+public class ReviewFilesValidator implements ConstraintValidator<ValidatedFiles, List<MultipartFile>> {
     private static final long MAX_FILE_SIZE = 5242880;
     private static final Set<String> ALLOWED_IMAGE_MIME_TYPES = Set.of(
             "image/jpeg",

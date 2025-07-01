@@ -43,36 +43,35 @@ public class BookDocumentUpdaterImpl implements BookDocumentUpdater {
     }
 
 
-    // TODO 리뷰 삭제 및 수정시 es 갱신해야함
-//    @Override
-//    public void decreaseReviewStatus(Long bookId, float deletedRating) {
-//        try {
-//            client.update(u -> u
-//                            .index("dodream_books")
-//                            .id(bookId.toString())
-//                            .script(s -> s
-//                                    .inline(i -> i
-//                                            .source("""
-//                                    ctx._source.reviewCount -= 1;
-//                                    if (ctx._source.reviewCount > 0) {
-//                                        ctx._source.ratingAvg =
-//                                          ((ctx._source.ratingAvg * (ctx._source.reviewCount + 1)) - params.deletedRating)
-//                                          / ctx._source.reviewCount;
-//                                    } else {
-//                                        ctx._source.ratingAvg = 0.0;
-//                                    }
-//                                """)
-//                                            .params(Map.of(
-//                                                    "deletedRating", JsonData.of(deletedRating)
-//                                            ))
-//                                    )
-//                            ),
-//                    BookDocument.class
-//            );
-//        } catch (IOException e) {
-//            throw new RuntimeException("리뷰 삭제 통계 갱신 실패", e);
-//        }
-//    }
+    @Override
+    public void decreaseReviewStatus(Long bookId, float deletedRating) {
+        try {
+            client.update(u -> u
+                            .index("dodream_books")
+                            .id(bookId.toString())
+                            .script(s -> s
+                                    .inline(i -> i
+                                            .source("""
+                                    ctx._source.reviewCount -= 1;
+                                    if (ctx._source.reviewCount > 0) {
+                                        ctx._source.ratingAvg =
+                                          ((ctx._source.ratingAvg * (ctx._source.reviewCount + 1)) - params.deletedRating)
+                                          / ctx._source.reviewCount;
+                                    } else {
+                                        ctx._source.ratingAvg = 0.0;
+                                    }
+                                """)
+                                            .params(Map.of(
+                                                    "deletedRating", JsonData.of(deletedRating)
+                                            ))
+                                    )
+                            ),
+                    BookDocument.class
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("리뷰 삭제 통계 갱신 실패", e);
+        }
+    }
 
 
     @Override

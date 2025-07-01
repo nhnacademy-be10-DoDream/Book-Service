@@ -18,6 +18,7 @@ public class Review extends BaseTimeEntity{
     private long reviewId;
 
     @Setter
+    @Getter
     @Max(10)
     @Min(0)
     @Column(columnDefinition = "TINYINT")
@@ -29,6 +30,7 @@ public class Review extends BaseTimeEntity{
     private String content;
 
     @NotNull
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", updatable = false)
     private Book book;

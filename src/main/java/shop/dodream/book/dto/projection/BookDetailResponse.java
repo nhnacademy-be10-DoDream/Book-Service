@@ -25,18 +25,16 @@ public class BookDetailResponse {
     private Boolean isGiftable;
     private List<String> bookUrls;
     private Long discountRate;
-    private Long likeCount;
 
     private BookStatus status;
     private ZonedDateTime createdAt;
-    private Long searchCount;
     private Long viewCount;
     private Long bookCount;
 
     @QueryProjection
     public BookDetailResponse(Long bookId, String title, String author, String description, String publisher,
                               String isbn, LocalDate publishedAt, Long salePrice, Long regularPrice,
-                              Boolean isGiftable, List<String> bookUrls, Long discountRate, Long likeCount) {
+                              Boolean isGiftable, List<String> bookUrls, Long discountRate) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -49,14 +47,13 @@ public class BookDetailResponse {
         this.isGiftable = isGiftable;
         this.bookUrls = bookUrls;
         this.discountRate = discountRate;
-        this.likeCount = likeCount;
     }
 
     @QueryProjection
     public BookDetailResponse(Long bookId, String title, String author, String description, String publisher,
                               String isbn, LocalDate publishedAt, Long salePrice, Long regularPrice,
-                              Boolean isGiftable, List<String> bookUrls, Long discountRate, Long likeCount,
-                              BookStatus status, ZonedDateTime createdAt, Long searchCount, Long viewCount, Long bookCount) {
+                              Boolean isGiftable, List<String> bookUrls, Long discountRate,
+                              BookStatus status, ZonedDateTime createdAt, Long viewCount, Long bookCount) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -69,10 +66,8 @@ public class BookDetailResponse {
         this.isGiftable = isGiftable;
         this.bookUrls = bookUrls;
         this.discountRate = discountRate;
-        this.likeCount = likeCount;
         this.status = status;
         this.createdAt = createdAt;
-        this.searchCount = searchCount;
         this.viewCount = viewCount;
         this.bookCount = bookCount;
     }
