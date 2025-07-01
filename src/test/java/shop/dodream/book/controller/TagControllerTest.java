@@ -6,9 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import shop.dodream.book.dto.TagResponse;
@@ -51,27 +48,28 @@ class TagControllerTest {
     }
 
     @Test
-    @DisplayName("전체 태그 조회 테스트")
-    void getTag() throws Exception {
+    @DisplayName("전체 태그 조회 테스트 - 페이징 없음")
+    void getTagsWithoutPaging() throws Exception {
         List<TagResponse> tags = List.of(
                 new TagResponse(1L, "조회 태그1"),
                 new TagResponse(2L, "조회 태그2")
         );
-        Page<TagResponse> page = new PageImpl<>(tags);
-        when(tagService.getTags(any(Pageable.class))).thenReturn(page);
-        mockMvc.perform(get("/public/tags")
-                .param("page", "0")
-                .param("size", "2")
-                .param("sort", "tagName,asc"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].tagId").value(1L))
-                .andExpect(jsonPath("$.content[0].tagName").value("조회 태그1"))
-                .andExpect(jsonPath("$.content[1].tagId").value(2L))
-                .andExpect(jsonPath("$.content[1].tagName").value("조회 태그2"));
 
-        verify(tagService, times(1)).getTags(any(Pageable.class));
+        when(tagService.getTags()).thenReturn(tags);
+
+        mockMvc.perform(get("/public/tags"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray()) // 최상위가 배열인지 확인
+                .andExpect(jsonPath("$[0].tagId").value(1L))
+                .andExpect(jsonPath("$[0].tagName").value("조회 태그1"))
+                .andExpect(jsonPath("$[1].tagId").value(2L))
+                .andExpect(jsonPath("$[1].tagName").value("조회 태그2"));
+
+        verify(tagService, times(1)).getTags();
     }
+
+
+
 
     @Test
     @DisplayName("태그 수정")
