@@ -1,9 +1,9 @@
 ### 책 api 이용 등록
-POST http://localhost:8080/admin/books/aladdin-api?isbn=9791157956579
+POST http://localhost:8080/admin/books/aladdin-api?isbn=9791197378270
 Content-Type: application/json
 
 ### ISBN 으로 조회
-GET http://localhost:8080/public/books/9791157956579
+GET http://localhost:8080/admin/books/9791157956579
 
 
 
@@ -17,7 +17,7 @@ GET http://localhost:8080/admin/books/1
 Content-Type: application/json
 
 ### 상세 조회 (사용자)
-GET http://localhost:8080/public/books/1
+GET http://localhost:8080/books/1
 Content-Type: application/json
 
 
@@ -48,7 +48,7 @@ Content-Type: application/json
 GET http://localhost:8080/books/1/likes/count
 
 ### 책 id로 리스트 조회
-GET http://localhost:8080/public/books?ids=1,4,6
+GET http://localhost:8080/books?ids=1,4,6
 
 
 ### 책 좋아요 등록
