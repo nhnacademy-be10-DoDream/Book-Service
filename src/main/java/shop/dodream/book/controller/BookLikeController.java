@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
+import shop.dodream.book.entity.Book;
 import shop.dodream.book.service.BookLikeService;
 
 import java.util.List;
@@ -19,12 +20,12 @@ public class BookLikeController {
     private final BookLikeService bookLikeService;
 
 
-    // 좋아요 등록
-    // TODO 삭제된 도서는 좋아요 안되게끔
+
     @Operation(summary = "도서 좋아요 등록", description = "도서에 좋아요를 등록합니다.")
     @PostMapping("/books/{book-id}/likes")
     public ResponseEntity<Void> registerBookLike(@PathVariable("book-id") Long bookId,
                                           @RequestHeader("X-USER-ID") String userId){
+
         bookLikeService.registerBookLike(bookId, userId);
         return ResponseEntity.ok().build();
     }

@@ -5,6 +5,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import shop.dodream.book.dto.BookResponse;
+import shop.dodream.book.dto.QBookResponse;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.QBookDetailResponse;
@@ -97,8 +99,7 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
         return queryFactory.from(book)
                 .leftJoin(book.images, image)
                 .where(
-                        book.id.eq(bookId),
-                        book.status.ne(BookStatus.REMOVED)
+                        book.id.eq(bookId)
                 )
                 .transform(
                         groupBy(book.id).list(
@@ -123,5 +124,16 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                         )
                 ).stream()
                 .findFirst();
+    }
+
+    @Override
+    public Optional<BookResponse> findByIsbn(String isbn) {
+        return Optional.ofNullable(
+                queryFactory
+                        .select(new QBookResponse(book.id, book.title))
+                        .from(book)
+                        .where(book.isbn.eq(isbn))
+                        .fetchOne()
+        );
     }
 }

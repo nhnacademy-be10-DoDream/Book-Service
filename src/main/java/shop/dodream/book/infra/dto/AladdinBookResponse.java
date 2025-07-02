@@ -56,8 +56,9 @@ public class AladdinBookResponse {
                     50L,
                     discountRate
             );
-
         }
+
+
     }
 
 

@@ -15,7 +15,7 @@ import shop.dodream.book.service.BookService;
 
 
 @RestController
-@RequestMapping("/books/internal")
+@RequestMapping("/public/books/internal")
 @RequiredArgsConstructor
 @Tag(name = "Book Internal", description = "도서 재고 관리 API")
 public class BookInternalController {
