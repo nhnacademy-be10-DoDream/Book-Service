@@ -32,9 +32,4 @@ public class BookController {
         return bookService.findAllByIds(ids);
     }
 
-    @Operation(summary = "도서 isbn 으로 도서 조회", description = "도서 isbn으로 도서 조회합니다.")
-    @GetMapping("{isbn}")
-    public BookResponse getBookByIsbn(@PathVariable("isbn") String isbn){
-        return bookService.getBookByIsbn(isbn);
-    }
 }
