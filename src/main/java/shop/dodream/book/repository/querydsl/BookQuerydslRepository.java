@@ -1,5 +1,6 @@
 package shop.dodream.book.repository.querydsl;
 
+import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 
@@ -13,4 +14,7 @@ public interface BookQuerydslRepository {
 
     Optional<BookDetailResponse> findBookDetailForAdmin(Long bookId);
     Optional<BookDetailResponse> findBookDetailForUser(Long bookId);
+
+
+    Optional<BookResponse> findByIsbn(String Isbn);
 }

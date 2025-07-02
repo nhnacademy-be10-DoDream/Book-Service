@@ -113,18 +113,6 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findVisibleBooksByIds(ids);
     }
 
-    private void updateStatusByBookCount(Book book) {
-        if (book.getStatus() != BookStatus.REMOVED) {
-            long count = book.getBookCount();
-            if (count == 0) {
-                book.setStatus(BookStatus.SOLD_OUT);
-            } else if (count <= 5) {
-                book.setStatus(BookStatus.LOW_STOCK);
-            } else {
-                book.setStatus(BookStatus.SELL);
-            }
-        }
-    }
 
 
     @Override
@@ -167,6 +155,7 @@ public class BookServiceImpl implements BookService {
                 book.addImages(createBookImagesThumbnail(book, uploadedKeys));
                 bookDocumentUpdater.updateBookFields(bookId, updateMap);
             }catch (Exception e){
+                // TODO exception 등록해얗마
                 throw new RuntimeException("Elasticsearch 문서 업데이트 실패", e);
             }
         }
@@ -207,6 +196,28 @@ public class BookServiceImpl implements BookService {
         updateStatusByBookCount(book);
 
         return new BookCountDecreaseResponse(book.getId(), book.getBookCount(), book.getStatus() == BookStatus.SELL);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookResponse getBookByIsbn(String isbn) {
+        return bookRepository.findByIsbn(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
+    }
+
+
+
+    private void updateStatusByBookCount(Book book) {
+        if (book.getStatus() != BookStatus.REMOVED) {
+            long count = book.getBookCount();
+            if (count == 0) {
+                book.setStatus(BookStatus.SOLD_OUT);
+            } else if (count <= 5) {
+                book.setStatus(BookStatus.LOW_STOCK);
+            } else {
+                book.setStatus(BookStatus.SELL);
+            }
+        }
     }
 
 

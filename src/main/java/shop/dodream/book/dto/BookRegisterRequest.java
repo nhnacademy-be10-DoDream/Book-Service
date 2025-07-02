@@ -62,60 +62,6 @@ public class BookRegisterRequest {
         return salePrice <= regularPrice;
     }
 
-
-//    @Min(value = 0, message = "할인율은 0 이상이어야 합니다.")
-//    @Max(value = 50, message = "할인율은 50 이하이어야 합니다.")
-//    private Long discountRate;
-
-
-
-//    public Book toEntity(AladdinBookResponse aladdinBookResponse){
-//
-//        AladdinBookResponse.Item bookItem = aladdinBookResponse.getItem().getFirst();
-//
-//        long regularPrice = aladdinBookResponse.getItem().getFirst().getPriceStandard();
-//        long salePrice = aladdinBookResponse.getItem().getFirst().getPriceSales();
-//
-//        // 할인율 계산
-//        long discountRate = 0L;
-//        if (regularPrice > 0 && salePrice <= regularPrice) {
-//            discountRate = (long) ((double) (regularPrice - salePrice) / regularPrice * 100);
-//        }
-//
-//        return new Book(
-//                bookItem.getTitle(),
-//                bookItem.getDescription(),
-//                bookItem.getAuthor(),
-//                bookItem.getPublisher(),
-//                bookItem.getPubDate(),
-//                isbn,
-//                regularPrice,
-//                BookStatus.SELL,
-//                salePrice,
-//                true,
-//                0L,
-//                50L,
-//                discountRate
-//        );
-//
-//    }
-
-//    public Book toEntity(){
-//        return new Book(
-//                title,
-//                description,
-//                author,
-//                publisher,
-//                publishedAt,
-//                isbn,
-//                regularPrice,
-//                isGiftable,
-//                salePrice,
-//                bookCount
-//        )
-//    }
-
-
     public Book toEntity() {
         return new Book(
                 title,
@@ -130,7 +76,6 @@ public class BookRegisterRequest {
                 isGiftable,
                 0L,
                 bookCount
-
         );
     }
 

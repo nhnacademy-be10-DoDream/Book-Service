@@ -28,4 +28,6 @@ public interface BookService {
 
     BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request);
 
+    BookResponse getBookByIsbn(String isbn);
+
 }
