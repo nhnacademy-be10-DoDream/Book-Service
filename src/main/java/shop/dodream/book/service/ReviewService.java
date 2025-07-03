@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.dto.ReviewCreateRequest;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
+import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface ReviewService {
     void deleteReview(Long reviewId);
 
     void deleteReview(Long reviewId, String userId);
+
+    ReviewSummaryResponse getReviewSummary(Long bookId);
 }

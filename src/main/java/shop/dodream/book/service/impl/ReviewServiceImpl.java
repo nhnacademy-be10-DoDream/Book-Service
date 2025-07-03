@@ -9,6 +9,7 @@ import shop.dodream.book.core.event.ReviewImageDeleteEvent;
 import shop.dodream.book.dto.ReviewCreateRequest;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
+import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.Image;
 import shop.dodream.book.entity.Review;
@@ -159,5 +160,12 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         return reviewImages;
+    }
+
+    @Override
+    public ReviewSummaryResponse getReviewSummary(Long bookId) {
+
+        return reviewRepository.findReviewSummaryByBookId(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
+
     }
 }
