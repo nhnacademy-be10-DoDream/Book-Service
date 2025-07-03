@@ -12,6 +12,6 @@ PUT http://localhost:8080/admin/tags/1?newTagName=신간
 Content-Type: application/json
 
 ### 태그 삭제
-DELETE http://localhost:8080/admin/tags/3
+DELETE http://localhost:8080/admin/tags/2
 
 ###

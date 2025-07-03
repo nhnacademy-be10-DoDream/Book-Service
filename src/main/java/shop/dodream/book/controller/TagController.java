@@ -27,7 +27,7 @@ public class TagController {
 
     // 전체 태그 조회
     @Operation(summary = "전체 태그 조회", description = "모든 태그를 조회합니다.")
-    @GetMapping("public/tags")
+    @GetMapping("/public/tags")
     public List<TagResponse> getTags() {
         return tagService.getTags();
     }
