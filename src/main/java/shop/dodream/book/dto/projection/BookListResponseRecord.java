@@ -2,8 +2,6 @@ package shop.dodream.book.dto.projection;
 
 import com.querydsl.core.annotations.QueryProjection;
 
-import java.util.List;
-
 public record BookListResponseRecord(
         Long bookId,
         String title,

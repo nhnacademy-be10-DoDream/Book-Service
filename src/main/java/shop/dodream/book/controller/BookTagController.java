@@ -23,7 +23,7 @@ public class BookTagController {
     private final BookTagService bookTagService;
 
     @Operation(summary = "도서에 태그 등록", description = "도서 ID와 태그 ID를 이용해 태그를 등록합니다.")
-    @PostMapping("/books/{book-id}/tags/{tag-id}")
+    @PostMapping("/admin/books/{book-id}/tags/{tag-id}")
     public ResponseEntity<BookWithTagResponse> registerTag(@PathVariable("book-id") Long bookId,
                                                            @PathVariable("tag-id") Long tagId) {
         BookWithTagResponse response = bookTagService.registerTag(bookId, tagId);
@@ -44,7 +44,7 @@ public class BookTagController {
     }
 
     @Operation(summary = "도서 태그 수정", description = "도서에 등록된 태그를 새로운 태그로 수정합니다.")
-    @PutMapping("/books/{book-id}/tags/{tag-id}")
+    @PutMapping("/admin/books/{book-id}/tags/{tag-id}")
     public BookWithTagResponse updateTagByBook(@PathVariable("book-id") Long bookId,
                                                                @PathVariable("tag-id") Long tagId,
                                                                @RequestParam Long newTagId) {
@@ -52,7 +52,7 @@ public class BookTagController {
     }
 
     @Operation(summary = "도서 태그 삭제", description = "도서에 등록된 태그를 삭제합니다.")
-    @DeleteMapping("/books/{book-id}/tags/{tag-id}")
+    @DeleteMapping("/admin/books/{book-id}/tags/{tag-id}")
     public ResponseEntity<Void> deleteTagByBook(@PathVariable("book-id") Long bookId,
                                                        @PathVariable("tag-id") Long tagId){
         bookTagService.deleteTagByBook(bookId, tagId);
