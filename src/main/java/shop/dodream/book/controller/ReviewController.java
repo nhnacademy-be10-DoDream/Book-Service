@@ -23,7 +23,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @Operation(summary = "도서 리뷰 목록 조회", description = "특정 도서의 리뷰 목록을 조회합니다.")
-    @GetMapping("/books/{book-id}/reviews")
+    @GetMapping("/public/books/{book-id}/reviews")
     public List<ReviewResponseRecord> getReviews(@PathVariable("book-id") Long bookId) {
         return reviewService.getReviewsByBookId(bookId);
     }
@@ -39,20 +39,20 @@ public class ReviewController {
     }
 
     @Operation(summary = "내 리뷰 목록 조회", description = "사용자가 작성한 리뷰 목록을 조회합니다.")
-    @GetMapping("/users/me/reviews")
+    @GetMapping("/reviews/me")
     public List<ReviewResponseRecord> getReviews(@RequestHeader("X-USER-ID") String userId){
         return reviewService.getReviewsByUserId(userId);
     }
 
     @Operation(summary = "내 리뷰 상세 조회", description = "사용자가 작성한 특정 리뷰를 조회합니다.")
-    @GetMapping("/users/me/reviews/{review-id}")
+    @GetMapping("/reviews/me/{review-id}")
     public ReviewResponseRecord getReview(@PathVariable("review-id") Long reviewId,
                                           @RequestHeader("X-USER-ID") String userId){
         return reviewService.getReview(reviewId, userId);
     }
 
     @Operation(summary = "내 리뷰 수정", description = "사용자가 작성한 리뷰를 수정합니다. (파일 첨부 가능)")
-    @PutMapping("/users/me/reviews/{review-id}")
+    @PutMapping("/reviews/me/{review-id}")
     public ResponseEntity<Void> updateReview(@PathVariable("review-id") Long reviewId,
                                              @RequestHeader("X-USER-ID") String userId,
                                              @Valid @RequestPart("review") ReviewUpdateRequest reviewUpdateRequest,
@@ -62,7 +62,7 @@ public class ReviewController {
     }
 
     @Operation(summary = "내 리뷰 삭제", description = "사용자가 작성한 리뷰를 삭제합니다.")
-    @DeleteMapping("/users/me/reviews/{review-id}")
+    @DeleteMapping("/reviews/me/{review-id}")
     public ResponseEntity<Void> deleteReview(@PathVariable("review-id") Long reviewId,
                                              @RequestHeader("X-USER-ID") String userId) {
         reviewService.deleteReview(reviewId, userId);

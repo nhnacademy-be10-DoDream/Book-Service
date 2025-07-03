@@ -61,8 +61,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewResponseRecord> getReviews() {
-        return reviewRepository.getAllBy();
+    public List<ReviewResponseRecord> getReviews(String userId) {
+
+        return reviewRepository.getAllBy(userId);
     }
 
     @Transactional(readOnly = true)

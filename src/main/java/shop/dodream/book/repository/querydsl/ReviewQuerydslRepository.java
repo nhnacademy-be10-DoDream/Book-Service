@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ReviewQuerydslRepository {
     Optional<ReviewResponseRecord> getByReviewId(long reviewId);
     Optional<ReviewResponseRecord> getByReviewIdAndUserId(long reviewId, String userId);
-    List<ReviewResponseRecord> getAllBy();
+    List<ReviewResponseRecord> getAllBy(String userId);
     List<ReviewResponseRecord> getAllByUserId(String userId);
     List<ReviewResponseRecord> getAllByBookId(long bookId);
 

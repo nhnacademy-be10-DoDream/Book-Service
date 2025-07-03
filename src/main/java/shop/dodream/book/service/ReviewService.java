@@ -11,7 +11,7 @@ import java.util.List;
 public interface ReviewService {
     void createReview(Long bookId, String userId, ReviewCreateRequest reviewCreateRequest, List<MultipartFile> files);
 
-    List<ReviewResponseRecord> getReviews();
+    List<ReviewResponseRecord> getReviews(String userId);
 
     List<ReviewResponseRecord> getReviewsByUserId(String userId);
 
