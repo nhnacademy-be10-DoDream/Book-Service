@@ -1,5 +1,5 @@
 ### 태그 생성
-POST http://localhost:8080/tags?newTagName=신간s
+POST http://localhost:8080/admin/tags?newTagName=신간s
 Content-Type: application/json
 
 
@@ -8,10 +8,10 @@ GET http://localhost:8080/public/tags?page=1&size=5
 Accept: application/json
 
 ### 태그 수정
-PUT http://localhost:8080/tags/1?newTagName=신간
+PUT http://localhost:8080/admin/tags/1?newTagName=신간
 Content-Type: application/json
 
 ### 태그 삭제
-DELETE http://localhost:8080/tags/3
+DELETE http://localhost:8080/admin/tags/3
 
 ###
