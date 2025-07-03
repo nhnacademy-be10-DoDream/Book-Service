@@ -30,7 +30,7 @@ public class ReviewController {
 
     @Operation(summary = "도서 리뷰 작성", description = "도서에 대한 리뷰를 작성합니다. (파일 첨부 가능)")
     @PostMapping("/books/{book-id}/reviews")
-    public ResponseEntity<Void> creteReview(@PathVariable("book-id") Long bookId,
+    public ResponseEntity<Void> createReview(@PathVariable("book-id") Long bookId,
                                             @RequestHeader("X-USER-ID") String userId,
                                             @Valid @RequestPart("review") ReviewCreateRequest reviewCreateRequest,
                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files) {
