@@ -59,7 +59,7 @@ public class AdminReviewController {
     }
 
     @Operation(summary = "리뷰 평점평균, 리뷰수 조회", description = "책 ID를 기준으로 리뷰의 평점 평균을 조회 합니다.")
-    @GetMapping("/review/{book-id}/reviews-summary")
+    @GetMapping("/reviews/{book-id}/review-summary")
     public ReviewSummaryResponse getReviewSummary(@PathVariable("book-id") Long bookId){
         return reviewService.getReviewSummary(bookId);
     }
