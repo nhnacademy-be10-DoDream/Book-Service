@@ -23,7 +23,7 @@ public class CategoryController {
 
     // 카테고리 등록
     @Operation(summary = "카테고리 등록", description = "새로운 카테고리를 등록합니다.")
-    @PostMapping("categories")
+    @PostMapping("/admin/categories")
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest request) {
         CategoryResponse response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -66,7 +66,7 @@ public class CategoryController {
 
     // 카테고리 수정
     @Operation(summary = "카테고리 수정", description = "카테고리 ID로 카테고리 정보를 수정합니다.")
-    @PutMapping("/categories/{category-id}")
+    @PutMapping("/admin/categories/{category-id}")
     public CategoryResponse updateCategory(@PathVariable("category-id") Long categoryId,
                                                            @RequestBody @Valid CategoryRequest request) {
         return categoryService.updateCategory(categoryId, request);
@@ -74,7 +74,7 @@ public class CategoryController {
 
     // 카테고리 삭제
     @Operation(summary = "카테고리 삭제", description = "카테고리 ID로 카테고리를 삭제합니다.")
-    @DeleteMapping("/categories/{category-id}")
+    @DeleteMapping("/admin/categories/{category-id}")
     public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable("category-id") Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

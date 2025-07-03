@@ -25,7 +25,7 @@ public class BookCategoryController {
     private final BookCategoryService bookCategoryService;
 
     @Operation(summary = "도서에 카테고리 등록", description = "도서에 하나 이상의 카테고리를 등록합니다.")
-    @PostMapping("/books/{book-id}/categories")
+    @PostMapping("/admin/books/{book-id}/categories")
     public ResponseEntity<BookWithCategoriesResponse> registerCategory(@PathVariable("book-id") Long bookId,
                                                                        @RequestBody @Valid IdsListRequest categoryIds) {
         BookWithCategoriesResponse response = bookCategoryService.registerCategory(bookId, categoryIds);
@@ -47,7 +47,7 @@ public class BookCategoryController {
 
     @Operation(summary = "도서의 카테고리 수정",
             description = "도서에 등록된 카테고리를 다른 카테고리로 수정합니다.")
-    @PutMapping("/books/{book-id}/categories/{category-id}")
+    @PutMapping("/admin/books/{book-id}/categories/{category-id}")
     public Long updateCategoryByBook(@PathVariable("book-id") Long bookId,
                                      @PathVariable("category-id") Long categoryId,
                                      @RequestParam(value = "new-category-id") Long newCategoryId) {
@@ -55,7 +55,7 @@ public class BookCategoryController {
     }
 
     @Operation(summary = "도서의 카테고리 삭제", description = "도서에 등록된 하나 이상의 카테고리를 삭제합니다.")
-    @DeleteMapping("/books/{book-id}/categories")
+    @DeleteMapping("/admin/books/{book-id}/categories")
     public ResponseEntity<Void> deleteCategoriesByBook(@PathVariable("book-id") Long bookId,
                                                        @RequestBody IdsListRequest categoryIds){
         bookCategoryService.deleteCategoriesByBook(bookId, categoryIds);

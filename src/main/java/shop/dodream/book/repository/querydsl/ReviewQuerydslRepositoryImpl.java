@@ -1,12 +1,16 @@
 package shop.dodream.book.repository.querydsl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import shop.dodream.book.dto.projection.QReviewResponseRecord;
+import shop.dodream.book.dto.projection.QReviewSummaryResponse;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
+import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 import shop.dodream.book.entity.Review;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -69,9 +73,15 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
-    public List<ReviewResponseRecord> getAllBy() {
+    public List<ReviewResponseRecord> getAllBy(String userId) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (Objects.nonNull(userId)){
+            booleanBuilder.and(review.userId.eq(userId));
+        }
+
         return queryFactory.from(review)
                 .leftJoin(review.images, image)
+                .where(booleanBuilder)
                 .transform(
                         groupBy(review.reviewId).list(
                                 new QReviewResponseRecord(
@@ -127,8 +137,24 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
                 );
     }
 
+    @Override
+    public Optional<ReviewSummaryResponse> findReviewSummaryByBookId(long bookId) {
 
-
-
-
+        ReviewSummaryResponse reviewSummaryResponse = queryFactory
+                .select(new QReviewSummaryResponse(
+                        review.rating.avg(),
+                        review.count()
+                ))
+                .from(review)
+                .where(review.book.id.eq(bookId))
+                .fetchOne();
+        return Optional.ofNullable(reviewSummaryResponse)
+                .map(r -> {
+                    if (r.getRatingAvg() == null) {
+                        r.setRatingAvg(0.0);
+                    }
+                    return r;
+                })
+                .or(() -> Optional.of(new ReviewSummaryResponse(0.0, 0L)));
+    }
 }

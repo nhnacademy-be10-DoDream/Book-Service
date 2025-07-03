@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
+import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 import shop.dodream.book.service.ReviewService;
 
 import java.util.List;
@@ -24,14 +25,8 @@ public class AdminReviewController {
 
     @Operation(summary = "리뷰 전체 조회", description = "관리자가 모든 리뷰를 조회합니다.")
     @GetMapping("/reviews")
-    public List<ReviewResponseRecord> getReviews(){
-        return reviewService.getReviews();
-    }
-
-    @Operation(summary = "사용자 리뷰 조회", description = "특정 사용자의 리뷰를 조회합니다.")
-    @GetMapping("/users/{user-id}/reviews")
-    public List<ReviewResponseRecord> getReviewsByUserId(@PathVariable("user-id") String userId){
-        return reviewService.getReviewsByUserId(userId);
+    public List<ReviewResponseRecord> getReviews(@RequestParam(value = "user-id", required = false) String userId){
+        return reviewService.getReviews(userId);
     }
 
     @Operation(summary = "리뷰 상세 조회", description = "리뷰 ID를 기준으로 리뷰 상세 정보를 조회합니다.")
@@ -55,4 +50,11 @@ public class AdminReviewController {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @Operation(summary = "리뷰 평점평균, 리뷰수 조회", description = "책 ID를 기준으로 리뷰의 평점 평균을 조회 합니다.")
+    @GetMapping("/reviews/{book-id}/review-summary")
+    public ReviewSummaryResponse getReviewSummary(@PathVariable("book-id") Long bookId){
+        return reviewService.getReviewSummary(bookId);
+    }
+
 }
