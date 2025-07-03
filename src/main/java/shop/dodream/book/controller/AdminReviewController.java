@@ -3,7 +3,6 @@ package shop.dodream.book.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +25,8 @@ public class AdminReviewController {
 
     @Operation(summary = "리뷰 전체 조회", description = "관리자가 모든 리뷰를 조회합니다.")
     @GetMapping("/reviews")
-    public List<ReviewResponseRecord> getReviews(){
-        return reviewService.getReviews();
-    }
-
-    @Operation(summary = "사용자 리뷰 조회", description = "특정 사용자의 리뷰를 조회합니다.")
-    @GetMapping("/users/{user-id}/reviews")
-    public List<ReviewResponseRecord> getReviewsByUserId(@PathVariable("user-id") String userId){
-        return reviewService.getReviewsByUserId(userId);
+    public List<ReviewResponseRecord> getReviews(@RequestParam(value = "user-id", required = false) String userId){
+        return reviewService.getReviews(userId);
     }
 
     @Operation(summary = "리뷰 상세 조회", description = "리뷰 ID를 기준으로 리뷰 상세 정보를 조회합니다.")

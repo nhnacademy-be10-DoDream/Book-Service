@@ -1,5 +1,6 @@
 package shop.dodream.book.repository.querydsl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import shop.dodream.book.dto.projection.QReviewResponseRecord;
@@ -9,6 +10,7 @@ import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 import shop.dodream.book.entity.Review;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -71,9 +73,15 @@ public class ReviewQuerydslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
-    public List<ReviewResponseRecord> getAllBy() {
+    public List<ReviewResponseRecord> getAllBy(String userId) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (Objects.nonNull(userId)){
+            booleanBuilder.and(review.userId.eq(userId));
+        }
+
         return queryFactory.from(review)
                 .leftJoin(review.images, image)
+                .where(booleanBuilder)
                 .transform(
                         groupBy(review.reviewId).list(
                                 new QReviewResponseRecord(
