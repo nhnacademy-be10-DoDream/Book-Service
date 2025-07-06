@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,9 @@ public class AdminReviewController {
 
     @Operation(summary = "리뷰 전체 조회", description = "관리자가 모든 리뷰를 조회합니다.")
     @GetMapping("/reviews")
-    public List<ReviewResponseRecord> getReviews(@RequestParam(value = "user-id", required = false) String userId){
-        return reviewService.getReviews(userId);
+    public Page<ReviewResponseRecord> getReviews(@RequestParam(value = "user-id", required = false) String userId,
+                                                 Pageable pageable){
+        return reviewService.getReviews(userId, pageable);
     }
 
     @Operation(summary = "리뷰 상세 조회", description = "리뷰 ID를 기준으로 리뷰 상세 정보를 조회합니다.")
