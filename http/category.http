@@ -15,7 +15,7 @@ Accept: application/json
 
 
 ### 특정 카테고리 조회
-GET http://localhost:8080/public/categories/2
+GET http://localhost:8080/public/categories/1
 Accept: application/json
 
 

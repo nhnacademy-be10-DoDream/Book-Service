@@ -27,6 +27,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override @Transactional(readOnly = true)
+    public TagResponse getTag(Long tagId) {
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new TagNotFoundException(tagId));
+        return new TagResponse(tag);
+    }
+
+    @Override @Transactional(readOnly = true)
     public List<TagResponse> getTags(){
         return tagRepository.findAll()
                 .stream()

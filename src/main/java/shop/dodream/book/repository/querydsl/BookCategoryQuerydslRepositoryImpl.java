@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.querydsl.core.group.GroupBy.list;
 import static shop.dodream.book.entity.QBook.book;
 import static shop.dodream.book.entity.QBookCategory.bookCategory;
 import static shop.dodream.book.entity.QImage.image;
@@ -34,7 +33,7 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
     private final BookDocumentUpdater bookDocumentUpdater;
 
     @Override
-    public Page<BookListResponseRecord> findBookListByCategoryId(Long categoryId, Pageable pageable) {
+    public Page<BookListResponseRecord> findBookListByCategoryIds(Set<Long> categoryIds, Pageable pageable) {
         List<BookListResponseRecord> content = queryFactory
                 .select(new QBookListResponseRecord(
                         book.id,
@@ -51,7 +50,7 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
                 .leftJoin(bookCategory.book, book)
                 .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
                 .where(
-                        bookCategory.category.id.eq(categoryId),
+                        bookCategory.category.id.in(categoryIds),
                         book.status.ne(BookStatus.REMOVED)
                 )
                 .offset(pageable.getOffset()) // 페이징 시작 위치
@@ -63,7 +62,7 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
                 .from(bookCategory)
                 .leftJoin(bookCategory.book, book)
                 .where(
-                        bookCategory.category.id.eq(categoryId),
+                        bookCategory.category.id.in(categoryIds),
                         book.status.ne(BookStatus.REMOVED)
                 )
                 .fetchOne();
