@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,12 +27,13 @@ public class ReviewController {
 
     @Operation(summary = "도서 리뷰 목록 조회", description = "특정 도서의 리뷰 목록을 조회합니다.")
     @GetMapping("/public/books/{book-id}/reviews")
-    public List<ReviewResponseRecord> getReviews(@PathVariable("book-id") Long bookId) {
-        return reviewService.getReviewsByBookId(bookId);
+    public Page<ReviewResponseRecord> getReviews(@PathVariable("book-id") Long bookId,
+                                                 Pageable pageable) {
+        return reviewService.getReviewsByBookId(bookId, pageable);
     }
 
     @Operation(summary = "도서 리뷰 작성", description = "도서에 대한 리뷰를 작성합니다. (파일 첨부 가능)")
-    @PostMapping("/books/{book-id}/reviews")
+    @PostMapping(path = "/books/{book-id}/reviews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createReview(@PathVariable("book-id") Long bookId,
                                             @RequestHeader("X-USER-ID") String userId,
                                             @Valid @RequestPart("review") ReviewCreateRequest reviewCreateRequest,
@@ -40,8 +44,9 @@ public class ReviewController {
 
     @Operation(summary = "내 리뷰 목록 조회", description = "사용자가 작성한 리뷰 목록을 조회합니다.")
     @GetMapping("/reviews/me")
-    public List<ReviewResponseRecord> getReviews(@RequestHeader("X-USER-ID") String userId){
-        return reviewService.getReviewsByUserId(userId);
+    public Page<ReviewResponseRecord> getReviews(@RequestHeader("X-USER-ID") String userId,
+                                                 Pageable pageable){
+        return reviewService.getReviews(userId, pageable);
     }
 
     @Operation(summary = "내 리뷰 상세 조회", description = "사용자가 작성한 특정 리뷰를 조회합니다.")

@@ -11,9 +11,10 @@ public record ReviewResponseRecord(
         String content,
         ZonedDateTime createdAt,
         long bookId,
-        List<String> images,
-        String userId
+        String userId,
+        List<String> images
 ) {
+
     @QueryProjection
-    public ReviewResponseRecord {}
+    public ReviewResponseRecord{}
 }
