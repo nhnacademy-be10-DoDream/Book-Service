@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface TagService {
     TagResponse createTag(String newTagName);
+    TagResponse getTag(Long tagId);
     List<TagResponse> getTags();
     TagResponse updateTag(Long tagId, String newTagName);
     void deleteTag(Long tagId);
