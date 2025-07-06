@@ -25,6 +25,13 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // 단일 태그 조회
+    @Operation(summary = "단일 태그 조회", description = "단일 태그를 조회합니다.")
+    @GetMapping("/public/tags/{tag-id}")
+    public TagResponse getTag(@PathVariable("tag-id") Long tagId) {
+        return tagService.getTag(tagId);
+    }
+
     // 전체 태그 조회
     @Operation(summary = "전체 태그 조회", description = "모든 태그를 조회합니다.")
     @GetMapping("/public/tags")
