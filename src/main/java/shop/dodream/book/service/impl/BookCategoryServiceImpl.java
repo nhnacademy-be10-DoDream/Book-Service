@@ -56,9 +56,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         // categoryMap에 있는 Id가 전부 존재하는지 검증
         validateCategoryExistence(requestCategoryIds, categoryMap);
 
-        // 부모 카테고리와 자식 카테고리 동시 등록 불가, 등록할때 부모,자식이 이미 등록되어있을 경우
-        validateParentChildConflict(requestCategoryIds, existingCategoryIds, categoryMap);
-
         List<CategoryWithParentProjection> initialCategories = requestCategoryIds.stream()
                 .map(categoryMap::get)
                 .toList();
@@ -130,7 +127,9 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             throw new CategoryNotFoundException(categoryId);
         }
 
-        return bookCategoryRepository.findBookListByCategoryId(categoryId, pageable);
+        Set<Long> categoryIds = findAllChildCategoryIds(categoryId);
+
+        return bookCategoryRepository.findBookListByCategoryIds(categoryIds, pageable);
     }
 
     @Override @Transactional
@@ -234,39 +233,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         }
     }
 
-    private void validateParentChildConflict(Set<Long> requestCategoryIds, Set<Long> existingCategoryIds, Map<Long, CategoryWithParentProjection> categoryMap) {
-        for (Long requestId : requestCategoryIds) {
-            checkParentConflict(requestId, requestCategoryIds, existingCategoryIds, categoryMap);
-        }
-
-        for (Long existingId : existingCategoryIds) {
-            checkChildConflict(existingId, requestCategoryIds, categoryMap);
-        }
-    }
-
-    private void checkParentConflict(Long id, Set<Long> requestCategoryIds, Set<Long> existingCategoryIds, Map<Long, CategoryWithParentProjection> categoryMap) {
-        Long parentId = categoryMap.get(id).parentId();
-        while (parentId != null) {
-            if (requestCategoryIds.contains(parentId)) {
-                throw new CategoryParentChildConflictException(id, parentId);
-            }
-            if (existingCategoryIds.contains(parentId)) {
-                throw new CategoryParentChildConflictException(id, parentId);
-            }
-            parentId = categoryMap.get(parentId) != null ? categoryMap.get(parentId).parentId() : null;
-        }
-    }
-
-    private void checkChildConflict(Long existingId, Set<Long> requestCategoryIds, Map<Long, CategoryWithParentProjection> categoryMap) {
-        Long parentId = categoryMap.get(existingId) != null ? categoryMap.get(existingId).parentId() : null;
-        while (parentId != null) {
-            if (requestCategoryIds.contains(parentId)) {
-                throw new CategoryParentChildConflictException(existingId, parentId);
-            }
-            parentId = categoryMap.get(parentId) != null ? categoryMap.get(parentId).parentId() : null;
-        }
-    }
-
     private List<BookCategory> createBookCategoryEntities(Book book, List<CategoryWithParentProjection> categories) {
         return categories.stream()
                 .map(dto -> {
@@ -289,5 +255,25 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 
         document.setCategoryNames(remainingCategoryNames);
         bookElasticsearchRepository.save(document);
+    }
+
+    private Set<Long> findAllChildCategoryIds(Long categoryId) {
+        List<CategoryFlatProjection> flatCategories = categoryRepository.findAllFlat();
+        Set<Long> result = new HashSet<>();
+        Deque<Long> queue = new ArrayDeque<>();
+        queue.add(categoryId);
+
+        while (!queue.isEmpty()) {
+            Long currentId = queue.poll();
+            result.add(currentId);
+
+            for (CategoryFlatProjection category : flatCategories) {
+                if (Objects.equals(category.getParentId(), currentId)) {
+                    queue.add(category.getCategoryId());
+                }
+            }
+        }
+
+        return result;
     }
 }
