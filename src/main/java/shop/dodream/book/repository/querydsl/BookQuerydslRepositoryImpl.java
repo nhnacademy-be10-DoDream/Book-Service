@@ -3,6 +3,9 @@ package shop.dodream.book.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.BookResponse;
@@ -29,9 +32,8 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<BookListResponseRecord> findAllBy() {
-        return queryFactory.from(book)
-                .leftJoin(book.images, image).where(image.isThumbnail.eq(true))
+    public Page<BookListResponseRecord> findAllBy(Pageable pageable) {
+        List<BookListResponseRecord> content = queryFactory
                 .select(new QBookListResponseRecord(
                         book.id,
                         book.title,
@@ -43,7 +45,19 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                         book.createdAt,
                         book.status
                 ))
+                .from(book)
+                .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(book.createdAt.desc()) // 정렬 조건 필요 시
                 .fetch();
+
+        Long count = queryFactory
+                .select(book.count())
+                .from(book)
+                .fetchOne();
+        return new PageImpl<>(content, pageable, count);
+
     }
 
     @Override

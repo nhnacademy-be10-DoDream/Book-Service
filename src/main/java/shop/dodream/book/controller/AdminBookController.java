@@ -7,6 +7,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -49,10 +52,10 @@ public class AdminBookController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "도서 전체 조회", description = "등록된 모든 도서를 조회합니다.")
+    @Operation(summary = "도서 전체 조회", description = "등록된 모든 도서를 페이징하여 조회합니다.")
     @GetMapping
-    public List<BookListResponseRecord> getAllBooks(){
-        return bookService.getAllBooks();
+    public Page<BookListResponseRecord> getAllBooks(Pageable pageable){
+        return bookService.getAllBooks(pageable);
     }
 
     @Operation(summary = "도서 상세 조회 (관리자)", description = "도서 ID를 기준으로 상세 정보를 조회합니다.")
