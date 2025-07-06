@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface BookCategoryQuerydslRepository {
     Set<Long> findCategoryIdsByBookId(@Param("bookId") Long bookId);
-    Page<BookListResponseRecord> findBookListByCategoryId(Long categoryId, Pageable pageable);
+    Page<BookListResponseRecord> findBookListByCategoryIds(Set<Long> categoryIds, Pageable pageable);
     void deleteByBookIdAndCategoryIds(@Param("bookId") Long bookId, @Param("categoryIds") List<Long> categoryIds);
     List<Long> findExistingCategoryIds(@Param("bookId") Long bookId, @Param("categoryIds") List<Long> categoryIds);
     Optional<BookCategory> findExistingCategory(@Param("bookId") Long bookId, @Param("categoryId") Long categoryId);

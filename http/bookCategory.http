@@ -3,11 +3,11 @@ POST http://localhost:8080/admin/books/11/categories
 Content-Type: application/json
 
 {
-  "ids": [10]
+  "ids": [52]
 }
 
 ### 해당 도서의 카테고리 조회
-GET http://localhost:8080/public/books/1/categories
+GET http://localhost:8080/public/books/11/categories
 Content-Type: application/json
 
 ### 해당 카테고리의 도서 조회

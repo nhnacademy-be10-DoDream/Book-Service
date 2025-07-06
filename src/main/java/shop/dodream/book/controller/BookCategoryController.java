@@ -41,7 +41,7 @@ public class BookCategoryController {
     @Operation(summary = "카테고리에 속한 도서 조회(페이징)", description = "카테고리에 속한 도서 목록을 페이징 처리하여 조회합니다.")
     @GetMapping("/public/categories/{category-id}/books")
     public Page<BookListResponseRecord> getBooksByCategoryId(@PathVariable("category-id") Long categoryId,
-                                                             @PageableDefault(size = 10) Pageable pageable) {
+                                                             @PageableDefault(size = 15) Pageable pageable) {
         return bookCategoryService.getBooksByCategoryId(categoryId, pageable);
     }
 
