@@ -39,7 +39,9 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        image.uuid
+                        image.uuid,
+                        book.createdAt,
+                        book.status
                 ))
                 .fetch();
     }
@@ -59,7 +61,9 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        image.uuid
+                        image.uuid,
+                        book.createdAt,
+                        book.status
                 ))
                 .fetch();
     }

@@ -41,10 +41,10 @@ public class AdminBookController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "도서 직접 등록", description = "ISBN을 기준으로 도서를 등록합니다.")
+    @Operation(summary = "도서 직접 등록", description = "새로운 도서를 직접 등록합니다.")
     @PostMapping()
     public ResponseEntity<Void> registerBook(@Valid @RequestPart("book") BookRegisterRequest bookRegisterRequest,
-                                             @ValidatedFiles @RequestPart(value = "files", required = false)List<MultipartFile> files){
+                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files){
         bookService.registerBookDirect(bookRegisterRequest, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -78,7 +78,7 @@ public class AdminBookController {
     }
 
     @Operation(summary = "도서 isbn 으로 도서 조회", description = "도서 isbn으로 도서 조회합니다.")
-    @GetMapping("{isbn}")
+    @GetMapping("isbn/{isbn}")
     public BookResponse getBookByIsbn(@PathVariable("isbn") String isbn){
         return bookService.getBookByIsbn(isbn);
     }
