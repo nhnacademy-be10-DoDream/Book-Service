@@ -3,14 +3,14 @@ package shop.dodream.book.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.QBookResponse;
-import shop.dodream.book.dto.projection.BookDetailResponse;
-import shop.dodream.book.dto.projection.BookListResponseRecord;
-import shop.dodream.book.dto.projection.QBookDetailResponse;
-import shop.dodream.book.dto.projection.QBookListResponseRecord;
+import shop.dodream.book.dto.projection.*;
 import shop.dodream.book.entity.BookStatus;
 
 import java.util.List;
@@ -29,19 +29,32 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<BookListResponseRecord> findAllBy() {
-        return queryFactory.from(book)
-                .leftJoin(book.images, image).where(image.isThumbnail.eq(true))
-                .select(new QBookListResponseRecord(
+    public Page<BookAdminListResponseRecord> findAllBy(Pageable pageable) {
+        List<BookAdminListResponseRecord> content = queryFactory
+                .select(new QBookAdminListResponseRecord(
                         book.id,
                         book.title,
                         book.author,
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        image.uuid
+                        image.uuid,
+                        book.createdAt,
+                        book.status
                 ))
+                .from(book)
+                .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(book.createdAt.desc()) // 정렬 조건 필요 시
                 .fetch();
+
+        Long count = queryFactory
+                .select(book.count())
+                .from(book)
+                .fetchOne();
+        return new PageImpl<>(content, pageable, count);
+
     }
 
     @Override

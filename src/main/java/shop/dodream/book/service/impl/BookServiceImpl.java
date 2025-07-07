@@ -1,13 +1,17 @@
 package shop.dodream.book.service.impl;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.core.event.BookImageDeleteEvent;
 import shop.dodream.book.core.properties.AladdinBookProperties;
+import shop.dodream.book.core.properties.MinIOProperties;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Book;
@@ -37,6 +41,7 @@ public class BookServiceImpl implements BookService {
     private final FileService fileService;
     private final BookDocumentUpdater bookDocumentUpdater;
     private final ApplicationEventPublisher eventPublisher;
+    private final MinIOProperties minIOProperties;
 
 
     @Override
@@ -87,6 +92,13 @@ public class BookServiceImpl implements BookService {
 
         Book book = registerRequest.toEntity();
 
+
+        if (files == null || files.isEmpty()) {
+            String defaultKey = minIOProperties.getDefaultThumbnailKey();
+            Image defaultImage = new Image(book, defaultKey, true);
+            book.addImages(List.of(defaultImage));
+        }
+
         List<String> uploadedImageKeys = fileService.uploadBookImageFromFiles(files);
 
         try {
@@ -103,8 +115,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookListResponseRecord> getAllBooks() {
-        return bookRepository.findAllBy();
+    public Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable) {
+        return bookRepository.findAllBy(pageable);
     }
 
     @Override
@@ -140,10 +152,19 @@ public class BookServiceImpl implements BookService {
             throw new BookAlreadyRemovedException();
         }
 
+        List<String> deleteKeys = book.getImages().stream()
+                .map(Image::getUuid)
+                .toList();
+
+        book.getImages().clear();
+
 
         List<String> uploadedKeys = fileService.uploadBookImageFromFiles(files);
-        List<String> deleteKeys = book.update(request);
+        List<Image> newImages = createBookImagesThumbnail(book, uploadedKeys);
+        book.addImages(newImages);
 
+
+        book.updateTextFields(request);
         updateStatusByBookCount(book);
 
         eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
@@ -152,7 +173,7 @@ public class BookServiceImpl implements BookService {
         Map<String, Object> updateMap = request.toUpdateMap();
         if (!updateMap.isEmpty()){
             try {
-                book.addImages(createBookImagesThumbnail(book, uploadedKeys));
+//                book.addImages(createBookImagesThumbnail(book, uploadedKeys));
                 bookDocumentUpdater.updateBookFields(bookId, updateMap);
             }catch (Exception e){
                 // TODO exception 등록해얗마

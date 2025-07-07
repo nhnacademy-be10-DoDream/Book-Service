@@ -7,6 +7,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,8 +19,8 @@ import shop.dodream.book.dto.BookUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
-import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -41,18 +44,18 @@ public class AdminBookController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "도서 직접 등록", description = "ISBN을 기준으로 도서를 등록합니다.")
+    @Operation(summary = "도서 직접 등록", description = "새로운 도서를 직접 등록합니다.")
     @PostMapping()
     public ResponseEntity<Void> registerBook(@Valid @RequestPart("book") BookRegisterRequest bookRegisterRequest,
-                                             @ValidatedFiles @RequestPart(value = "files", required = false)List<MultipartFile> files){
+                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files){
         bookService.registerBookDirect(bookRegisterRequest, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "도서 전체 조회", description = "등록된 모든 도서를 조회합니다.")
+    @Operation(summary = "도서 전체 조회", description = "등록된 모든 도서를 페이징하여 조회합니다.")
     @GetMapping
-    public List<BookListResponseRecord> getAllBooks(){
-        return bookService.getAllBooks();
+    public Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable){
+        return bookService.getAllBooks(pageable);
     }
 
     @Operation(summary = "도서 상세 조회 (관리자)", description = "도서 ID를 기준으로 상세 정보를 조회합니다.")
@@ -78,7 +81,7 @@ public class AdminBookController {
     }
 
     @Operation(summary = "도서 isbn 으로 도서 조회", description = "도서 isbn으로 도서 조회합니다.")
-    @GetMapping("{isbn}")
+    @GetMapping("/isbn/{isbn}")
     public BookResponse getBookByIsbn(@PathVariable("isbn") String isbn){
         return bookService.getBookByIsbn(isbn);
     }
