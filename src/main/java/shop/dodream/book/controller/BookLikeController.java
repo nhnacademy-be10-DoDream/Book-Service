@@ -4,13 +4,13 @@ package shop.dodream.book.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
-import shop.dodream.book.entity.Book;
 import shop.dodream.book.service.BookLikeService;
 
-import java.util.List;
 
 @RestController
 @RequestMapping
@@ -53,8 +53,8 @@ public class BookLikeController {
     // 좋아요한 도서 목록 조회
     @Operation(summary = "사용자가 좋아요한 도서 목록 조회", description = "로그인한 사용자가 좋아요한 도서 목록을 조회합니다.")
     @GetMapping("/likes/me")
-    public List<BookListResponseRecord> getLikedBooks(@RequestHeader("X-USER-ID") String userId){
-        return bookLikeService.getLikedBooksByUserId(userId);
+    public Page<BookListResponseRecord> getLikedBooks(@RequestHeader("X-USER-ID") String userId, Pageable pageable){
+        return bookLikeService.getLikedBooksByUserId(userId, pageable);
     }
 
     // 도서 좋아요 수 조회
