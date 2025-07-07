@@ -256,4 +256,15 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    //TODO 수정시 대표이미지 처리 고민중... 어케해야할지 몰르겠음
+//    private List<Image> createBookImages(Book book, List<String> imageUrls) {
+//        List<Image> bookImages = new ArrayList<>(imageUrls.size());
+//
+//        for (String imageUrl : imageUrls) {
+//            Image bookImage = new Image(book, imageUrl);
+//            bookImages.add(bookImage);
+//        }
+//
+//        return bookImages;
+//    }
 }
