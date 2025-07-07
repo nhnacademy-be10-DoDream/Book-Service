@@ -42,9 +42,7 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        image.uuid,
-                        book.createdAt,
-                        book.status
+                        image.uuid
                 ))
                 .from(bookCategory)
                 .leftJoin(bookCategory.book, book)
