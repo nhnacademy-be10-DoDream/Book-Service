@@ -1,6 +1,8 @@
 package shop.dodream.book.service.impl;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -103,8 +105,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookListResponseRecord> getAllBooks() {
-        return bookRepository.findAllBy();
+    public Page<BookListResponseRecord> getAllBooks(Pageable pageable) {
+        return bookRepository.findAllBy(pageable);
     }
 
     @Override
@@ -235,7 +237,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
-    //TODO 수정시 대표이미지 처리 고민중... 어케해야할지 몰르겠음
+//    TODO 수정시 대표이미지 처리 고민중... 어케해야할지 몰르겠음
 //    private List<Image> createBookImages(Book book, List<String> imageUrls) {
 //        List<Image> bookImages = new ArrayList<>(imageUrls.size());
 //

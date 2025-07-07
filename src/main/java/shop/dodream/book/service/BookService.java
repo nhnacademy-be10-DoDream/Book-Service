@@ -1,5 +1,7 @@
 package shop.dodream.book.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookDetailResponse;
@@ -14,7 +16,7 @@ public interface BookService {
     void registerBookDirect(BookRegisterRequest registerRequest, List<MultipartFile> files);
 
 
-    List<BookListResponseRecord> getAllBooks();
+    Page<BookListResponseRecord> getAllBooks(Pageable pageable);
 
     List<BookListResponseRecord> findAllByIds(List<Long> ids);
 
