@@ -39,9 +39,7 @@ public class BookLikeQuerydslRepositoryImpl implements BookLikeQuerydslRepositor
                     book.isbn,
                     book.regularPrice,
                     book.salePrice,
-                    image.uuid,
-                    book.createdAt,
-                    book.status
+                    image.uuid
             ))
             .fetch();
     }

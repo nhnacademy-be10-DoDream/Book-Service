@@ -33,7 +33,6 @@ public class BookUpdateRequest {
     @Min(value = 0, message = "수량은 0이상이어야합니다.")
     private Long bookCount;
 
-    private List<String> images;
 
     @AssertTrue(message = "할인가는 정가보다 작거나 같아야 합니다.")
     public boolean isSalePriceValid() {

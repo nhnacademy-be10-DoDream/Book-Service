@@ -131,8 +131,7 @@ public class Book extends BaseTimeEntity{
 
 
 
-    public List<String> update(BookUpdateRequest bookUpdateRequest) {
-        List<String> deletedImageUuids = new ArrayList<>();
+    public void updateTextFields(BookUpdateRequest bookUpdateRequest) {
 
         Optional.ofNullable(bookUpdateRequest.getTitle())
                 .ifPresent(this::setTitle);
@@ -162,24 +161,7 @@ public class Book extends BaseTimeEntity{
         this.discountRate = calculateDiscountRate(regularPrice, salePrice);
 
 
-        Optional.ofNullable(bookUpdateRequest.getImages()).ifPresent(requestImages -> {
-            Set<String> requestImageSet = new HashSet<>(requestImages);
 
-            Set<String> currentImageUuids = images.stream()
-                    .map(Image::getUuid)
-                    .collect(Collectors.toSet());
-
-            Set<String> toDelete = new HashSet<>(currentImageUuids);
-            toDelete.removeAll(requestImages);
-
-            images.removeIf(image -> toDelete.contains(image.getUuid()));
-
-            deletedImageUuids.addAll(toDelete);
-
-
-        });
-
-        return deletedImageUuids;
     }
 
     public void addImages(List<Image> reviewImages) {

@@ -19,8 +19,8 @@ import shop.dodream.book.dto.BookUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
-import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class AdminBookController {
 
     @Operation(summary = "도서 전체 조회", description = "등록된 모든 도서를 페이징하여 조회합니다.")
     @GetMapping
-    public Page<BookListResponseRecord> getAllBooks(Pageable pageable){
+    public Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable){
         return bookService.getAllBooks(pageable);
     }
 

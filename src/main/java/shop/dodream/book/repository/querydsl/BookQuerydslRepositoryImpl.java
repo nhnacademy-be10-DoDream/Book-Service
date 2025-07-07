@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.QBookResponse;
-import shop.dodream.book.dto.projection.BookDetailResponse;
-import shop.dodream.book.dto.projection.BookListResponseRecord;
-import shop.dodream.book.dto.projection.QBookDetailResponse;
-import shop.dodream.book.dto.projection.QBookListResponseRecord;
+import shop.dodream.book.dto.projection.*;
 import shop.dodream.book.entity.BookStatus;
 
 import java.util.List;
@@ -32,9 +29,9 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<BookListResponseRecord> findAllBy(Pageable pageable) {
-        List<BookListResponseRecord> content = queryFactory
-                .select(new QBookListResponseRecord(
+    public Page<BookAdminListResponseRecord> findAllBy(Pageable pageable) {
+        List<BookAdminListResponseRecord> content = queryFactory
+                .select(new QBookAdminListResponseRecord(
                         book.id,
                         book.title,
                         book.author,
@@ -75,9 +72,7 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        image.uuid,
-                        book.createdAt,
-                        book.status
+                        image.uuid
                 ))
                 .fetch();
     }

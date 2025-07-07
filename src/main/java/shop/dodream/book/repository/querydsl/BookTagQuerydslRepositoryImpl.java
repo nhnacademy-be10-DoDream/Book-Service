@@ -48,9 +48,7 @@ public class BookTagQuerydslRepositoryImpl implements BookTagQuerydslRepository{
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        image.uuid,
-                        book.createdAt,
-                        book.status
+                        image.uuid
                 ))
                 .from(bookTag)
                 .leftJoin(bookTag.book, book)
