@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +40,15 @@ public class AdminBookController {
             @Pattern(regexp = "\\d{13}", message = "ISBN은 13자리 숫자여야합니다.")
             String isbn){
         bookService.registerBookByIsbn(isbn);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
+    @Operation(summary = "도서 리스트로 isbn 등록", description = "isbn13자리 리스트로 등록합니다. ")
+    @PostMapping("/aladdin-api/isbn13")
+    public ResponseEntity<Void> aladdinRegisterBook13(@RequestBody IsbnListRequest isbn){
+
+        bookService.registerBookListIsbn(isbn);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

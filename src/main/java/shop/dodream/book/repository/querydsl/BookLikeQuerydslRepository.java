@@ -1,9 +1,11 @@
 package shop.dodream.book.repository.querydsl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
 
 public interface BookLikeQuerydslRepository {
-    List<BookListResponseRecord> findLikedBooksByUserId(String userId);
+    Page<BookListResponseRecord> findLikedBooksByUserId(String userId, Pageable pageable);
 }

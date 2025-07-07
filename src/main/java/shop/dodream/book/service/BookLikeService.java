@@ -1,6 +1,9 @@
 package shop.dodream.book.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
+
 
 import java.util.List;
 
@@ -13,7 +16,7 @@ public interface BookLikeService {
 
     void bookLikeDelete(Long bookId, String userId);
 
-    List<BookListResponseRecord> getLikedBooksByUserId (String userId);
+    Page<BookListResponseRecord> getLikedBooksByUserId (String userId, Pageable pageable);
 
     Long getBookLikeCount(Long bookId);
 

@@ -49,10 +49,11 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                 .orderBy(book.createdAt.desc()) // 정렬 조건 필요 시
                 .fetch();
 
-        Long count = queryFactory
+        Long count = Optional.ofNullable(queryFactory
                 .select(book.count())
                 .from(book)
-                .fetchOne();
+                .fetchOne()).orElse(0L);
+
         return new PageImpl<>(content, pageable, count);
 
     }
