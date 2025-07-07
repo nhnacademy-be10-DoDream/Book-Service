@@ -1,5 +1,6 @@
 package shop.dodream.book.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
@@ -256,15 +258,21 @@ public class BookServiceImpl implements BookService {
     }
 
 
-    //TODO 수정시 대표이미지 처리 고민중... 어케해야할지 몰르겠음
-//    private List<Image> createBookImages(Book book, List<String> imageUrls) {
-//        List<Image> bookImages = new ArrayList<>(imageUrls.size());
-//
-//        for (String imageUrl : imageUrls) {
-//            Image bookImage = new Image(book, imageUrl);
-//            bookImages.add(bookImage);
-//        }
-//
-//        return bookImages;
-//    }
+
+    @Override
+    @Transactional
+    public void registerBookListIsbn(IsbnListRequest request) {
+        List<String> isbnList = request.getIsbnList();
+
+        for(String isbn: isbnList){
+            try{
+                registerBookByIsbn(isbn);
+            }catch (Exception e){
+                log.error("Failed to register ISBN: {}", isbn, e);
+            }
+
+
+        }
+
+    }
 }

@@ -33,4 +33,6 @@ public interface BookService {
 
     BookResponse getBookByIsbn(String isbn);
 
+    void registerBookListIsbn(IsbnListRequest isbn);
+
 }
