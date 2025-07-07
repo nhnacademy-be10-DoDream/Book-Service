@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.core.event.BookImageDeleteEvent;
 import shop.dodream.book.core.properties.AladdinBookProperties;
+import shop.dodream.book.core.properties.MinIOProperties;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Book;
@@ -39,6 +41,7 @@ public class BookServiceImpl implements BookService {
     private final FileService fileService;
     private final BookDocumentUpdater bookDocumentUpdater;
     private final ApplicationEventPublisher eventPublisher;
+    private final MinIOProperties minIOProperties;
 
 
     @Override
@@ -89,6 +92,13 @@ public class BookServiceImpl implements BookService {
 
         Book book = registerRequest.toEntity();
 
+
+        if (files == null || files.isEmpty()) {
+            String defaultKey = minIOProperties.getDefaultThumbnailKey();
+            Image defaultImage = new Image(book, defaultKey, true);
+            book.addImages(List.of(defaultImage));
+        }
+
         List<String> uploadedImageKeys = fileService.uploadBookImageFromFiles(files);
 
         try {
@@ -105,7 +115,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<BookListResponseRecord> getAllBooks(Pageable pageable) {
+    public Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable) {
         return bookRepository.findAllBy(pageable);
     }
 
@@ -142,10 +152,19 @@ public class BookServiceImpl implements BookService {
             throw new BookAlreadyRemovedException();
         }
 
+        List<String> deleteKeys = book.getImages().stream()
+                .map(Image::getUuid)
+                .toList();
+
+        book.getImages().clear();
+
 
         List<String> uploadedKeys = fileService.uploadBookImageFromFiles(files);
-        List<String> deleteKeys = book.update(request);
+        List<Image> newImages = createBookImagesThumbnail(book, uploadedKeys);
+        book.addImages(newImages);
 
+
+        book.updateTextFields(request);
         updateStatusByBookCount(book);
 
         eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
@@ -154,7 +173,7 @@ public class BookServiceImpl implements BookService {
         Map<String, Object> updateMap = request.toUpdateMap();
         if (!updateMap.isEmpty()){
             try {
-                book.addImages(createBookImagesThumbnail(book, uploadedKeys));
+//                book.addImages(createBookImagesThumbnail(book, uploadedKeys));
                 bookDocumentUpdater.updateBookFields(bookId, updateMap);
             }catch (Exception e){
                 // TODO exception 등록해얗마
@@ -237,7 +256,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
-//    TODO 수정시 대표이미지 처리 고민중... 어케해야할지 몰르겠음
+    //TODO 수정시 대표이미지 처리 고민중... 어케해야할지 몰르겠음
 //    private List<Image> createBookImages(Book book, List<String> imageUrls) {
 //        List<Image> bookImages = new ArrayList<>(imageUrls.size());
 //
