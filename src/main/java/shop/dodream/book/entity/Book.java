@@ -10,7 +10,6 @@ import shop.dodream.book.dto.BookUpdateRequest;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor

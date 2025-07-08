@@ -17,5 +17,5 @@ public class MinIOProperties {
     private String bucket;
     private String bookPrefix;
     private String reviewPrefix;
-    private String defaultThumbnailKey;
+    private String defaultImage;
 }

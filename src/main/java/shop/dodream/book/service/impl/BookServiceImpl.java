@@ -96,7 +96,7 @@ public class BookServiceImpl implements BookService {
 
 
         if (files == null || files.isEmpty()) {
-            String defaultKey = minIOProperties.getDefaultThumbnailKey();
+            String defaultKey = minIOProperties.getDefaultImage();
             Image defaultImage = new Image(book, defaultKey, true);
             book.addImages(List.of(defaultImage));
         }
