@@ -60,7 +60,7 @@ public class AdminBookController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "도서 전체 조회", description = "등록된 모든 도서를 페이징하여 조회합니다.")
+    @Operation(summary = "도서 전체 조회(페이징)", description = "등록된 모든 도서를 페이징하여 조회합니다.")
     @GetMapping
     public Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable){
         return bookService.getAllBooks(pageable);
