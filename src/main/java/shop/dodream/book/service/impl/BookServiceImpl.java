@@ -162,23 +162,21 @@ public class BookServiceImpl implements BookService {
             throw new BookAlreadyRemovedException();
         }
 
-        List<String> deleteKeys = book.getImages().stream()
-                .map(Image::getUuid)
-                .toList();
+        if (files != null && !files.isEmpty() && files.stream().anyMatch(file -> !file.isEmpty())) {
+            List<String> deleteKeys = book.getImages().stream()
+                    .map(Image::getUuid)
+                    .toList();
+            book.getImages().clear();
 
-        book.getImages().clear();
+            List<String> uploadedKeys = fileService.uploadBookImageFromFiles(files);
+            List<Image> newImages = createBookImagesThumbnail(book, uploadedKeys);
+            book.addImages(newImages);
 
-
-        List<String> uploadedKeys = fileService.uploadBookImageFromFiles(files);
-        List<Image> newImages = createBookImagesThumbnail(book, uploadedKeys);
-        book.addImages(newImages);
-
+            eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
+        }
 
         book.updateTextFields(request);
         updateStatusByBookCount(book);
-
-        eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
-
 
         Map<String, Object> updateMap = request.toUpdateMap();
         if (!updateMap.isEmpty()){
