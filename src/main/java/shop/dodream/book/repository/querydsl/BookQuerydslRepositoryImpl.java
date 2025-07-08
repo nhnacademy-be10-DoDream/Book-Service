@@ -74,6 +74,9 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                 ))
                 .from(book)
                 .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
+                .where(
+                        book.status.ne(BookStatus.REMOVED)
+                )
                 .orderBy(book.createdAt.desc())
                 .fetch();
     }
