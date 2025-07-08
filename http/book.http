@@ -156,7 +156,7 @@ POST http://localhost:8080/books/internal/decrease-bookCount
 Content-Type: application/json
 
 {
-  "bookId": 1,
+  "bookId": 2,
   "bookCount": 10
 }
 
