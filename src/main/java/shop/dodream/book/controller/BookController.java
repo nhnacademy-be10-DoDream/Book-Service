@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.BookResponse;
+import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookService;
@@ -30,6 +30,12 @@ public class BookController {
     @GetMapping
     public List<BookListResponseRecord> getBooksByIds(@RequestParam List<Long> ids){
         return bookService.findAllByIds(ids);
+    }
+
+    @Operation(summary = "도서 전체 조회", description = "등록된 모든 도서를 조회합니다.")
+    @GetMapping("/all")
+    public List<BookAdminListResponseRecord> getAllBooks(){
+        return bookService.getAllBooks();
     }
 
 }
