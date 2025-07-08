@@ -4,6 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import shop.dodream.book.entity.BookStatus;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public record BookAdminListResponseRecord(
         Long bookId,
