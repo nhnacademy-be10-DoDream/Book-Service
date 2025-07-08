@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface BookQuerydslRepository {
     Page<BookAdminListResponseRecord> findAllBy(Pageable pageable);
+    List<BookAdminListResponseRecord> findAllBy();
 
     List<BookListResponseRecord> findVisibleBooksByIds(List<Long> ids);
 

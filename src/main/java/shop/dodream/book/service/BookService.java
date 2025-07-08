@@ -19,6 +19,8 @@ public interface BookService {
 
     Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable);
 
+    List<BookAdminListResponseRecord> getAllBooks();
+
     List<BookListResponseRecord> findAllByIds(List<Long> ids);
 
     BookDetailResponse getBookByIdForAdmin(Long bookId);

@@ -59,6 +59,26 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     }
 
     @Override
+    public List<BookAdminListResponseRecord> findAllBy() {
+        return queryFactory
+                .select(new QBookAdminListResponseRecord(
+                        book.id,
+                        book.title,
+                        book.author,
+                        book.isbn,
+                        book.regularPrice,
+                        book.salePrice,
+                        image.uuid,
+                        book.createdAt,
+                        book.status
+                ))
+                .from(book)
+                .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
+                .orderBy(book.createdAt.desc())
+                .fetch();
+    }
+
+    @Override
     public List<BookListResponseRecord> findVisibleBooksByIds(List<Long> ids) {
         return queryFactory.from(book)
                 .leftJoin(book.images, image).where(image.isThumbnail.eq(true))

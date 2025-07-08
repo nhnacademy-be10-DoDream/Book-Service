@@ -123,6 +123,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<BookAdminListResponseRecord> getAllBooks() {
+        return bookRepository.findAllBy();
+    }
+
+
+
+    @Override
+    @Transactional(readOnly = true)
     public List<BookListResponseRecord> findAllByIds(List<Long> ids) {
         return bookRepository.findVisibleBooksByIds(ids);
     }
