@@ -75,7 +75,7 @@ public class AdminBookController {
     @Operation(summary = "도서 정보 수정", description = "도서의 정보를 수정합니다.")
     @PutMapping("/{book-id}")
     public ResponseEntity<Void> updateBook(@PathVariable("book-id") Long bookId,
-                                           @Validated @RequestBody BookUpdateRequest request,
+                                           @Validated @RequestPart("book") BookUpdateRequest request,
                                            @ValidatedFiles @RequestPart(value = "files", required = false)List<MultipartFile> files){
         bookService.updateBook(bookId, request, files);
         return ResponseEntity.noContent().build();

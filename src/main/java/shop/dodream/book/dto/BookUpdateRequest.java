@@ -1,6 +1,7 @@
 package shop.dodream.book.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,8 @@ public class BookUpdateRequest {
     private String description;
     private String author;
     private String publisher;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate publishedAt;
 
     @Min(value = 0, message = "정가는 0이상이어야합니다.")
@@ -50,7 +55,9 @@ public class BookUpdateRequest {
         if (author != null) map.put("author", author);
         if (publisher != null) map.put("publisher", publisher);
         if (salePrice != null) map.put("salePrice", salePrice);
-        if (publishedAt != null) map.put("publishedAt", publishedAt);
+        if (publishedAt != null) map.put("publishedAt", Date.from(
+                publishedAt.atStartOfDay(ZoneId.systemDefault()).toInstant()
+        ));
         return map;
     }
 
