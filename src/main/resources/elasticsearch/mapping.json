@@ -36,6 +36,9 @@
     },
     "categoryNames": {
       "type": "keyword"
+    },
+    "imageUrl": {
+      "type": "keyword"
     }
   }
 }

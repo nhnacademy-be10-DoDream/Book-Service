@@ -76,7 +76,7 @@ public class BookServiceImpl implements BookService {
             book.addImages(List.of(bookImage));
             Book savedBook = bookRepository.save(book);
 
-            bookElasticsearchRepository.save(new BookDocument(savedBook));
+            bookElasticsearchRepository.save(new BookDocument(savedBook, imageUrl));
         }catch (Exception e) {
             eventPublisher.publishEvent(new BookImageDeleteEvent(List.of(imageUrl)));
             throw e;
@@ -107,7 +107,7 @@ public class BookServiceImpl implements BookService {
             book.addImages(createBookImagesThumbnail(book,uploadedImageKeys));
             Book savedBook = bookRepository.save(book);
 
-            bookElasticsearchRepository.save(new BookDocument(savedBook));
+            bookElasticsearchRepository.save(new BookDocument(savedBook, uploadedImageKeys.getFirst()));
         }catch (Exception e) {
             eventPublisher.publishEvent(new BookImageDeleteEvent(uploadedImageKeys));
             throw e;

@@ -8,6 +8,8 @@ Content-Type: application/json
   "parentId": null
 }
 
+### 해당 도서의 카테고리 트리 조회
+GET http://localhost:8090/public/books/1/categories
 
 ### 전체 카테고리 조회
 GET http://localhost:8080/public/categories
