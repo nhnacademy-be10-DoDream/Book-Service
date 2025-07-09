@@ -165,6 +165,7 @@ public class BookServiceImpl implements BookService {
         if (files != null && !files.isEmpty() && files.stream().anyMatch(file -> !file.isEmpty())) {
             List<String> deleteKeys = book.getImages().stream()
                     .map(Image::getUuid)
+                    .filter(key -> !key.equals(minIOProperties.getDefaultImage()))
                     .toList();
             book.getImages().clear();
 

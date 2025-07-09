@@ -9,6 +9,9 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.dodream.book.dto.BookDocument;
 import shop.dodream.book.dto.BookItemResponse;
@@ -26,7 +29,7 @@ public class BookSearchServiceImpl implements BookSearchService {
     private final ElasticsearchClient elasticsearchClient;
 
     @Override
-    public List<BookItemResponse> searchBooks(String keyword, BookSortType sortType) {
+    public Page<BookItemResponse> searchBooks(String keyword, BookSortType sortType, Pageable pageable) {
         try {
             Query query;
 
@@ -57,7 +60,8 @@ public class BookSearchServiceImpl implements BookSearchService {
             SearchRequest request = new SearchRequest.Builder()
                     .index("dodream_books")
                     .query(query)
-                    .size(20)
+                    .from((int)pageable.getOffset()) // offset = page * size
+                    .size(pageable.getPageSize())
                     .sort(sortOption != null ? Collections.singletonList(sortOption) : Collections.emptyList())
                     .build();
 
@@ -66,14 +70,22 @@ public class BookSearchServiceImpl implements BookSearchService {
                     BookDocument.class
             );
 
-            return response.hits().hits().stream()
+            List<BookItemResponse> content = response.hits().hits().stream()
                     .map(Hit::source)
                     .map(BookItemResponse::new)
                     .toList();
 
+
+            long totalHits = response.hits().total() != null ? response.hits().total().value() : content.size();
+
+
+            return new PageImpl<>(content, pageable, totalHits);
+
+            
+
         } catch (IOException e) {
             e.printStackTrace();
-            return Collections.emptyList();
+            return Page.empty(pageable);
         }
     }
 }
