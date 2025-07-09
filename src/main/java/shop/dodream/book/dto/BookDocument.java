@@ -65,7 +65,8 @@ public class BookDocument {
         this.salePrice = book.getSalePrice();
         this.publishedAt = Date.from(
                 book.getPublishedAt().atStartOfDay(ZoneId.systemDefault()).toInstant()
-        );        this.viewCount = book.getViewCount();
+        );
+        this.viewCount = book.getViewCount();
         this.ratingAvg = 0.0f;
         this.reviewCount = 0L;
     }
