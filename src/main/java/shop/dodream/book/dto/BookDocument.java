@@ -53,10 +53,13 @@ public class BookDocument {
     @Field(type = FieldType.Long)
     private Long reviewCount;
 
+    @Field(type = FieldType.Text)
+    private String imageUrl;
+
     @Field(type = FieldType.Keyword)
     private List<String> categoryNames;
 
-    public BookDocument(Book book) {
+    public BookDocument(Book book, String imageUrl) {
         this.bookId = book.getId();
         this.title = book.getTitle();
         this.description = book.getDescription();
@@ -69,6 +72,7 @@ public class BookDocument {
         this.viewCount = book.getViewCount();
         this.ratingAvg = 0.0f;
         this.reviewCount = 0L;
+        this.imageUrl = imageUrl;
     }
 
     public BookDocument(Book book, List<String> categoryNames) {
