@@ -32,7 +32,7 @@ public class Review extends BaseTimeEntity{
     @NotNull
     @Getter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", updatable = false)
+    @JoinColumn(name = "book_id", updatable = false)
     private Book book;
 
     @Getter
