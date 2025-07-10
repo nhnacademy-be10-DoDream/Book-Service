@@ -37,7 +37,6 @@ public class ImageEventHandler {
 
 
 
-    @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Retryable(
             retryFor = {RuntimeException.class, IOException.class},
