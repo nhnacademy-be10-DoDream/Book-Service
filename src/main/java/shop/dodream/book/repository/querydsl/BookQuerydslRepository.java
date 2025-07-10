@@ -8,6 +8,7 @@ import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface BookQuerydslRepository {
@@ -21,4 +22,9 @@ public interface BookQuerydslRepository {
 
 
     Optional<BookResponse> findByIsbn(String Isbn);
+
+
+    void incrementViewCount(Long bookId, Long increment);
+
+
 }

@@ -13,4 +13,6 @@ public interface BookDocumentUpdater {
 
     void updateReviewStatus(Long bookId, float oldRating, float newRating);
 
+    void incrementViewCount(Long bookId, Long increment);
+
 }
