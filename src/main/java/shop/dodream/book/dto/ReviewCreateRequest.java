@@ -23,14 +23,12 @@ public class ReviewCreateRequest {
     private String content;
 
 
-    public Review toEntity(Book book, String userId) {
-
-
-
+    public Review toEntity(Book book, String userId, long itemId) {
         return new Review(
                 rating,
                 content,
                 userId,
+                itemId,
                 book
         );
     }
