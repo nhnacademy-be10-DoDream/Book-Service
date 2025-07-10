@@ -13,8 +13,10 @@ import shop.dodream.book.dto.projection.QReviewSummaryResponse;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
 import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -80,6 +82,24 @@ public class ReviewQuerydslRepositoryImpl implements ReviewQuerydslRepository {
                     return r;
                 })
                 .or(() -> Optional.of(new ReviewSummaryResponse(0.0, 0L)));
+    }
+
+    @Override
+    public List<Long> getByNoWriteReview(List<Long> orderItemIds, String userId) {
+        if (orderItemIds.isEmpty()) {
+            return List.of();
+        }
+        List<Long> writtenIds = queryFactory.from(review)
+                .select(review.orderItemId)
+                .where(review.orderItemId.in(orderItemIds)
+                        .and(review.userId.eq(userId)))
+                .fetch();
+
+        Set<Long> writtenIdSet = new HashSet<>(writtenIds);
+
+        return orderItemIds.stream()
+                .filter(id -> !writtenIdSet.contains(id))
+                .toList();
     }
 
     private Page<ReviewResponseRecord> getReviewsPage(BooleanBuilder builder, Pageable pageable) {

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import shop.dodream.book.exception.ForbiddenException;
 import shop.dodream.book.exception.ResourceConflictException;
 import shop.dodream.book.exception.ResourceNotFoundException;
 
@@ -61,6 +62,23 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
         URI type = URI.create("/errors/bad-request");
         HttpStatusCode status = HttpStatus.BAD_REQUEST;
+        String detail = ex.getLocalizedMessage();
+
+        ProblemDetail body = createProblemDetail(ex, status, detail, null, null, request);
+        body.setType(type);
+
+        return handleExceptionInternal(ex, body, new HttpHeaders(), status, request);
+    }
+
+    /**
+     * 403 Forbidden
+     * ForbiddenException 공통 처리
+     */
+    @Nullable
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Object> handleForbidden(ForbiddenException ex, WebRequest request) {
+        URI type = URI.create("/errors/forbidden");
+        HttpStatusCode status = ex.getStatusCode();
         String detail = ex.getLocalizedMessage();
 
         ProblemDetail body = createProblemDetail(ex, status, detail, null, null, request);
