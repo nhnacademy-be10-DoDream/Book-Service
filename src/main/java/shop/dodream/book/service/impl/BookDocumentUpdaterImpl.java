@@ -42,6 +42,33 @@ public class BookDocumentUpdaterImpl implements BookDocumentUpdater {
         }
     }
 
+    @Override
+    public void updateReviewStatus(Long bookId, float oldRating, float newRating) {
+        try {
+            client.update(u -> u
+                            .index("dodream_books")
+                            .id(bookId.toString())
+                            .script(s -> s
+                                    .inline(i -> i
+                                            .source("""
+                                    ctx._source.ratingAvg = 
+                                      ((ctx._source.ratingAvg * ctx._source.reviewCount) - params.oldRating + params.newRating) 
+                                      / ctx._source.reviewCount;
+                                """)
+                                            .params(Map.of(
+                                                    "oldRating", JsonData.of(oldRating),
+                                                    "newRating", JsonData.of(newRating)
+                                            ))
+                                    )
+                            ),
+                    BookDocument.class
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("리뷰 평점 수정 갱신 실패", e);
+        }
+    }
+
+
 
     @Override
     public void decreaseReviewStatus(Long bookId, float deletedRating) {

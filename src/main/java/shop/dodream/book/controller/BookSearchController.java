@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/books")
+@RequestMapping("/public/books")
 @Tag(name = "Book Search", description = "도서 검색 API")
 public class BookSearchController {
     private final BookSearchService bookSearchService;
