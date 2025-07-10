@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
 import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ReviewQuerydslRepository {
@@ -14,4 +15,5 @@ public interface ReviewQuerydslRepository {
     Page<ReviewResponseRecord> getAllBy(String userId, Pageable pageable);
     Page<ReviewResponseRecord> getAllByBookId(long bookId, Pageable pageable);
     Optional<ReviewSummaryResponse> findReviewSummaryByBookId(long bookId);
+    List<Long> getByNoWriteReview(List<Long> orderItemIds, String userId);
 }
