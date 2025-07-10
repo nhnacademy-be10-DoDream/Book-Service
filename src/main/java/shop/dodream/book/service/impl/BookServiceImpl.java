@@ -26,6 +26,7 @@ import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.service.FileService;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -226,6 +227,18 @@ public class BookServiceImpl implements BookService {
         return new BookCountDecreaseResponse(book.getId(), book.getBookCount(), book.getStatus() == BookStatus.SELL);
     }
 
+    @Override
+    @Transactional
+    public void increaseBookCount(BookCountIncreaseRequest request) {
+        Book book = bookRepository.findById(request.getBookId()).orElseThrow(() -> new BookNotFoundException(request.getBookId()));
+
+
+        Long currentStock = book.getBookCount();
+        book.setBookCount(currentStock+request.getBookCount());
+
+        updateStatusByBookCount(book);
+
+    }
 
     @Override
     @Transactional(readOnly = true)
