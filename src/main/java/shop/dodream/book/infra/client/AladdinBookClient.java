@@ -17,7 +17,8 @@ public interface AladdinBookClient {
             @RequestParam("itemIdType") String itemIdType,
             @RequestParam("ItemId") String isbn,
             @RequestParam("output") String output,
-            @RequestParam("Version") String version
+            @RequestParam("Version") String version,
+            @RequestParam("Cover") String cover
     );
 
 }
