@@ -23,6 +23,9 @@ public class BookController {
     @Operation(summary = "도서 상세 조회(유저)", description = "도서 ID로 도서의 상세 정보를 조회합니다.")
     @GetMapping("{book-id}")
     public BookDetailResponse getBookById(@PathVariable("book-id") Long bookId){
+
+        bookService.increaseViewCount(bookId);
+
         return bookService.getBookByIdForUser(bookId);
     }
 

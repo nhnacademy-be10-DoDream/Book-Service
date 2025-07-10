@@ -114,4 +114,23 @@ public class BookDocumentUpdaterImpl implements BookDocumentUpdater {
             throw new RuntimeException("도서 필드 업데이트 실패", e);
         }
     }
+
+    @Override
+    public void incrementViewCount(Long bookId, Long increment) {
+        try {
+            client.update(u -> u
+                            .index("dodream_books")
+                            .id(bookId.toString())
+                            .script(s -> s
+                                    .inline(i -> i
+                                            .source("ctx._source.viewCount += params.increment")
+                                            .params(Map.of("increment", JsonData.of(increment)))
+                                    )
+                            ),
+                    BookDocument.class
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Elasticsearch viewCount 증가 실패: bookId=" + bookId, e);
+        }
+    }
 }

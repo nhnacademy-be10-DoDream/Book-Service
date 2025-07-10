@@ -12,8 +12,10 @@ import shop.dodream.book.dto.BookResponse;
 import shop.dodream.book.dto.QBookResponse;
 import shop.dodream.book.dto.projection.*;
 import shop.dodream.book.entity.BookStatus;
+import shop.dodream.book.entity.QBook;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -172,5 +174,14 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
                         .where(book.isbn.eq(isbn))
                         .fetchOne()
         );
+    }
+
+
+    @Override
+    public void incrementViewCount(Long bookId, Long increment) {
+        queryFactory.update(book)
+                .set(book.viewCount, book.bookCount.add(increment))
+                .where(book.id.eq(bookId))
+                .execute();
     }
 }

@@ -40,4 +40,6 @@ public interface BookService {
 
     void registerBookListIsbn(IsbnListRequest isbn);
 
+    void increaseViewCount(Long bookId);
+
 }

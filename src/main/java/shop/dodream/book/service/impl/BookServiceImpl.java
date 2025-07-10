@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class BookServiceImpl implements BookService {
     private final BookDocumentUpdater bookDocumentUpdater;
     private final ApplicationEventPublisher eventPublisher;
     private final MinIOProperties minIOProperties;
-
+    private final RedisTemplate<String, Long> redisTemplate;
 
     @Override
     @Transactional
@@ -276,9 +277,14 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    @Override
+    public void increaseViewCount(Long bookId) {
+        String key = "viewCount:book:"+bookId;
+        redisTemplate.opsForValue().increment(key);
+    }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public void registerBookListIsbn(IsbnListRequest request) {
         List<String> isbnList = request.getIsbnList();
 
