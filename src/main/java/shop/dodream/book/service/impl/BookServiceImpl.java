@@ -61,7 +61,8 @@ public class BookServiceImpl implements BookService {
                 properties.getItemIdType(),
                 isbn,
                 properties.getOutput(),
-                properties.getVersion()
+                properties.getVersion(),
+                properties.getCover()
         );
 
         if (aladdinBookResponse.getErrorCode() != null){
