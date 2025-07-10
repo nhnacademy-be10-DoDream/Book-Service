@@ -15,4 +15,5 @@ public class AladdinBookProperties {
     private String itemIdType;
     private String output;
     private String version;
+    private String cover;
 }
