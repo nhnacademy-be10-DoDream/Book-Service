@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import shop.dodream.book.core.event.PointEarnEvent;
 import shop.dodream.book.core.event.ReviewImageDeleteEvent;
 import shop.dodream.book.dto.PurchaseCheckResponse;
 import shop.dodream.book.dto.ReviewCreateRequest;
@@ -59,6 +60,11 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewCreateRequest.toEntity(book, userId, noWriteReviewByItems.getFirst());
 
         List<String> uploadedImageKeys = fileService.uploadReviewImageFromFiles(files);
+        if (uploadedImageKeys.isEmpty()) {
+            eventPublisher.publishEvent(new PointEarnEvent(userId, 0, "REVIEW"));
+        } else {
+            eventPublisher.publishEvent(new PointEarnEvent(userId, 0, "PHOTO_REVIEW"));
+        }
 
         try {
             review.addImages(createReviewImages(review, uploadedImageKeys));

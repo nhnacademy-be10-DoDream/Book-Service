@@ -7,8 +7,7 @@ import shop.dodream.book.dto.PurchaseCheckResponse;
 
 import java.util.List;
 
-//@FeignClient(name = "orderClient", url = "order")
-@FeignClient(name = "orderClient", url = "s1.java21.net:10327")
+@FeignClient(name = "order")
 public interface OrderClient {
 
     @GetMapping("/orders/users/{user-id}/books/{book-id}/items")
