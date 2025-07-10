@@ -30,6 +30,7 @@ import shop.dodream.book.service.FileService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Slf4j
@@ -106,8 +107,11 @@ public class BookServiceImpl implements BookService {
         try {
             book.addImages(createBookImagesThumbnail(book,uploadedImageKeys));
             Book savedBook = bookRepository.save(book);
-
-            bookElasticsearchRepository.save(new BookDocument(savedBook, uploadedImageKeys.getFirst()));
+            String img = minIOProperties.getDefaultImage();
+            if (!uploadedImageKeys.isEmpty()) {
+                img = uploadedImageKeys.getFirst();
+            }
+            bookElasticsearchRepository.save(new BookDocument(savedBook, img));
         }catch (Exception e) {
             eventPublisher.publishEvent(new BookImageDeleteEvent(uploadedImageKeys));
             throw e;
@@ -181,13 +185,7 @@ public class BookServiceImpl implements BookService {
 
         Map<String, Object> updateMap = request.toUpdateMap();
         if (!updateMap.isEmpty()){
-            try {
-//                book.addImages(createBookImagesThumbnail(book, uploadedKeys));
                 bookDocumentUpdater.updateBookFields(bookId, updateMap);
-            }catch (Exception e){
-                // TODO exception 등록해얗마
-                throw new RuntimeException("Elasticsearch 문서 업데이트 실패", e);
-            }
         }
 
 

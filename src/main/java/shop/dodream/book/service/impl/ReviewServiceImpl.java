@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import shop.dodream.book.core.event.PointEarnEvent;
 import shop.dodream.book.core.event.ReviewImageDeleteEvent;
+import shop.dodream.book.dto.PurchaseCheckResponse;
 import shop.dodream.book.dto.ReviewCreateRequest;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
@@ -16,7 +18,9 @@ import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.Image;
 import shop.dodream.book.entity.Review;
 import shop.dodream.book.exception.BookNotFoundException;
+import shop.dodream.book.exception.ReviewNotAllowedException;
 import shop.dodream.book.exception.ReviewNotFoundException;
+import shop.dodream.book.infra.client.OrderClient;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.ReviewRepository;
 import shop.dodream.book.service.BookDocumentUpdater;
@@ -29,6 +33,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
+    private final OrderClient orderClient;
     private final ApplicationEventPublisher eventPublisher;
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
@@ -38,15 +43,28 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void createReview(Long bookId, String userId, ReviewCreateRequest reviewCreateRequest, List<MultipartFile> files) {
 
-        // 주문 내역 확인 로직 필요
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotFoundException(bookId);
         }
 
+        List<PurchaseCheckResponse> checkResponses = orderClient.checkOrderItem(userId, bookId);
+
+        List<Long> noWriteReviewByItems = reviewRepository.getByNoWriteReview(checkResponses.stream()
+                .map(PurchaseCheckResponse::orderItemId).toList(), userId);
+
+        if (noWriteReviewByItems.isEmpty()) {
+            throw new ReviewNotAllowedException(userId);
+        }
+
         Book book = bookRepository.getReferenceById(bookId);
-        Review review = reviewCreateRequest.toEntity(book, userId);
+        Review review = reviewCreateRequest.toEntity(book, userId, noWriteReviewByItems.getFirst());
 
         List<String> uploadedImageKeys = fileService.uploadReviewImageFromFiles(files);
+        if (uploadedImageKeys.isEmpty()) {
+            eventPublisher.publishEvent(new PointEarnEvent(userId, 0, "REVIEW"));
+        } else {
+            eventPublisher.publishEvent(new PointEarnEvent(userId, 0, "PHOTO_REVIEW"));
+        }
 
         try {
             review.addImages(createReviewImages(review, uploadedImageKeys));
@@ -102,6 +120,9 @@ public class ReviewServiceImpl implements ReviewService {
         eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         review.addImages(createReviewImages(review, uploadedKeys));
+
+        bookDocumentUpdater.updateReviewStatus(review.getBook().getId(), review.getRating(), reviewUpdateRequest.getRating());
+
     }
 
     @Transactional
@@ -115,6 +136,8 @@ public class ReviewServiceImpl implements ReviewService {
         eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         reviewRepository.deleteById(reviewId);
+
+        bookDocumentUpdater.decreaseReviewStatus(review.getBook().getId(), review.getRating());
     }
 
     @Transactional
@@ -129,11 +152,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         reviewRepository.deleteByReviewIdAndUserId(reviewId, userId);
 
-        try {
-            bookDocumentUpdater.decreaseReviewStatus(review.getBook().getId(), review.getRating());
-        }catch (Exception e) {
-            throw new RuntimeException("es 리뷰 삭제시 리뷰필드 업데이트 실패:", e);
-        }
     }
 
     private Review findWithImageByReviewId(Long reviewId) {

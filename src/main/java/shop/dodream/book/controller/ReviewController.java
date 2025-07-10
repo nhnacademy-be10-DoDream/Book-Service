@@ -36,9 +36,9 @@ public class ReviewController {
     @Operation(summary = "도서 리뷰 작성", description = "도서에 대한 리뷰를 작성합니다. (파일 첨부 가능)")
     @PostMapping(path = "/books/{book-id}/reviews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createReview(@PathVariable("book-id") Long bookId,
-                                            @RequestHeader("X-USER-ID") String userId,
-                                            @Valid @RequestPart("review") ReviewCreateRequest reviewCreateRequest,
-                                            @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+                                             @RequestHeader("X-USER-ID") String userId,
+                                             @Valid @RequestPart("review") ReviewCreateRequest reviewCreateRequest,
+                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         reviewService.createReview(bookId, userId, reviewCreateRequest, files);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -46,14 +46,14 @@ public class ReviewController {
     @Operation(summary = "내 리뷰 목록 조회", description = "사용자가 작성한 리뷰 목록을 조회합니다.")
     @GetMapping("/reviews/me")
     public Page<ReviewResponseRecord> getReviews(@RequestHeader("X-USER-ID") String userId,
-                                                 Pageable pageable){
+                                                 Pageable pageable) {
         return reviewService.getReviews(userId, pageable);
     }
 
     @Operation(summary = "내 리뷰 상세 조회", description = "사용자가 작성한 특정 리뷰를 조회합니다.")
     @GetMapping("/reviews/me/{review-id}")
     public ReviewResponseRecord getReview(@PathVariable("review-id") Long reviewId,
-                                          @RequestHeader("X-USER-ID") String userId){
+                                          @RequestHeader("X-USER-ID") String userId) {
         return reviewService.getReview(reviewId, userId);
     }
 
@@ -62,7 +62,7 @@ public class ReviewController {
     public ResponseEntity<Void> updateReview(@PathVariable("review-id") Long reviewId,
                                              @RequestHeader("X-USER-ID") String userId,
                                              @Valid @RequestPart("review") ReviewUpdateRequest reviewUpdateRequest,
-                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files){
+                                             @ValidatedFiles @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         reviewService.updateReview(reviewId, userId, reviewUpdateRequest, files);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -77,7 +77,7 @@ public class ReviewController {
 
     @Operation(summary = "리뷰 평점평균, 리뷰수 조회", description = "책 ID를 기준으로 리뷰의 평점 평균을 조회 합니다.")
     @GetMapping("/public/reviews/{book-id}/review-summary")
-    public ReviewSummaryResponse getReviewSummary(@PathVariable("book-id") Long bookId){
+    public ReviewSummaryResponse getReviewSummary(@PathVariable("book-id") Long bookId) {
         return reviewService.getReviewSummary(bookId);
     }
 }

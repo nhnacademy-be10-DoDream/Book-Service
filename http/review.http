@@ -13,7 +13,7 @@ Accept: application/json
 X-USER-ID: user
 
 ### (어드민) 리뷰 전체 조회
-GET http://localhost:8080/admin/reviews
+GET http://localhost:8090/admin/reviews
 Accept: application/json
 
 ### (어드민) 리뷰 단일 조회

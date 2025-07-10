@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,6 +23,8 @@ public class BookItemResponse {
     private Long viewCount;
     private Float ratingAvg;
     private Long reviewCount;
+    private String imageUrl;
+    private List<String> categoryNames;
 
 
     public BookItemResponse(BookDocument document) {
@@ -35,5 +38,7 @@ public class BookItemResponse {
         this.viewCount = document.getViewCount();
         this.ratingAvg = document.getRatingAvg();
         this.reviewCount = document.getReviewCount();
+        this.imageUrl = document.getImageUrl();
+        this.categoryNames = document.getCategoryNames();
     }
 }
