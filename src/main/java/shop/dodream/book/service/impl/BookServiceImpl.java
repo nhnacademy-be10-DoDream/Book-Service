@@ -27,12 +27,10 @@ import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.service.FileService;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 @Slf4j
@@ -205,7 +203,7 @@ public class BookServiceImpl implements BookService {
                 .toList();
 
         eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
-        bookElasticsearchRepository.deleteById(bookId);
+//        bookElasticsearchRepository.deleteById(bookId);
 
     }
 
@@ -285,7 +283,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public void registerBookListIsbn(IsbnListRequest request) {
         List<String> isbnList = request.getIsbnList();
 
