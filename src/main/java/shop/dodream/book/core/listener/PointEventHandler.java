@@ -27,7 +27,7 @@ public class PointEventHandler {
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
     public void handlePointEarnEvent(PointEarnEvent event) {
-        PointRequest pointRequest = new PointRequest(event.amount(), "EARN", event.policyType(), true, null);
+        PointRequest pointRequest = new PointRequest(event.amount(), "EARN", event.policyType());
         try {
             userClient.pointEarn(event.userId(), pointRequest);
             log.info("포인트 적립 요청 성공 - userId: {}, policyType: {}", event.userId(), event.policyType());

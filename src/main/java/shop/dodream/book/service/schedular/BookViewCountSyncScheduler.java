@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookDocumentUpdater;
 
@@ -19,8 +20,9 @@ public class BookViewCountSyncScheduler {
     private final BookRepository bookRepository;
     private final BookDocumentUpdater bookDocumentUpdater;
 
-    //5분마다 주기적으로 실행
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    //1분마다 주기적으로 실행
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
+    @Transactional
     public void syncViewCounts(){
         Set<String> keys = redisTemplate.keys("viewCount:book:*");
 
