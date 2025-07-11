@@ -2,7 +2,6 @@ package shop.dodream.book.infra.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,9 +20,4 @@ public class PointRequest {
 
     @NotNull
     String policyType;
-
-    Boolean isPolicyCommon;
-
-    @Size(max = 255)
-    String description;
 }
