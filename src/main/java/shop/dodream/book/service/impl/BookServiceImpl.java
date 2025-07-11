@@ -203,7 +203,7 @@ public class BookServiceImpl implements BookService {
                 .toList();
 
         eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
-        bookElasticsearchRepository.deleteById(bookId);
+//        bookElasticsearchRepository.deleteById(bookId);
 
     }
 
