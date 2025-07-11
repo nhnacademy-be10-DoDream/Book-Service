@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.BookWithCategoriesResponse;
+import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
 import shop.dodream.book.dto.IdsListRequest;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
@@ -36,6 +37,12 @@ public class BookCategoryController {
     @GetMapping("/public/books/{book-id}/categories")
     public List<CategoryTreeResponse> getCategoriesByBookId(@PathVariable("book-id") Long bookId) {
         return bookCategoryService.getCategoriesByBookId(bookId);
+    }
+
+    @Operation(summary = "도서의 카테고리 플랫 조회", description = "도서에 등록된 카테고리 플랫 구조를 조회합니다.")
+    @GetMapping("/public/books/{book-id}/categories/flat")
+    public List<CategoryResponse> getFlatCategoriesByBookId(@PathVariable("book-id") Long bookId) {
+        return bookCategoryService.getFlatCategoriesByBookId(bookId);
     }
 
     @Operation(summary = "카테고리에 속한 도서 조회(페이징)", description = "카테고리에 속한 도서 목록을 페이징 처리하여 조회합니다.")
