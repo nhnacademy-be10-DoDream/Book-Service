@@ -23,6 +23,7 @@ public class BookCategory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("categoryId")
+    @Getter
     @JoinColumn(name = "category_id")
     private Category category;
 

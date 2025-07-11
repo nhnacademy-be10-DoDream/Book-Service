@@ -122,6 +122,19 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     }
 
     @Override @Transactional(readOnly = true)
+    public List<CategoryResponse> getFlatCategoriesByBookId(Long bookId){
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotFoundException(bookId);
+        }
+        List<BookCategory> bookCategories = bookCategoryRepository.findByBookId(bookId);
+
+        return bookCategories.stream()
+                .map(BookCategory::getCategory)
+                .map(CategoryResponse::new)
+                .toList();
+    }
+
+    @Override @Transactional(readOnly = true)
     public Page<BookListResponseRecord> getBooksByCategoryId(Long categoryId, Pageable pageable) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new CategoryNotFoundException(categoryId);
