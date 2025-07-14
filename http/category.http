@@ -12,7 +12,7 @@ Content-Type: application/json
 GET http://localhost:8090/public/books/1/categories
 
 ### 전체 카테고리 조회
-GET http://localhost:8080/public/categories
+GET http://localhost:8090/public/categories
 Accept: application/json
 
 
