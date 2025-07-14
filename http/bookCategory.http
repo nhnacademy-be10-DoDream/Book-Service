@@ -14,10 +14,6 @@ Content-Type: application/json
 GET http://localhost:8090/public/books/17/categories/flat
 Content-Type: application/json
 
-### 해당 도서의 카테고리 플랫구조로 조회
-GET http://localhost:8090/public/books/36/categories/flat
-Content-Type: application/json
-
 ### 해당 카테고리의 도서 조회
 GET http://localhost:8080/public/categories/11/books
 Content-Type: application/json

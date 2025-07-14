@@ -8,15 +8,17 @@ import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
+import shop.dodream.book.infra.dto.AladdinBookResponse;
 
 import java.util.List;
 
 public interface BookService {
 
-    void registerBookByIsbn(String isbn);
-
     void registerBookDirect(BookRegisterRequest registerRequest, List<MultipartFile> files);
 
+    AladdinBookSearchResult getAladdinBookList(String query, int size, int page);
+
+    void registerFromAladdin(BookRegisterRequest request);
 
     Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable);
 
@@ -37,8 +39,6 @@ public interface BookService {
     void increaseBookCount(BookCountIncreaseRequest request);
 
     BookResponse getBookByIsbn(String isbn);
-
-    void registerBookListIsbn(IsbnListRequest isbn);
 
     void increaseViewCount(Long bookId);
 

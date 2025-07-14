@@ -15,6 +15,7 @@ import java.util.List;
 public class AladdinBookResponse {
     private Integer errorCode;
     private String errorMessage;
+    private Integer totalResults;
     private List<Item> item;
 
 
@@ -32,31 +33,31 @@ public class AladdinBookResponse {
         private Long priceSales; // 판매가
         private String cover; //이미지 url
 
-        public Book toEntity(){
-
-            // 할인율 계산
-            long discountRate = 0L;
-            if (priceStandard > 0 && priceSales <= priceStandard) {
-                discountRate = Math.round((1 - (double) priceSales / priceStandard) * 100);
-
-            }
-
-            return new Book(
-                    title,
-                    description,
-                    author,
-                    publisher,
-                    pubDate,
-                    isbn13,
-                    priceStandard,
-                    BookStatus.SELL,
-                    priceSales,
-                    true,
-                    0L,
-                    50L,
-                    discountRate
-            );
-        }
+//        public Book toEntity(){
+//
+//            // 할인율 계산
+//            long discountRate = 0L;
+//            if (priceStandard > 0 && priceSales <= priceStandard) {
+//                discountRate = Math.round((1 - (double) priceSales / priceStandard) * 100);
+//
+//            }
+//
+//            return new Book(
+//                    title,
+//                    description,
+//                    author,
+//                    publisher,
+//                    pubDate,
+//                    isbn13,
+//                    priceStandard,
+//                    BookStatus.SELL,
+//                    priceSales,
+//                    true,
+//                    0L,
+//                    50L,
+//                    discountRate
+//            );
+//        }
 
 
     }
