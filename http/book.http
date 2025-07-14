@@ -1,3 +1,11 @@
+### 책 api 조회
+GET http://localhost:8090/admin/books/admin/books/keyword?query=고양이&page=2&size=30
+
+
+### 책 등록
+POST http://localhost:8090/admin/books/aladdin-api
+
+
 ### 책 api 이용 등록
 POST http://localhost:8090/admin/books/aladdin-api?isbn=9788965961956
 Content-Type: application/json

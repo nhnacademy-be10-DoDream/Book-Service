@@ -1,10 +1,14 @@
 package shop.dodream.book.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
+import shop.dodream.book.infra.dto.AladdinBookResponse;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -12,19 +16,18 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookItemResponse {
     private Long bookId;
     private String title;
     private String description;
     private String author;
     private String publisher;
+    private String isbn;
+    private String publishedAt;
+    private Long regularPrice;
     private Long salePrice;
-    private Date publishedAt;
-    private Long viewCount;
-    private Float ratingAvg;
-    private Long reviewCount;
     private String imageUrl;
-    private List<String> categoryNames;
 
 
     public BookItemResponse(BookDocument document) {
@@ -34,11 +37,23 @@ public class BookItemResponse {
         this.author = document.getAuthor();
         this.publisher = document.getPublisher();
         this.salePrice = document.getSalePrice();
-        this.publishedAt = document.getPublishedAt();
-        this.viewCount = document.getViewCount();
-        this.ratingAvg = document.getRatingAvg();
-        this.reviewCount = document.getReviewCount();
+        this.publishedAt = String.valueOf(document.getPublishedAt());
         this.imageUrl = document.getImageUrl();
-        this.categoryNames = document.getCategoryNames();
+    }
+
+    public static BookItemResponse from(AladdinBookResponse.Item item) {
+        BookItemResponse response = new BookItemResponse();
+        response.setTitle(item.getTitle());
+        response.setDescription(item.getDescription());
+        response.setAuthor(item.getAuthor());
+        response.setPublisher(item.getPublisher());
+        response.setIsbn(item.getIsbn13());
+        response.setPublishedAt(String.valueOf(item.getPubDate()));
+        response.setRegularPrice(item.getPriceStandard());
+        response.setSalePrice(item.getPriceSales());
+        response.setImageUrl(item.getCover());
+        return response;
     }
 }
+
+

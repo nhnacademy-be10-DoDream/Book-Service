@@ -29,6 +29,7 @@ import shop.dodream.book.service.BookService;
 import shop.dodream.book.service.FileService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,28 +49,40 @@ public class BookServiceImpl implements BookService {
     private final RedisTemplate<String, Long> redisTemplate;
 
     @Override
-    @Transactional
-    public void registerBookByIsbn(String isbn) {
-        if (bookRepository.existsByIsbn(isbn)){
-            throw new DuplicateIsbnException(isbn);
-        }
-
+    @Transactional(readOnly = true)
+    public AladdinBookSearchResult getAladdinBookList(String query, int size, int page) {
         AladdinBookResponse aladdinBookResponse = aladdinBookClient.searchBook(
                 properties.getTtbkey(),
-                properties.getItemIdType(),
-                isbn,
+                query,
+                String.valueOf(size),
+                String.valueOf(page),
                 properties.getOutput(),
                 properties.getVersion(),
                 properties.getCover()
         );
 
-        if (aladdinBookResponse.getErrorCode() != null){
-            throw new AladdinBookNotFoundException(isbn);
+        if (aladdinBookResponse.getErrorCode() != null) {
+            log.error("알라딘 api 에러: code={}, message={}", aladdinBookResponse.getErrorCode(), aladdinBookResponse.getErrorMessage());
+            return new AladdinBookSearchResult(0, Collections.emptyList());
         }
 
-        AladdinBookResponse.Item item = aladdinBookResponse.getItem().getFirst();
+        List<BookItemResponse> items = aladdinBookResponse.getItem().stream()
+                .map(BookItemResponse::from)
+                .toList();
 
-        String imageUrl = fileService.uploadBookImageFromUrl(item.getCover());
+
+        return new AladdinBookSearchResult(aladdinBookResponse.getTotalResults(), items);
+    }
+
+    @Override
+    @Transactional
+    public void registerFromAladdin(BookRegisterRequest item) {
+        if (bookRepository.existsByIsbn(item.getIsbn())){
+            throw new DuplicateIsbnException(item.getIsbn());
+        }
+
+
+        String imageUrl = fileService.uploadBookImageFromUrl(item.getImageUrl());
 
         try {
             Book book = item.toEntity();
@@ -83,9 +96,47 @@ public class BookServiceImpl implements BookService {
             eventPublisher.publishEvent(new BookImageDeleteEvent(List.of(imageUrl)));
             throw e;
         }
-
-
     }
+
+//    @Override
+//    @Transactional
+//    public void registerBookByIsbn(String isbn) {
+//        if (bookRepository.existsByIsbn(isbn)){
+//            throw new DuplicateIsbnException(isbn);
+//        }
+//
+//        AladdinBookResponse aladdinBookResponse = aladdinBookClient.searchBook(
+//                properties.getTtbkey(),
+//                properties.getItemIdType(),
+//                isbn,
+//                properties.getOutput(),
+//                properties.getVersion(),
+//                properties.getCover()
+//        );
+//
+//        if (aladdinBookResponse.getErrorCode() != null){
+//            throw new AladdinBookNotFoundException(isbn);
+//        }
+//
+//        AladdinBookResponse.Item item = aladdinBookResponse.getItem().getFirst();
+//
+//        String imageUrl = fileService.uploadBookImageFromUrl(item.getCover());
+//
+//        try {
+//            Book book = item.toEntity();
+//
+//            Image bookImage = new Image(book, imageUrl, true);
+//            book.addImages(List.of(bookImage));
+//            Book savedBook = bookRepository.save(book);
+//
+//            bookElasticsearchRepository.save(new BookDocument(savedBook, imageUrl));
+//        }catch (Exception e) {
+//            eventPublisher.publishEvent(new BookImageDeleteEvent(List.of(imageUrl)));
+//            throw e;
+//        }
+//
+//
+//    }
 
     @Override
     @Transactional
@@ -282,19 +333,19 @@ public class BookServiceImpl implements BookService {
         redisTemplate.opsForValue().increment(key);
     }
 
-    @Override
-    public void registerBookListIsbn(IsbnListRequest request) {
-        List<String> isbnList = request.getIsbnList();
-
-        for(String isbn: isbnList){
-            try{
-                registerBookByIsbn(isbn);
-            }catch (Exception e){
-                log.error("Failed to register ISBN: {}", isbn, e);
-            }
-
-
-        }
-
-    }
+//    @Override
+//    public void registerBookListIsbn(IsbnListRequest request) {
+//        List<String> isbnList = request.getIsbnList();
+//
+//        for(String isbn: isbnList){
+//            try{
+//                registerBookByIsbn(isbn);
+//            }catch (Exception e){
+//                log.error("Failed to register ISBN: {}", isbn, e);
+//            }
+//
+//
+//        }
+//
+//    }
 }

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import shop.dodream.book.core.properties.AladdinBookProperties;
 import shop.dodream.book.dto.BookRegisterRequest;
 import shop.dodream.book.dto.BookUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
+import shop.dodream.book.infra.dto.AladdinBookResponse;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -32,23 +34,20 @@ import java.util.List;
 public class AdminBookController {
     private final BookService bookService;
 
-    @Operation(summary = "도서 등록 외부 API 등록", description = "ISBN을 기준으로 도서를 등록합니다.")
-    @PostMapping("/aladdin-api")
-    public ResponseEntity<Void> aladdinRegisterBook(
-            @RequestParam("isbn")
-            @NotBlank(message = "isbn 은 필수값입니다.")
-            @Pattern(regexp = "\\d{13}", message = "ISBN은 13자리 숫자여야합니다.")
-            String isbn){
-        bookService.registerBookByIsbn(isbn);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+    @Operation(summary = "알라딘 도서 조회 API", description = "책 제목이나 저자등으로 도서를 검색해 알라딘 책 정보를 조회합니다.")
+    @GetMapping("/aladdin-search")
+    public AladdinBookSearchResult getAladdinBookList(@RequestParam("query") String query,
+                                                  @RequestParam(value = "size", defaultValue = "25") int size,
+                                                  @RequestParam(value = "page", defaultValue = "1") int page) {
+        return bookService.getAladdinBookList(query, size, page);
     }
 
 
-    @Operation(summary = "도서 리스트로 isbn 등록", description = "isbn13자리 리스트로 등록합니다. ")
-    @PostMapping("/aladdin-api/isbn13")
-    public ResponseEntity<Void> aladdinRegisterBook13(@RequestBody IsbnListRequest isbn){
-
-        bookService.registerBookListIsbn(isbn);
+    @Operation(summary = "알라딘 도서 등록", description = "알라딘 API에서 검색한 도서를 등록합니다.")
+    @PostMapping("/aladdin-api")
+    public ResponseEntity<Void> registerFromAladdin(@RequestBody BookRegisterRequest request){
+        bookService.registerFromAladdin(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

@@ -11,11 +11,12 @@ import shop.dodream.book.infra.dto.AladdinBookResponse;
 public interface AladdinBookClient {
 
 
-    @GetMapping(value = "/ItemLookUp.aspx")
+    @GetMapping(value = "/ItemSearch.aspx")
     AladdinBookResponse searchBook(
             @RequestParam("ttbkey") String ttbkey,
-            @RequestParam("itemIdType") String itemIdType,
-            @RequestParam("ItemId") String isbn,
+            @RequestParam("Query") String query,
+            @RequestParam("MaxResults") String maxResults,
+            @RequestParam("start") String start,
             @RequestParam("output") String output,
             @RequestParam("Version") String version,
             @RequestParam("Cover") String cover

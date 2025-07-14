@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 public class BookRegisterRequest {
 
 
@@ -56,6 +55,9 @@ public class BookRegisterRequest {
     @Max(500)
     private Long bookCount;
 
+    private String imageUrl;
+
+
     @AssertTrue(message = "할인가는 정가보다 작거나 같아야 합니다.")
     public boolean isSalePriceValid() {
         if (regularPrice == null || salePrice == null) return true;
@@ -78,6 +80,11 @@ public class BookRegisterRequest {
                 bookCount
         );
     }
+
+
+
+
+
 
 
 
