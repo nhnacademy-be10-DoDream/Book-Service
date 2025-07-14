@@ -4,6 +4,7 @@ package shop.dodream.book.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
@@ -12,7 +13,7 @@ import shop.dodream.book.service.BookService;
 
 import java.util.List;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/public/books")
 @RequiredArgsConstructor
