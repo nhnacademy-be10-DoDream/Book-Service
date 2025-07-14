@@ -98,45 +98,6 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-//    @Override
-//    @Transactional
-//    public void registerBookByIsbn(String isbn) {
-//        if (bookRepository.existsByIsbn(isbn)){
-//            throw new DuplicateIsbnException(isbn);
-//        }
-//
-//        AladdinBookResponse aladdinBookResponse = aladdinBookClient.searchBook(
-//                properties.getTtbkey(),
-//                properties.getItemIdType(),
-//                isbn,
-//                properties.getOutput(),
-//                properties.getVersion(),
-//                properties.getCover()
-//        );
-//
-//        if (aladdinBookResponse.getErrorCode() != null){
-//            throw new AladdinBookNotFoundException(isbn);
-//        }
-//
-//        AladdinBookResponse.Item item = aladdinBookResponse.getItem().getFirst();
-//
-//        String imageUrl = fileService.uploadBookImageFromUrl(item.getCover());
-//
-//        try {
-//            Book book = item.toEntity();
-//
-//            Image bookImage = new Image(book, imageUrl, true);
-//            book.addImages(List.of(bookImage));
-//            Book savedBook = bookRepository.save(book);
-//
-//            bookElasticsearchRepository.save(new BookDocument(savedBook, imageUrl));
-//        }catch (Exception e) {
-//            eventPublisher.publishEvent(new BookImageDeleteEvent(List.of(imageUrl)));
-//            throw e;
-//        }
-//
-//
-//    }
 
     @Override
     @Transactional
@@ -333,19 +294,4 @@ public class BookServiceImpl implements BookService {
         redisTemplate.opsForValue().increment(key);
     }
 
-//    @Override
-//    public void registerBookListIsbn(IsbnListRequest request) {
-//        List<String> isbnList = request.getIsbnList();
-//
-//        for(String isbn: isbnList){
-//            try{
-//                registerBookByIsbn(isbn);
-//            }catch (Exception e){
-//                log.error("Failed to register ISBN: {}", isbn, e);
-//            }
-//
-//
-//        }
-//
-//    }
 }

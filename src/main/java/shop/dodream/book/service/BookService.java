@@ -14,8 +14,6 @@ import java.util.List;
 
 public interface BookService {
 
-//    void registerBookByIsbn(String isbn);
-
     void registerBookDirect(BookRegisterRequest registerRequest, List<MultipartFile> files);
 
     AladdinBookSearchResult getAladdinBookList(String query, int size, int page);
@@ -41,8 +39,6 @@ public interface BookService {
     void increaseBookCount(BookCountIncreaseRequest request);
 
     BookResponse getBookByIsbn(String isbn);
-
-//    void registerBookListIsbn(IsbnListRequest isbn);
 
     void increaseViewCount(Long bookId);
 
