@@ -44,7 +44,7 @@ public class BookSearchServiceImpl implements BookSearchService {
             if (sortType == BookSortType.RATING) {
                 boolQueryBuilder.filter(f -> f.range(r -> r
                         .field("reviewCount")
-                        .gte(JsonData.of(100))
+                        .gte(JsonData.of(10))
                 ));
             }
 
