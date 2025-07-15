@@ -20,7 +20,6 @@ public class BookViewCountSyncScheduler {
     private final BookRepository bookRepository;
     private final BookDocumentUpdater bookDocumentUpdater;
 
-    //1분마다 주기적으로 실행
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     @Transactional
     public void syncViewCounts(){

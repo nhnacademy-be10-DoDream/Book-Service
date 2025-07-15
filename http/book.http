@@ -93,7 +93,7 @@ Content-Type: application/json
 }
 
 ### 책 삭제(논리삭제)
-DELETE http://localhost:8080/admin/books/1
+DELETE http://localhost:8090/admin/books/12
 
 
 ### 재고 차감
