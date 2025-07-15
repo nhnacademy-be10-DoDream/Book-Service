@@ -8,13 +8,17 @@ import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.entity.Category;
-import shop.dodream.book.exception.*;
+import shop.dodream.book.exception.CategoryDepthNotFoundException;
+import shop.dodream.book.exception.CategoryNotDeleteWithChildren;
+import shop.dodream.book.exception.CategoryNotFoundException;
+import shop.dodream.book.exception.InvalidParentCategoryException;
 import shop.dodream.book.repository.BookCategoryRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.CategoryService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,6 +95,29 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryTreeResponse> result = new ArrayList<>();
         result.add(rootNode);
         return result;
+    }
+
+    @Override @Transactional(readOnly = true)
+    public List<CategoryFlatProjection> getCategoriesPath(Long categoryId) {
+        List<CategoryFlatProjection> flatCategories = categoryRepository.findAllFlat();
+        Map<Long, CategoryFlatProjection> idToCategory = flatCategories.stream()
+                .collect(Collectors.toMap(CategoryFlatProjection::getCategoryId, c -> c));
+
+        List<CategoryFlatProjection> path = new ArrayList<>();
+        CategoryFlatProjection current = idToCategory.get(categoryId);
+        if (current == null) {
+            throw new CategoryNotFoundException(categoryId);
+        }
+
+        while (current != null) {
+            path.add(current);
+            if (current.getParentId() == null) break;
+            current = idToCategory.get(current.getParentId());
+        }
+
+        Collections.reverse(path);
+
+        return path;
     }
 
     @Override @Transactional(readOnly = true)
