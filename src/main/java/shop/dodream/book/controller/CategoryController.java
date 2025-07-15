@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.dodream.book.dto.CategoryRequest;
 import shop.dodream.book.dto.CategoryResponse;
 import shop.dodream.book.dto.CategoryTreeResponse;
+import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.service.CategoryService;
 
 import java.util.List;
@@ -55,6 +56,13 @@ public class CategoryController {
     @GetMapping("/public/categories/{category-id}/related")
     public List<CategoryTreeResponse> getCategoriesRelated(@PathVariable("category-id") Long categoryId) {
         return categoryService.getCategoriesRelated(categoryId);
+    }
+
+    // 루트부터 특정 카테고리 전체 조회
+    @Operation(summary = "루트부터 특정카 테고리 트리 조회", description = "루트부터 특정카테고리까지 조회합니다.")
+    @GetMapping("/public/categories/{category-id}/path")
+    public List<CategoryFlatProjection> getCategoriesPath(@PathVariable("category-id") Long categoryId) {
+        return categoryService.getCategoriesPath(categoryId);
     }
 
     // 특정 카테고리 깊이별 조회
