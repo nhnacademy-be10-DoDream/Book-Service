@@ -1,12 +1,9 @@
-### 인덱싱 처리
-POST http://localhost:8080/books/reindex
 
 ### 검색
-GET http://localhost:8090/public/books/search?keyword=교감
+GET http://localhost:8090/public/books/search?keyword=귀멸&page=0&size=2
 
 
-# curl "http://localhost:9200/books/_search?pretty"
-GET http://s4.java21.net:9200/books/_search?pretty
 
-###
+
+
 
