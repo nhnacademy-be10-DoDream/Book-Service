@@ -113,7 +113,7 @@ public class Book extends BaseTimeEntity{
         this.images = new ArrayList<>();
     }
 
-//    알라딘용
+    // 알라딘용
     public Book(String title, String description, String author, String publisher, LocalDate publishedAt, String isbn, Long regularPrice, BookStatus status, Long salePrice, Boolean isGiftable, Long viewCount, Long bookCount, Long discountRate) {
         this.title = title;
         this.description = description;
@@ -168,12 +168,16 @@ public class Book extends BaseTimeEntity{
 
     // TODO 리스트 이미지 말고 단일로 이미지로 처리
     public void addImages(List<Image> imageList) {
-        images.addAll(imageList);
+        for (Image image: imageList){
+            images.add(image);
+            image.setBook(this);
+        }
     }
 
     private Long calculateDiscountRate(Long regularPrice, Long salePrice) {
         return Math.round((1 - (double) salePrice / regularPrice) * 100);
     }
+
 
 
 
