@@ -42,6 +42,9 @@
     },
     "imageUrl": {
       "type": "keyword"
+    },
+    "status": {
+      "type": "keyword"
     }
   }
 }
