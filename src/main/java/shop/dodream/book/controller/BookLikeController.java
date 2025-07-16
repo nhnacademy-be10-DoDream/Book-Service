@@ -21,8 +21,8 @@ public class BookLikeController {
 
 
 
-    @Operation(summary = "도서 좋아요 등록", description = "도서에 좋아요를 등록합니다.")
-    @PostMapping("/books/{book-id}/likes")
+    @Operation(summary = "사용자 도서 좋아요 등록", description = "도서에 좋아요를 등록합니다.")
+    @PostMapping("/likes/me/books/{book-id}")
     public ResponseEntity<Void> registerBookLike(@PathVariable("book-id") Long bookId,
                                           @RequestHeader("X-USER-ID") String userId){
 
@@ -32,7 +32,7 @@ public class BookLikeController {
 
     // 로그인한 사용자 특정 도서 좋아요 여부 조회
     @Operation(summary = "사용자의 도서 좋아요 여부 조회", description = "로그인한 사용자가 해당 도서를 좋아요 했는지 여부를 조회합니다.")
-    @GetMapping("/books/{book-id}/me")
+    @GetMapping("/likes/me/books/{book-id}")
     public Boolean bookLikeFindMe(@PathVariable("book-id") Long bookId,
                                                     @RequestHeader("X-USER-ID") String userId){
 
@@ -41,8 +41,8 @@ public class BookLikeController {
 
 
     // 좋아요 취소(삭제)
-    @Operation(summary = "도서 좋아요 취소", description = "사용자가 도서 좋아요를 취소합니다.")
-    @DeleteMapping("/books/{book-id}/likes")
+    @Operation(summary = "사용자 도서 좋아요 취소", description = "사용자가 도서 좋아요를 취소합니다.")
+    @DeleteMapping("/likes/me/books/{book-id}")
     public ResponseEntity<Void> bookLikeDelete(@PathVariable("book-id") Long bookId,
                                         @RequestHeader("X-USER-ID") String userId){
         bookLikeService.bookLikeDelete(bookId, userId);
@@ -52,7 +52,7 @@ public class BookLikeController {
 
     // 좋아요한 도서 목록 조회
     @Operation(summary = "사용자가 좋아요한 도서 목록 조회", description = "로그인한 사용자가 좋아요한 도서 목록을 조회합니다.")
-    @GetMapping("/likes/me")
+    @GetMapping("/likes/me/books")
     public Page<BookListResponseRecord> getLikedBooks(@RequestHeader("X-USER-ID") String userId, Pageable pageable){
         return bookLikeService.getLikedBooksByUserId(userId, pageable);
     }

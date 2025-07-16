@@ -53,22 +53,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, body, headers, status, request);
     }
 
-    /**
-     * 400 Bad Request
-     * IllegalArgumentException 공통 처리
-     */
-    @Nullable
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
-        URI type = URI.create("/errors/bad-request");
-        HttpStatusCode status = HttpStatus.BAD_REQUEST;
-        String detail = ex.getLocalizedMessage();
 
-        ProblemDetail body = createProblemDetail(ex, status, detail, null, null, request);
-        body.setType(type);
-
-        return handleExceptionInternal(ex, body, new HttpHeaders(), status, request);
-    }
 
     /**
      * 403 Forbidden

@@ -22,7 +22,7 @@ public interface BookService {
 
     Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable);
 
-    List<BookAdminListResponseRecord> getAllBooks();
+    List<BookListResponseRecord> getAllBooks();
 
     List<BookListResponseRecord> findAllByIds(List<Long> ids);
 
@@ -38,7 +38,7 @@ public interface BookService {
 
     void increaseBookCount(BookCountIncreaseRequest request);
 
-    BookResponse getBookByIsbn(String isbn);
+    BookItemResponse getBookByIsbn(String isbn);
 
     void increaseViewCount(Long bookId);
 

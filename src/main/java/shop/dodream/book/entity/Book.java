@@ -15,11 +15,17 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Table(name = "Book", indexes = {
-        @Index(name = "idx_sale_price", columnList = "salePrice"),
-        @Index(name = "idx_created_at", columnList = "createdAt"),
-        @Index(name = "idx_view_count", columnList = "viewCount")
-})
+@Table(
+        name = "book",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_isbn", columnNames = "isbn")
+        },
+        indexes = {
+                @Index(name = "idx_sale_price", columnList = "sale_price"),
+                @Index(name = "idx_created_at", columnList = "created_at"),
+                @Index(name = "idx_view_count", columnList = "view_count")
+        }
+)
 public class Book extends BaseTimeEntity{
 
     @Id
@@ -43,12 +49,10 @@ public class Book extends BaseTimeEntity{
     @Column(nullable = false)
     private String publisher;
 
-    @Setter
     @Column(nullable = false)
     private LocalDate publishedAt;
 
-    @Setter
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String isbn;
 
     @Setter
@@ -69,7 +73,6 @@ public class Book extends BaseTimeEntity{
     private Boolean isGiftable;
 
 
-    @Setter
     @Column(nullable = false)
     private Long viewCount;
 
@@ -83,9 +86,9 @@ public class Book extends BaseTimeEntity{
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true
     )
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
 
-    @Setter
+//    @Setter
     @Column(nullable = false)
     private Long discountRate;
 
@@ -163,8 +166,9 @@ public class Book extends BaseTimeEntity{
 
     }
 
-    public void addImages(List<Image> reviewImages) {
-        images.addAll(reviewImages);
+    // TODO 리스트 이미지 말고 단일로 이미지로 처리
+    public void addImages(List<Image> imageList) {
+        images.addAll(imageList);
     }
 
     private Long calculateDiscountRate(Long regularPrice, Long salePrice) {

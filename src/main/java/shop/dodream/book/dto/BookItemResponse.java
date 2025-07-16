@@ -1,23 +1,20 @@
 package shop.dodream.book.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
 import shop.dodream.book.infra.dto.AladdinBookResponse;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookItemResponse {
+
     private Long bookId;
     private String title;
     private String description;
@@ -54,6 +51,13 @@ public class BookItemResponse {
         response.setImageUrl(item.getCover());
         return response;
     }
+
+    @QueryProjection
+    public BookItemResponse(Long bookId, String title){
+        this.bookId = bookId;
+        this.title = title;
+    }
+
 }
 
 
