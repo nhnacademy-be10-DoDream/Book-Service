@@ -57,6 +57,9 @@ public class BookDocument {
     @Field(type = FieldType.Text)
     private String imageUrl;
 
+    @Field(type = FieldType.Long)
+    private List<Long> categoryIds;
+
     @Field(type = FieldType.Keyword)
     private List<String> categoryNames;
 

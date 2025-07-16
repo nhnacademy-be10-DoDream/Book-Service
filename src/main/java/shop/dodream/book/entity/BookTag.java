@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class BookTag {
 
     @EmbeddedId
