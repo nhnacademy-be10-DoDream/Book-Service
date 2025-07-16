@@ -17,21 +17,17 @@ Accept: application/json
 
 
 ### 특정 카테고리 조회
-GET http://localhost:8090/public/categories/1
+GET http://localhost:8080/public/categories/1
 Accept: application/json
 
 
 ### 특정 카테고리에 하위 카테고리 조회
-GET http://localhost:8090/public/categories/1/children
+GET http://localhost:8090/public/categories/13/children
 Accept: application/json
 
 
 ### 특정 카테고리에 연관 카테고리 전체 조회
-GET http://localhost:8090/public/categories/1/related
-Accept: application/json
-
-### 루트부터 특정 카테고리 전체 조회
-GET http://localhost:8090/public/categories/39/path
+GET http://localhost:8080/public/categories/1/related
 Accept: application/json
 
 

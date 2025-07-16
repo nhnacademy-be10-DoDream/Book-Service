@@ -5,11 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
 import shop.dodream.book.infra.dto.AladdinBookResponse;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -28,6 +25,7 @@ public class BookItemResponse {
     private Long regularPrice;
     private Long salePrice;
     private String imageUrl;
+    private List<Long> categoryIds;
 
 
     public BookItemResponse(BookDocument document) {
@@ -39,6 +37,7 @@ public class BookItemResponse {
         this.salePrice = document.getSalePrice();
         this.publishedAt = String.valueOf(document.getPublishedAt());
         this.imageUrl = document.getImageUrl();
+        this.categoryIds = document.getCategoryIds();
     }
 
     public static BookItemResponse from(AladdinBookResponse.Item item) {

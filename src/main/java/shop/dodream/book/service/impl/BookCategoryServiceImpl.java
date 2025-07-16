@@ -68,16 +68,20 @@ public class BookCategoryServiceImpl implements BookCategoryService {
                 .map(dto -> new CategoryResponse(dto.id(), dto.categoryName(), dto.depth(), dto.parentId()))
                 .toList();
 
-        List<String> categoryNames = initialCategories.stream()
+        BookDocument document = bookElasticsearchRepository.findById(bookId)
+                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
+        Set<Long> updatedIds = new LinkedHashSet<>(existingCategoryIds);
+        updatedIds.addAll(requestCategoryIds);
+        document.setCategoryIds(new ArrayList<>(updatedIds));
+        List<String> existingNames = document.getCategoryNames() != null ? document.getCategoryNames() : new ArrayList<>();
+        List<String> newCategoryNames = initialCategories.stream()
                 .map(CategoryWithParentProjection::categoryName)
                 .toList();
 
-        BookDocument document = bookElasticsearchRepository.findById(bookId)
-                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
-
-        document.setCategoryNames(categoryNames);
+        Set<String> updatedNames = new LinkedHashSet<>(existingNames);
+        updatedNames.addAll(newCategoryNames);
+        document.setCategoryNames(new ArrayList<>(updatedNames));
         bookElasticsearchRepository.save(document);
-
 
         return new BookWithCategoriesResponse(book.getId(), categoryResponses);
     }
@@ -256,6 +260,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 
     private void syncCategoriesToElasticsearch(Long bookId) {
         Set<Long> remainingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId);
+        List<Long> remainingCategoryIdList = new ArrayList<>(remainingCategoryIds);
 
         List<String> remainingCategoryNames = remainingCategoryIds.stream()
                 .map(id -> categoryRepository.findById(id)
@@ -266,6 +271,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         BookDocument document = bookElasticsearchRepository.findById(bookId)
                 .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
 
+        document.setCategoryIds(remainingCategoryIdList);
         document.setCategoryNames(remainingCategoryNames);
         bookElasticsearchRepository.save(document);
     }
