@@ -12,6 +12,7 @@ import shop.dodream.book.infra.dto.AladdinBookResponse;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookItemResponse {
 
