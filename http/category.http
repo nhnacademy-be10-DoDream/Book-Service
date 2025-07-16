@@ -22,7 +22,7 @@ Accept: application/json
 
 
 ### 특정 카테고리에 하위 카테고리 조회
-GET http://localhost:8080/public/categories/1/children
+GET http://localhost:8090/public/categories/13/children
 Accept: application/json
 
 
