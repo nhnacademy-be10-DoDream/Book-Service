@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.infra.dto.AladdinBookResponse;
 
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +27,7 @@ public class BookItemResponse {
     private Long regularPrice;
     private Long salePrice;
     private String imageUrl;
+    private List<Long> categoryIds;
 
 
     public BookItemResponse(BookDocument document) {
@@ -37,6 +39,7 @@ public class BookItemResponse {
         this.salePrice = document.getSalePrice();
         this.publishedAt = String.valueOf(document.getPublishedAt());
         this.imageUrl = document.getImageUrl();
+        this.categoryIds = document.getCategoryIds();
     }
 
     public static BookItemResponse from(AladdinBookResponse.Item item) {
