@@ -46,7 +46,7 @@ class BookTagControllerTest {
         BookWithTagResponse bookWithTagResponse = new BookWithTagResponse(newBookId, new TagResponse(newTagId, newTagName));
         when(bookTagService.registerTag(newBookId, newTagId)).thenReturn(bookWithTagResponse);
 
-        mockMvc.perform(post("/books/{book-id}/tags/{tag-id}", newBookId, newTagId))
+        mockMvc.perform(post("/admin/books/{book-id}/tags/{tag-id}", newBookId, newTagId))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.bookId").value(newBookId))
                 .andExpect(jsonPath("$.tag.tagId").value(newTagId))
@@ -88,50 +88,40 @@ class BookTagControllerTest {
     @Test
     @DisplayName("해당 태그의 도서 조회")
     void getBooksByTagId() throws Exception {
-
         Long newTagId = 1L;
-        Long newBookId1 = 10L;
-        String newTitle1 = "테스트 도서제목";
-        String newAuthor1 = "테스트 도서저자";
-        String newIsbn1 = "11111111";
-        Long newRegularPrice1 = 101L;
-        Long newSalePrice1 = 201L;
-        String newBookUrl1 = "테스트 URL";
 
-        Long newBookId2 = 20L;
-        String newTitle2 = "테스트 도서제목2";
-        String newAuthor2 = "테스트 도서저자2";
-        String newIsbn2 = "22222222";
-        Long newRegularPrice2 = 102L;
-        Long newSalePrice2 = 202L;
-        String newBookUrl2 = "테스트 URL";
-        Pageable pageable = PageRequest.of(0, 10);
-
-        List<BookListResponseRecord> content = List.of(
-//                new BookListResponseRecord(newBookId1, newTitle1, newAuthor1, newIsbn1, newRegularPrice1, newSalePrice1, newBookUrl1),
-//                new BookListResponseRecord(newBookId2, newTitle2, newAuthor2, newIsbn2, newRegularPrice2, newSalePrice2, newBookUrl2)
+        BookListResponseRecord book1 = new BookListResponseRecord(
+                10L, "테스트 도서제목", "테스트 도서저자", "11111111", 101L, 201L, "테스트 URL"
+        );
+        BookListResponseRecord book2 = new BookListResponseRecord(
+                20L, "테스트 도서제목2", "테스트 도서저자2", "22222222", 102L, 202L, "테스트 URL"
         );
 
+        List<BookListResponseRecord> content = List.of(book1, book2);
         Page<BookListResponseRecord> bookListResponseRecords = new PageImpl<>(content);
 
-        when(bookTagService.getBooksByTagId(newTagId, pageable)).thenReturn(bookListResponseRecords);
-        mockMvc.perform(get("/public/tags/{tag-id}/books", newTagId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].bookId").value(newBookId1))
-                .andExpect(jsonPath("$.content[0].title").value(newTitle1))
-                .andExpect(jsonPath("$.content[0].author").value(newAuthor1))
-                .andExpect(jsonPath("$.content[0].isbn").value(newIsbn1))
-                .andExpect(jsonPath("$.content[0].regularPrice").value(newRegularPrice1))
-                .andExpect(jsonPath("$.content[0].salePrice").value(newSalePrice1))
-                .andExpect(jsonPath("$.content[0].bookUrl").value(newBookUrl1))
-                .andExpect(jsonPath("$.content[1].bookId").value(newBookId2))
-                .andExpect(jsonPath("$.content[1].title").value(newTitle2))
-                .andExpect(jsonPath("$.content[1].author").value(newAuthor2))
-                .andExpect(jsonPath("$.content[1].isbn").value(newIsbn2))
-                .andExpect(jsonPath("$.content[1].regularPrice").value(newRegularPrice2))
-                .andExpect(jsonPath("$.content[1].salePrice").value(newSalePrice2))
-                .andExpect(jsonPath("$.content[1].bookUrl").value(newBookUrl2));
+        Pageable pageable = PageRequest.of(0, 10);
 
+        when(bookTagService.getBooksByTagId(newTagId, pageable)).thenReturn(bookListResponseRecords);
+
+        mockMvc.perform(get("/public/tags/{tag-id}/books", newTagId)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].bookId").value(10L))
+                .andExpect(jsonPath("$.content[0].title").value("테스트 도서제목"))
+                .andExpect(jsonPath("$.content[0].author").value("테스트 도서저자"))
+                .andExpect(jsonPath("$.content[0].isbn").value("11111111"))
+                .andExpect(jsonPath("$.content[0].regularPrice").value(101))
+                .andExpect(jsonPath("$.content[0].salePrice").value(201))
+                .andExpect(jsonPath("$.content[0].bookUrl").value("테스트 URL"))
+                .andExpect(jsonPath("$.content[1].bookId").value(20L))
+                .andExpect(jsonPath("$.content[1].title").value("테스트 도서제목2"))
+                .andExpect(jsonPath("$.content[1].author").value("테스트 도서저자2"))
+                .andExpect(jsonPath("$.content[1].isbn").value("22222222"))
+                .andExpect(jsonPath("$.content[1].regularPrice").value(102))
+                .andExpect(jsonPath("$.content[1].salePrice").value(202))
+                .andExpect(jsonPath("$.content[1].bookUrl").value("테스트 URL"));
 
         verify(bookTagService, times(1)).getBooksByTagId(newTagId, pageable);
     }
@@ -147,7 +137,7 @@ class BookTagControllerTest {
         BookWithTagResponse bookWithTagResponse = new BookWithTagResponse(newBookId, new TagResponse(newTagId, newTagName));
         when(bookTagService.updateTagByBook(newBookId, newTagId, registerTagId)).thenReturn(bookWithTagResponse);
 
-        mockMvc.perform(put("/books/{book-id}/tags/{tag-id}", newBookId, newTagId)
+        mockMvc.perform(put("/admin/books/{book-id}/tags/{tag-id}", newBookId, newTagId)
                 .param("newTagId", String.valueOf(registerTagId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookId").value(newBookId))
@@ -164,7 +154,7 @@ class BookTagControllerTest {
         Long newTagId = 1L;
         doNothing().when(bookTagService).deleteTagByBook(newBookId, newTagId);
 
-        mockMvc.perform(delete("/books/{book-id}/tags/{tag-id}", newBookId, newTagId))
+        mockMvc.perform(delete("/admin/books/{book-id}/tags/{tag-id}", newBookId, newTagId))
                 .andExpect(status().isNoContent());
     }
 }

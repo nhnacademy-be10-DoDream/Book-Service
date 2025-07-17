@@ -3,9 +3,6 @@ package shop.dodream.book.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import shop.dodream.book.dto.TagResponse;
 import shop.dodream.book.entity.Tag;
 import shop.dodream.book.exception.TagNotFoundException;
@@ -38,15 +35,32 @@ class TagServiceTest {
     @Test
     @DisplayName("태그 생성 테스트")
     void createTagTest() {
+        Long tagId = 1L;
         String tagName = "IT";
-        Tag savedTag = new Tag(1L, tagName);
+        Tag savedTag = new Tag(tagId, tagName);
 
         when(tagRepository.save(any(Tag.class))).thenReturn(savedTag);
 
         TagResponse result = tagService.createTag(tagName);
 
-        assertThat(result.getTagId()).isEqualTo(1L);
+        assertThat(result.getTagId()).isEqualTo(tagId);
         assertThat(result.getTagName()).isEqualTo(tagName);
+    }
+
+    @Test
+    @DisplayName("태그 단일 조회 테스트")
+    void getTagTest() {
+        Long tagId = 1L;
+        String tagName = "IT";
+        Tag savedTag = new Tag(tagId, tagName);
+
+        when(tagRepository.findById(tagId)).thenReturn(Optional.of(savedTag));
+
+        TagResponse result = tagService.getTag(tagId);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getTagName()).isEqualTo(tagName);
+        verify(tagRepository, times(1)).findById(tagId);
     }
 
     @Test
@@ -58,14 +72,12 @@ class TagServiceTest {
                 new Tag(3L, "만화")
         );
 
-        Page<Tag> tagPage = new PageImpl<>(tagList);
+        when(tagRepository.findAll()).thenReturn(tagList);
 
-        when(tagRepository.findAll(any(PageRequest.class))).thenReturn(tagPage);
+        List<TagResponse> result = tagService.getTags();
 
-        Page<TagResponse> result = tagService.getTags(PageRequest.of(0, 10));
-
-        assertThat(result.getTotalElements()).isEqualTo(3);
-        assertThat(result.getContent().get(0).getTagName()).isEqualTo("IT");
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0).getTagName()).isEqualTo("IT");
     }
 
     @Test
