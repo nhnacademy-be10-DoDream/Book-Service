@@ -1,6 +1,7 @@
 package shop.dodream.book.service.impl;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
@@ -30,7 +31,8 @@ public class BookSearchServiceImpl implements BookSearchService {
     private final ElasticsearchClient elasticsearchClient;
 
     @Override
-    public Page<BookItemResponse> searchBooks(String keyword, BookSortType sortType, Pageable pageable) {
+    public Page<BookItemResponse> searchBooks(String keyword, BookSortType sortType, Pageable pageable,
+                                              List<Long> categoryIds, Integer minPrice, Integer maxPrice) {
         try {
             MultiMatchQuery multiMatchQuery = new MultiMatchQuery.Builder()
                     .query(keyword)
@@ -40,6 +42,24 @@ public class BookSearchServiceImpl implements BookSearchService {
             BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder()
                     .must(m -> m.multiMatch(multiMatchQuery)) // keyword 검색 조건
                     .mustNot(mn -> mn.term(t -> t.field("status").value("REMOVED"))); // status=REMOVED 제외 조건
+
+            if (categoryIds != null && !categoryIds.isEmpty()) {
+                boolQueryBuilder.filter(f -> f.terms(t -> t
+                        .field("categoryIds")
+                        .terms(terms -> terms.value(categoryIds.stream()
+                                .map(FieldValue::of)
+                                .toList()))
+                ));
+            }
+
+            if (minPrice != null || maxPrice != null) {
+                boolQueryBuilder.filter(f -> f.range(r -> {
+                    r.field("salePrice");
+                    if (minPrice != null) r.gte(JsonData.of(minPrice));
+                    if (maxPrice != null) r.lte(JsonData.of(maxPrice));
+                    return r;
+                }));
+            }
 
             if (sortType == BookSortType.RATING) {
                 boolQueryBuilder.filter(f -> f.range(r -> r
