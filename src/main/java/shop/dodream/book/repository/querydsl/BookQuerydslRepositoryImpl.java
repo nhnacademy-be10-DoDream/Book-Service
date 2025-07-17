@@ -8,14 +8,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.BookResponse;
-import shop.dodream.book.dto.QBookResponse;
+import shop.dodream.book.dto.BookItemResponse;
+import shop.dodream.book.dto.QBookItemResponse;
 import shop.dodream.book.dto.projection.*;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.entity.QBook;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -61,18 +59,16 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     }
 
     @Override
-    public List<BookAdminListResponseRecord> findAllBy() {
+    public List<BookListResponseRecord> findAllBy() {
         return queryFactory
-                .select(new QBookAdminListResponseRecord(
+                .select(new QBookListResponseRecord(
                         book.id,
                         book.title,
                         book.author,
                         book.isbn,
                         book.regularPrice,
                         book.salePrice,
-                        image.uuid,
-                        book.createdAt,
-                        book.status
+                        image.uuid
                 ))
                 .from(book)
                 .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
@@ -166,10 +162,10 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     }
 
     @Override
-    public Optional<BookResponse> findByIsbn(String isbn) {
+    public Optional<BookItemResponse> findByIsbn(String isbn) {
         return Optional.ofNullable(
                 queryFactory
-                        .select(new QBookResponse(book.id, book.title))
+                        .select(new QBookItemResponse(book.id, book.title))
                         .from(book)
                         .where(book.isbn.eq(isbn))
                         .fetchOne()

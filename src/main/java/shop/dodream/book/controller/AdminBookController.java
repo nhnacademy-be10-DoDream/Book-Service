@@ -4,8 +4,6 @@ package shop.dodream.book.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.core.properties.AladdinBookProperties;
 import shop.dodream.book.dto.BookRegisterRequest;
 import shop.dodream.book.dto.BookUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +18,6 @@ import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
-import shop.dodream.book.infra.dto.AladdinBookResponse;
 import shop.dodream.book.service.BookService;
 
 import java.util.List;
@@ -89,7 +85,7 @@ public class AdminBookController {
 
     @Operation(summary = "도서 isbn 으로 도서 조회", description = "도서 isbn으로 도서 조회합니다.")
     @GetMapping("/isbn/{isbn}")
-    public BookResponse getBookByIsbn(@PathVariable("isbn") String isbn){
+    public BookItemResponse getBookByIsbn(@PathVariable("isbn") String isbn){
         return bookService.getBookByIsbn(isbn);
     }
 

@@ -140,7 +140,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookAdminListResponseRecord> getAllBooks() {
+    public List<BookListResponseRecord> getAllBooks() {
         return bookRepository.findAllBy();
     }
 
@@ -254,7 +254,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookResponse getBookByIsbn(String isbn) {
+    public BookItemResponse getBookByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
     }
 

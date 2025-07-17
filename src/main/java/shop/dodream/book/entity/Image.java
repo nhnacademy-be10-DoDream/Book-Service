@@ -3,10 +3,7 @@ package shop.dodream.book.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor
@@ -25,6 +22,7 @@ public class Image {
     @JoinColumn(name = "reviewId", updatable = false)
     private Review review;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", updatable = false)
     private Book book;
@@ -36,10 +34,6 @@ public class Image {
         this.uuid = uuid;
     }
 
-    public Image(Book book, String uuid) {
-        this.book = book;
-        this.uuid = uuid;
-    }
 
     public Image(Book book, String uuid, boolean isThumbnail) {
         this.book = book;

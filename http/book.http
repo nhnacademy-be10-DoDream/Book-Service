@@ -74,7 +74,7 @@ GET http://localhost:8080/public/books/all
 Content-Type: application/json
 
 ### 책 상세 조회 (관리자)
-GET http://localhost:8090/admin/books/29
+GET http://localhost:8090/admin/books/21
 Content-Type: application/json
 
 ### 상세 조회 (사용자)
@@ -104,6 +104,16 @@ Content-Type: application/json
   "bookId": 2,
   "bookCount": 10
 }
+
+### 재고 증가
+POST http://localhost:8090/public/books/internal/increase-bookCount
+Content-Type: application/json
+
+{
+  "bookId": 21,
+  "bookCount": 5
+}
+
 
 ### 책 좋아요 조회
 GET http://localhost:8080/books/1/likes/count
