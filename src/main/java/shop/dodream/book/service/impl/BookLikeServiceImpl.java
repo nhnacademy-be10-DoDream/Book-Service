@@ -1,6 +1,8 @@
 package shop.dodream.book.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
@@ -37,8 +39,11 @@ public class BookLikeServiceImpl implements BookLikeService {
 
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
 
-        BookLike bookLike = new BookLike(userId, book);
+        if (book.getStatus() == BookStatus.REMOVED){
+            throw new BookAlreadyRemovedException();
+        }
 
+        BookLike bookLike = new BookLike(userId, book);
         bookLikeRepository.save(bookLike);
 
     }
@@ -72,10 +77,11 @@ public class BookLikeServiceImpl implements BookLikeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookListResponseRecord> getLikedBooksByUserId(String userId) {
+    public Page<BookListResponseRecord> getLikedBooksByUserId(String userId, Pageable pageable) {
 
-        return bookLikeRepository.findLikedBooksByUserId(userId);
+        return bookLikeRepository.findLikedBooksByUserId(userId, pageable);
     }
+
 
 
     @Override

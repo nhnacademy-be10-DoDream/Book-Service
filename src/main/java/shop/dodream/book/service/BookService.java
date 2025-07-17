@@ -1,27 +1,45 @@
 package shop.dodream.book.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
+import shop.dodream.book.infra.dto.AladdinBookResponse;
 
 import java.util.List;
 
 public interface BookService {
 
-    void registerBookByIsbn(BookRegisterRequest request);
+    void registerBookDirect(BookRegisterRequest registerRequest, List<MultipartFile> files);
+
+    AladdinBookSearchResult getAladdinBookList(String query, int size, int page);
+
+    void registerFromAladdin(BookRegisterRequest request);
+
+    Page<BookAdminListResponseRecord> getAllBooks(Pageable pageable);
 
     List<BookListResponseRecord> getAllBooks();
 
-    List<BookListResponseRecord> findAllByIds(List<Long>
-                                                      ids);
+    List<BookListResponseRecord> findAllByIds(List<Long> ids);
+
     BookDetailResponse getBookByIdForAdmin(Long bookId);
 
     BookDetailResponse getBookByIdForUser(Long bookId);
 
-    void updateBook(Long bookId, BookUpdateRequest request);
+    void updateBook(Long bookId, BookUpdateRequest request, List<MultipartFile> files);
 
     void deleteBook(Long bookId);
 
     BookCountDecreaseResponse decreaseBookCount(BookCountDecreaseRequest request);
+
+    void increaseBookCount(BookCountIncreaseRequest request);
+
+    BookItemResponse getBookByIsbn(String isbn);
+
+    void increaseViewCount(Long bookId);
 
 }

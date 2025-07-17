@@ -34,7 +34,16 @@
     "reviewCount": {
       "type": "long"
     },
+    "categoryIds": {
+      "type": "long"
+    },
     "categoryNames": {
+      "type": "keyword"
+    },
+    "imageUrl": {
+      "type": "keyword"
+    },
+    "status": {
       "type": "keyword"
     }
   }

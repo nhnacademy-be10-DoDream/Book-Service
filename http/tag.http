@@ -1,17 +1,20 @@
 ### 태그 생성
-POST http://localhost:8080/tags?newTagName=신간s
+POST http://localhost:8080/admin/tags?newTagName=베스트셀러
 Content-Type: application/json
 
+### 단일 태그 조회
+GET http://localhost:8080/public/tags/2
+Accept: application/json
 
 ### 전체 태그 조회
-GET http://localhost:8080/tags?page=1&size=5
+GET http://localhost:8080/public/tags?page=1&size=5
 Accept: application/json
 
 ### 태그 수정
-PATCH http://localhost:8080/tags/1?newTagName=신간
+PUT http://localhost:8080/admin/tags/1?newTagName=신간
 Content-Type: application/json
 
 ### 태그 삭제
-DELETE http://localhost:8080/tags/3
+DELETE http://localhost:8080/admin/tags/4
 
 ###

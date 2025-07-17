@@ -21,7 +21,7 @@ public class Category {
     @Column(name = "category_id") @Getter
     private Long id;
 
-    @Column(nullable = false, unique = true) @Setter
+    @Column(nullable = false) @Setter
     private String categoryName;
 
     @Column(nullable = false) @Setter

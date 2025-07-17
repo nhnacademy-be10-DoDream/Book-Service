@@ -1,5 +1,5 @@
 ### 카테고리 등록
-POST http://localhost:8080/categories
+POST http://localhost:8080/admin/categories
 Content-Type: application/json
 
 {
@@ -8,34 +8,40 @@ Content-Type: application/json
   "parentId": null
 }
 
+### 해당 도서의 카테고리 트리 조회
+GET http://localhost:8090/public/books/1/categories
 
 ### 전체 카테고리 조회
-GET http://localhost:8080/categories
+GET http://localhost:8090/public/categories
 Accept: application/json
 
 
 ### 특정 카테고리 조회
-GET http://localhost:8080/categories/2
+GET http://localhost:8090/public/categories/1
 Accept: application/json
 
 
 ### 특정 카테고리에 하위 카테고리 조회
-GET http://localhost:8080/categories/2/children
+GET http://localhost:8090/public/categories/1/children
 Accept: application/json
 
 
 ### 특정 카테고리에 연관 카테고리 전체 조회
-GET http://localhost:8080/categories/1/related
+GET http://localhost:8090/public/categories/1/related
+Accept: application/json
+
+### 루트부터 특정 카테고리 전체 조회
+GET http://localhost:8090/public/categories/39/path
 Accept: application/json
 
 
 ### 특정 깊이 카테고리 조회
-GET http://localhost:8080/categories/1/depth
+GET http://localhost:8080/public/categories/1/depth
 Accept: application/json
 
 
 ### 카테고리 수정
-PATCH http://localhost:8080/categories/3
+PUT http://localhost:8080/admin/categories/3
 Content-Type: application/json
 
 {
@@ -47,6 +53,6 @@ Content-Type: application/json
 
 
 ### 카테고리 삭제
-DELETE http://localhost:8080/categories/3
+DELETE http://localhost:8080/admin/categories/136
 
 

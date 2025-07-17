@@ -7,46 +7,87 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.infra.dto.NaverBookResponse;
-import shop.dodream.book.util.BookUtils;
+import shop.dodream.book.entity.Image;
+import shop.dodream.book.infra.dto.AladdinBookResponse;
 
-import javax.swing.text.html.parser.Entity;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 public class BookRegisterRequest {
+
+
+    @NotBlank
+    private String title;
+
+    @NotBlank(message = "책 설명은 필수 값 입니다.")
+    private String description;
+
+    @NotBlank
+    private String author;
+
+    @NotBlank
+    private String publisher;
+
+    @NotNull
+    private LocalDate publishedAt;
 
     @NotBlank(message = "isbn 은 필수 값 입니다.")
     @Pattern(regexp = "\\d{13}", message = "ISBN은 13자리 숫자여야 합니다.")
     private String isbn;
 
-    @NotBlank(message = "책 설명은 필수 값 입니다.")
-    private String description;
 
-    @Min(value = 0, message = "할인율은 0 이상이어야 합니다.")
-    @Max(value = 50, message = "할인율은 50 이하이어야 합니다.")
-    private Long discountRate;
+    @NotNull
+    @Positive
+    private Long regularPrice;
+
+    @NotNull
+    @PositiveOrZero
+    private Long salePrice;
+
+    @NotNull
+    private Boolean isGiftable;
+
+    @NotNull
+    @Min(5)
+    @Max(500)
+    private Long bookCount;
+
+    private String imageUrl;
 
 
-
-    public void applyTo(Book book){
-        long discountRate = this.discountRate;
-        long regularPrice = (discountRate == 0) ? book.getSalePrice() : Math.round(book.getSalePrice() * 100.0 / (100 - discountRate));
-
-        book.setDescription(this.description);
-        book.setDiscountRate(discountRate);
-        book.setRegularPrice(regularPrice);
-        book.setStatus(BookStatus.SELL);
-        book.setBookCount(50L);
-        book.setSearchCount(0L);
-        book.setViewCount(0L);
-        book.setIsGiftable(true);
-        book.setCreatedAt(ZonedDateTime.now());
-        book.setLikeCount(0L);
+    @AssertTrue(message = "할인가는 정가보다 작거나 같아야 합니다.")
+    public boolean isSalePriceValid() {
+        if (regularPrice == null || salePrice == null) return true;
+        return salePrice <= regularPrice;
     }
+
+    public Book toEntity() {
+        return new Book(
+                title,
+                description,
+                author,
+                publisher,
+                publishedAt,
+                isbn,
+                regularPrice,
+                BookStatus.SELL,
+                salePrice,
+                isGiftable,
+                0L,
+                bookCount
+        );
+    }
+
+
+
+
+
+
+
+
 
 
 }

@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = {
+        @Index(name = "idx_book_id", columnList = "bookId"),
+        @Index(name = "idx_user_id", columnList = "userId")
+})
 public class Review extends BaseTimeEntity{
     @Id
     @Getter
@@ -18,6 +22,7 @@ public class Review extends BaseTimeEntity{
     private long reviewId;
 
     @Setter
+    @Getter
     @Max(10)
     @Min(0)
     @Column(columnDefinition = "TINYINT")
@@ -29,8 +34,9 @@ public class Review extends BaseTimeEntity{
     private String content;
 
     @NotNull
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", updatable = false)
+    @JoinColumn(name = "book_id", updatable = false)
     private Book book;
 
     @Getter
@@ -44,6 +50,9 @@ public class Review extends BaseTimeEntity{
     @NotNull
     @Column(updatable = false)
     private String userId;
+
+    @Column(updatable = false)
+    private long orderItemId;
 
     public List<String> update(ReviewUpdateRequest request) {
 
@@ -72,11 +81,12 @@ public class Review extends BaseTimeEntity{
     }
 
 
-    public Review(Short rating, String content, String userID, Book book) {
+    public Review(Short rating, String content, String userID, long orderItemId, Book book) {
         this.book = book;
         this.rating = rating;
         this.content = content;
         this.userId = userID;
+        this.orderItemId = orderItemId;
         this.images = new ArrayList<>();
     }
 

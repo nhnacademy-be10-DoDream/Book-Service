@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface FileService {
-    String uploadBookImageFromUrl(String imageUrl) throws IOException;
+    String uploadBookImageFromUrl(String imageUrl);
 
     List<String> uploadBookImageFromFiles(List<MultipartFile> files);
 

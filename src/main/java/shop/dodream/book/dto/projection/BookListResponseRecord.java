@@ -10,7 +10,6 @@ public record BookListResponseRecord(
         Long regularPrice,
         Long salePrice,
         String bookUrl
-
 ) {
     @QueryProjection
     public BookListResponseRecord(Long bookId, String title, String author, String isbn,
@@ -23,4 +22,5 @@ public record BookListResponseRecord(
         this.salePrice = salePrice;
         this.bookUrl = bookUrl;
     }
+
 }

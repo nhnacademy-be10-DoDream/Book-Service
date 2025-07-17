@@ -1,19 +1,80 @@
+### 책 api 조회
+GET http://localhost:8090/admin/books/admin/books/keyword?query=고양이&page=2&size=30
+
+
 ### 책 등록
-POST http://localhost:8080/admin/books
+POST http://localhost:8090/admin/books/aladdin-api
+
+
+### 책 api 이용 등록
+POST http://localhost:8090/admin/books/aladdin-api?isbn=9788965961956
+Content-Type: application/json
+
+
+### 책 리스트 등록
+POST http://localhost:8090/admin/books/aladdin-api/isbn13
 Content-Type: application/json
 
 {
-  "isbn": "9791198520548",
-  "description" : "직접 설명을 등록해야함...",
-  "discountRate": 0
+  "isbnList": [
+    "9791197378270",
+    "9791157956579",
+    "9791169213868",
+    "9791162241776",
+    "9791161758633",
+    "9791140711963",
+    "9791192987354",
+    "9791161752624",
+    "9791158395995",
+    "9791195484577",
+    "9791168764293",
+    "9791168764286",
+    "9791134841324",
+    "9791134820237",
+    "9791134816001",
+    "9791198520548",
+    "8809943923627",
+    "9791191126433",
+    "9791191126440",
+    "9791191126426",
+    "9791168223981",
+    "9788970940564",
+    "9791198833273",
+    "9791191248852",
+    "9788970944746",
+    "9791141103835",
+    "9788966262281",
+    "9788936434120",
+    "9788925531236",
+    "9788965961956",
+    "9791193904152",
+    "9788936439743",
+    "9791194087700",
+    "9791197221989",
+
+    "9788901294742",
+    "9788965966814"
+  ]
 }
 
+
+### ISBN 으로 조회
+GET http://localhost:8080/admin/books/isbn/9791157956579
+
 ### 책 전체 조회
-GET http://localhost:8080/admin/books
+GET http://localhost:8090/admin/books
+Content-Type: application/json
+
+### 책 전체 조회(페이징)
+GET http://localhost:8090/admin/books
+Content-Type: application/json
+
+### 책 전체 조회
+GET http://localhost:8080/public/books/all
 Content-Type: application/json
 
 ### 책 상세 조회 (관리자)
-GET http://localhost:8080/admin/books/1
+GET http://localhost:8090/admin/books/21
 Content-Type: application/json
 
 ### 상세 조회 (사용자)
@@ -32,7 +93,7 @@ Content-Type: application/json
 }
 
 ### 책 삭제(논리삭제)
-DELETE http://localhost:8080/admin/books/1
+DELETE http://localhost:8090/admin/books/12
 
 
 ### 재고 차감
@@ -40,9 +101,19 @@ POST http://localhost:8080/books/internal/decrease-bookCount
 Content-Type: application/json
 
 {
-  "bookId": 1,
+  "bookId": 2,
   "bookCount": 10
 }
+
+### 재고 증가
+POST http://localhost:8090/public/books/internal/increase-bookCount
+Content-Type: application/json
+
+{
+  "bookId": 21,
+  "bookCount": 5
+}
+
 
 ### 책 좋아요 조회
 GET http://localhost:8080/books/1/likes/count

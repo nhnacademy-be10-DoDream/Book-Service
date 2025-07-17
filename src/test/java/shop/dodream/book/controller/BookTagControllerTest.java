@@ -74,7 +74,7 @@ class BookTagControllerTest {
         BookWithTagsResponse bookWithTagsResponse = new BookWithTagsResponse(newBookId, tagResponses);
         when(bookTagService.getTagsByBookId(newBookId)).thenReturn(bookWithTagsResponse);
 
-        mockMvc.perform(get("/books/{book-id}/tags", newBookId))
+        mockMvc.perform(get("/public/books/{book-id}/tags", newBookId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookId").value(newBookId))
                 .andExpect(jsonPath("$.tags[0].tagId").value(tagId1))
@@ -108,14 +108,14 @@ class BookTagControllerTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         List<BookListResponseRecord> content = List.of(
-                new BookListResponseRecord(newBookId1, newTitle1, newAuthor1, newIsbn1, newRegularPrice1, newSalePrice1, newBookUrl1),
-                new BookListResponseRecord(newBookId2, newTitle2, newAuthor2, newIsbn2, newRegularPrice2, newSalePrice2, newBookUrl2)
+//                new BookListResponseRecord(newBookId1, newTitle1, newAuthor1, newIsbn1, newRegularPrice1, newSalePrice1, newBookUrl1),
+//                new BookListResponseRecord(newBookId2, newTitle2, newAuthor2, newIsbn2, newRegularPrice2, newSalePrice2, newBookUrl2)
         );
 
         Page<BookListResponseRecord> bookListResponseRecords = new PageImpl<>(content);
 
         when(bookTagService.getBooksByTagId(newTagId, pageable)).thenReturn(bookListResponseRecords);
-        mockMvc.perform(get("/tags/{tag-id}/books", newTagId))
+        mockMvc.perform(get("/public/tags/{tag-id}/books", newTagId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].bookId").value(newBookId1))
                 .andExpect(jsonPath("$.content[0].title").value(newTitle1))

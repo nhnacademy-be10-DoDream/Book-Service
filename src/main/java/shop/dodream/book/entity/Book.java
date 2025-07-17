@@ -15,11 +15,17 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Table(name = "Book", indexes = {
-        @Index(name = "idx_sale_price", columnList = "salePrice"),
-        @Index(name = "idx_created_at", columnList = "createdAt"),
-        @Index(name = "idx_view_count", columnList = "viewCount")
-})
+@Table(
+        name = "book",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_isbn", columnNames = "isbn")
+        },
+        indexes = {
+                @Index(name = "idx_sale_price", columnList = "sale_price"),
+                @Index(name = "idx_created_at", columnList = "created_at"),
+                @Index(name = "idx_view_count", columnList = "view_count")
+        }
+)
 public class Book extends BaseTimeEntity{
 
     @Id
@@ -43,12 +49,10 @@ public class Book extends BaseTimeEntity{
     @Column(nullable = false)
     private String publisher;
 
-    @Setter
     @Column(nullable = false)
     private LocalDate publishedAt;
 
-    @Setter
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String isbn;
 
     @Setter
@@ -68,11 +72,7 @@ public class Book extends BaseTimeEntity{
     @Column(nullable = false)
     private Boolean isGiftable;
 
-    @Setter
-    @Column(nullable = false)
-    private Long searchCount;
 
-    @Setter
     @Column(nullable = false)
     private Long viewCount;
 
@@ -86,28 +86,55 @@ public class Book extends BaseTimeEntity{
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true
     )
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
 
-    @Setter
+//    @Setter
     @Column(nullable = false)
     private Long discountRate;
 
-    @Setter
-    @Column(nullable = false)
-    private Long likeCount;
 
-    public Book(String title, String author, Long salePrice, String publisher, LocalDate publishedAt, String isbn) {
+
+
+    // 책 직접등록용
+    public Book(String title, String description, String author, String publisher, LocalDate publishedAt, String isbn, Long regularPrice, BookStatus status, Long salePrice, Boolean isGiftable, Long viewCount, Long bookCount) {
         this.title = title;
+        this.description = description;
         this.author = author;
-        this.salePrice = salePrice;
         this.publisher = publisher;
         this.publishedAt = publishedAt;
         this.isbn = isbn;
+        this.regularPrice = regularPrice;
+        this.status = status;
+        this.salePrice = salePrice;
+        this.isGiftable = isGiftable;
+        this.viewCount = viewCount;
+        this.bookCount = bookCount;
+        this.discountRate = calculateDiscountRate(regularPrice,salePrice);
+        this.images = new ArrayList<>();
+    }
+
+    // 알라딘용
+    public Book(String title, String description, String author, String publisher, LocalDate publishedAt, String isbn, Long regularPrice, BookStatus status, Long salePrice, Boolean isGiftable, Long viewCount, Long bookCount, Long discountRate) {
+        this.title = title;
+        this.description = description;
+        this.author = author;
+        this.publisher = publisher;
+        this.publishedAt = publishedAt;
+        this.isbn = isbn;
+        this.regularPrice = regularPrice;
+        this.status = status;
+        this.salePrice = salePrice;
+        this.isGiftable = isGiftable;
+        this.viewCount = viewCount;
+        this.bookCount = bookCount;
+        this.discountRate = discountRate;
         this.images = new ArrayList<>();
     }
 
 
-    public void update(BookUpdateRequest bookUpdateRequest) {
+
+    public void updateTextFields(BookUpdateRequest bookUpdateRequest) {
+
         Optional.ofNullable(bookUpdateRequest.getTitle())
                 .ifPresent(this::setTitle);
 
@@ -131,11 +158,26 @@ public class Book extends BaseTimeEntity{
 
         Optional.ofNullable(bookUpdateRequest.getBookCount())
                 .ifPresent(this::setBookCount);
+
+
+        this.discountRate = calculateDiscountRate(regularPrice, salePrice);
+
+
+
     }
 
-    public void addImages(List<Image> reviewImages) {
-        images.addAll(reviewImages);
+    // TODO 리스트 이미지 말고 단일로 이미지로 처리
+    public void addImages(List<Image> imageList) {
+        for (Image image: imageList){
+            images.add(image);
+            image.setBook(this);
+        }
     }
+
+    private Long calculateDiscountRate(Long regularPrice, Long salePrice) {
+        return Math.round((1 - (double) salePrice / regularPrice) * 100);
+    }
+
 
 
 

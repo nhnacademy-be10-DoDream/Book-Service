@@ -10,5 +10,4 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long>, CategoryRepositoryCustom {
     List<Category> findByDepth(Long depth);
-    boolean existsByCategoryName(String categoryName);
 }

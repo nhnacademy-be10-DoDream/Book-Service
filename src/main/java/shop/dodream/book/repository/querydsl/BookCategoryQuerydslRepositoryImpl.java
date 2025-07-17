@@ -14,6 +14,7 @@ import shop.dodream.book.dto.projection.QBookListResponseRecord;
 import shop.dodream.book.entity.BookCategory;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.QBookCategory;
+import shop.dodream.book.service.BookDocumentUpdater;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,9 +30,10 @@ import static shop.dodream.book.entity.QImage.image;
 @Transactional(readOnly = true)
 public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslRepository{
     private final JPAQueryFactory queryFactory;
+    private final BookDocumentUpdater bookDocumentUpdater;
 
     @Override
-    public Page<BookListResponseRecord> findBookListByCategoryId(Long categoryId, Pageable pageable) {
+    public Page<BookListResponseRecord> findBookListByCategoryIds(Set<Long> categoryIds, Pageable pageable) {
         List<BookListResponseRecord> content = queryFactory
                 .select(new QBookListResponseRecord(
                         book.id,
@@ -46,7 +48,7 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
                 .leftJoin(bookCategory.book, book)
                 .leftJoin(book.images, image).on(image.isThumbnail.eq(true))
                 .where(
-                        bookCategory.category.id.eq(categoryId),
+                        bookCategory.category.id.in(categoryIds),
                         book.status.ne(BookStatus.REMOVED)
                 )
                 .offset(pageable.getOffset()) // 페이징 시작 위치
@@ -58,7 +60,7 @@ public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslR
                 .from(bookCategory)
                 .leftJoin(bookCategory.book, book)
                 .where(
-                        bookCategory.category.id.eq(categoryId),
+                        bookCategory.category.id.in(categoryIds),
                         book.status.ne(BookStatus.REMOVED)
                 )
                 .fetchOne();
