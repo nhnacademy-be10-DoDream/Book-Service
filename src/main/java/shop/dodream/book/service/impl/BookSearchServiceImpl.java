@@ -16,6 +16,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.BookDocument;
+import shop.dodream.book.dto.BookItemResponse;
+import shop.dodream.book.dto.BookItemWithCountResponse;
+import shop.dodream.book.dto.BookSortType;
 import shop.dodream.book.service.BookSearchService;
 import shop.dodream.book.service.CategoryService;
 
