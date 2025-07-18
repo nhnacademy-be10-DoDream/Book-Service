@@ -17,12 +17,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import shop.dodream.book.dto.BookDocument;
 import shop.dodream.book.dto.BookItemResponse;
+import shop.dodream.book.dto.BookItemWithCountResponse;
 import shop.dodream.book.dto.BookSortType;
 import shop.dodream.book.service.BookSearchService;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +34,8 @@ public class BookSearchServiceImpl implements BookSearchService {
     private final ElasticsearchClient elasticsearchClient;
 
     @Override
-    public Page<BookItemResponse> searchBooks(String keyword, BookSortType sortType, Pageable pageable,
-                                              List<Long> categoryIds, Integer minPrice, Integer maxPrice) {
+    public BookItemWithCountResponse searchBooks(String keyword, BookSortType sortType, Pageable pageable,
+                                                 List<Long> categoryIds, Integer minPrice, Integer maxPrice) {
         try {
             MultiMatchQuery multiMatchQuery = new MultiMatchQuery.Builder()
                     .query(keyword)
@@ -80,6 +83,11 @@ public class BookSearchServiceImpl implements BookSearchService {
                     .from((int) pageable.getOffset())  // offset = page * size
                     .size(pageable.getPageSize())
                     .sort(sortOption != null ? Collections.singletonList(sortOption) : Collections.emptyList())
+                    .aggregations("category_count", agg -> agg
+                            .terms(t -> t
+                                    .field("categoryIds")
+                                    .size(1000)
+                            ))
                     .build();
 
             SearchResponse<BookDocument> response = elasticsearchClient.search(request, BookDocument.class);
@@ -93,11 +101,25 @@ public class BookSearchServiceImpl implements BookSearchService {
                     ? response.hits().total().value()
                     : content.size();
 
-            return new PageImpl<>(content, pageable, totalHits);
+            Map<Long, Long> categoryCountMap = new HashMap<>();
+            var buckets = response.aggregations()
+                    .get("category_count")
+                    .lterms()
+                    .buckets()
+                    .array();
+
+            for (var bucket : buckets) {
+                Long categoryId = bucket.key();
+                long count = bucket.docCount();
+                categoryCountMap.put(categoryId, count);
+            }
+
+            Page<BookItemResponse> page = new PageImpl<>(content, pageable, totalHits);
+            return new BookItemWithCountResponse(page, categoryCountMap);
 
         } catch (IOException e) {
             e.printStackTrace();
-            return Page.empty(pageable);
+            return new BookItemWithCountResponse(Page.empty(), Collections.emptyMap());
         }
     }
 }
