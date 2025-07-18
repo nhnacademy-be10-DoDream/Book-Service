@@ -36,6 +36,7 @@ public class BookSearchServiceImpl implements BookSearchService {
     @Override
     public BookItemWithCountResponse searchBooks(String keyword, BookSortType sortType, Pageable pageable,
                                                  List<Long> categoryIds, Integer minPrice, Integer maxPrice) {
+
         try {
             MultiMatchQuery multiMatchQuery = new MultiMatchQuery.Builder()
                     .query(keyword)

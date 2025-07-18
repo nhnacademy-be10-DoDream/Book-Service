@@ -9,6 +9,7 @@ import java.util.List;
 
 
 public interface BookSearchService {
+
     BookItemWithCountResponse searchBooks(String keyword,
                                           BookSortType bookSortType,
                                           Pageable pageable,
