@@ -24,6 +24,7 @@ public class BookSearchController {
 
     @Operation(summary = "도서 검색", description = "키워드를 통해 도서를 검색합니다. 정렬 옵션을 선택할 수 있습니다.")
     @GetMapping("/search")
+
     public BookItemWithCountResponse searchBooks(@RequestParam String keyword,
                                                  @RequestParam(value = "sort", required = false, defaultValue = "NONE") BookSortType sort,
                                                  Pageable pageable,
