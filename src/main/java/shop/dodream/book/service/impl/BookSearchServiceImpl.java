@@ -15,23 +15,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import shop.dodream.book.dto.BookDocument;
-import shop.dodream.book.dto.BookItemResponse;
-import shop.dodream.book.dto.BookItemWithCountResponse;
-import shop.dodream.book.dto.BookSortType;
+import shop.dodream.book.dto.*;
 import shop.dodream.book.service.BookSearchService;
+import shop.dodream.book.service.CategoryService;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BookSearchServiceImpl implements BookSearchService {
 
     private final ElasticsearchClient elasticsearchClient;
+    private final CategoryService categoryService;
 
     @Override
     public BookItemWithCountResponse searchBooks(String keyword, BookSortType sortType, Pageable pageable,
@@ -112,6 +112,24 @@ public class BookSearchServiceImpl implements BookSearchService {
                 Long categoryId = bucket.key();
                 long count = bucket.docCount();
                 categoryCountMap.put(categoryId, count);
+            }
+
+            List<CategoryResponse> depth1Categories = categoryService.getCategoriesDepth(1L);
+            List<CategoryResponse> allCategories = categoryService.getCategories();
+
+            Map<Long, List<CategoryResponse>> parentToChildrenMap = allCategories.stream()
+                    .filter(c -> c.getParentId() != null)
+                    .collect(Collectors.groupingBy(CategoryResponse::getParentId));
+
+            for (CategoryResponse depth1 : depth1Categories) {
+                long sum = 0L;
+                List<CategoryResponse> secondLevelCategories = parentToChildrenMap.getOrDefault(depth1.getCategoryId(), List.of());
+                for (CategoryResponse second : secondLevelCategories) {
+                    sum += categoryCountMap.getOrDefault(second.getCategoryId(), 0L);
+                }
+                if (sum > 0) {
+                    categoryCountMap.put(depth1.getCategoryId(), sum);
+                }
             }
 
             Page<BookItemResponse> page = new PageImpl<>(content, pageable, totalHits);
