@@ -1,6 +1,6 @@
 
 ### 검색
-GET http://localhost:8090/public/books/search?keyword=스프링&categoryIds=8&minPrice=10000&maxPrice=12000
+GET http://localhost:8090/public/books/search?keyword=스프링
 
 
 
