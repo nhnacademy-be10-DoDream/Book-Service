@@ -1,6 +1,5 @@
 package shop.dodream.book.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,6 @@ class BookTagControllerTest {
 
     @MockBean
     private BookTagService bookTagService;
-
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("해당 도서에 태그 등록")

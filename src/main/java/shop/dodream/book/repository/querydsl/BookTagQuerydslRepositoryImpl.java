@@ -16,7 +16,6 @@ import shop.dodream.book.entity.Tag;
 
 import java.util.List;
 
-import static com.querydsl.core.group.GroupBy.list;
 import static shop.dodream.book.entity.QBook.book;
 import static shop.dodream.book.entity.QBookTag.bookTag;
 import static shop.dodream.book.entity.QImage.image;
@@ -57,8 +56,8 @@ public class BookTagQuerydslRepositoryImpl implements BookTagQuerydslRepository{
                         bookTag.tag.id.eq(tagId),
                         book.status.ne(BookStatus.REMOVED)
                 )
-                .offset(pageable.getOffset()) // 페이지 시작 위치
-                .limit(pageable.getPageSize()) // 페이지 크기
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         Long total = queryFactory

@@ -1,5 +1,5 @@
 ### 카테고리 등록
-POST http://localhost:8080/admin/categories
+POST http://localhost:8090/admin/categories
 Content-Type: application/json
 
 {
@@ -53,6 +53,6 @@ Content-Type: application/json
 
 
 ### 카테고리 삭제
-DELETE http://localhost:8080/admin/categories/136
+DELETE http://localhost:8090/admin/categories/152
 
 

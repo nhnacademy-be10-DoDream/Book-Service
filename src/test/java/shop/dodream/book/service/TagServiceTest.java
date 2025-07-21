@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import shop.dodream.book.dto.TagResponse;
 import shop.dodream.book.entity.Tag;
 import shop.dodream.book.exception.TagNotFoundException;
-import shop.dodream.book.repository.BookTagRepository;
 import shop.dodream.book.repository.TagRepository;
 import shop.dodream.book.service.impl.TagServiceImpl;
 
@@ -21,15 +20,13 @@ import static org.mockito.Mockito.*;
 
 class TagServiceTest {
 
-    private TagRepository tagRepository;
-    private BookTagRepository bookTagRepository;
+    private TagRepository tagRepository;;
     private TagServiceImpl tagService;
 
     @BeforeEach
     void setUp() {
         tagRepository = mock(TagRepository.class);
-        bookTagRepository = mock(BookTagRepository.class);
-        tagService = new TagServiceImpl(tagRepository, bookTagRepository);
+        tagService = new TagServiceImpl(tagRepository);
     }
 
     @Test
