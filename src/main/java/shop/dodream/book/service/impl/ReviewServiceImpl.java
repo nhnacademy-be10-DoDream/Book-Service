@@ -61,9 +61,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<String> uploadedImageKeys = fileService.uploadReviewImageFromFiles(files);
         if (uploadedImageKeys.isEmpty()) {
-            eventPublisher.publishEvent(new PointEarnEvent(userId, 0, "REVIEW"));
+            eventPublisher.publishEvent(new PointEarnEvent(userId, "REVIEW"));
         } else {
-            eventPublisher.publishEvent(new PointEarnEvent(userId, 0, "PHOTO_REVIEW"));
+            eventPublisher.publishEvent(new PointEarnEvent(userId, "PHOTO_REVIEW"));
         }
 
         try {

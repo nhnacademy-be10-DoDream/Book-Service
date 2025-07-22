@@ -1,6 +1,5 @@
 package shop.dodream.book.infra.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,13 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PointRequest {
-    @NotNull
-    @Min(0)
-    Long amount;
-
-    @NotNull
-    String pointType;
-
     @NotNull
     String policyType;
 }
