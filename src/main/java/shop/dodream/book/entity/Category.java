@@ -45,4 +45,11 @@ public class Category {
         this.id = id;
     }
 
+    public Category(Long id, String categoryName, Long depth, Category parent) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.depth = depth;
+        this.parent = parent;
+    }
+
 }

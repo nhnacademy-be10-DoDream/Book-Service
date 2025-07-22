@@ -56,8 +56,8 @@ public class BookTagQuerydslRepositoryImpl implements BookTagQuerydslRepository{
                         bookTag.tag.id.eq(tagId),
                         book.status.ne(BookStatus.REMOVED)
                 )
-                .offset(pageable.getOffset()) // 페이지 시작 위치
-                .limit(pageable.getPageSize()) // 페이지 크기
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         Long total = queryFactory

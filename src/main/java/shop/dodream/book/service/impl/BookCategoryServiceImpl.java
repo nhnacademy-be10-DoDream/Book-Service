@@ -253,7 +253,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private List<BookCategory> createBookCategoryEntities(Book book, List<CategoryWithParentProjection> categories) {
         return categories.stream()
                 .map(dto -> {
-                    Category categoryRef = entityManager.getReference(Category.class, dto.id());
+                    Category categoryRef = new Category(dto.id());
                     return new BookCategory(new BookCategoryId(book.getId(), dto.id()), book, categoryRef);
                 }).toList();
     }
