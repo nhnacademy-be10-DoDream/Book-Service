@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookInternalController.class)
-public class BookInternalControllerTest {
+class BookInternalControllerTest {
 
 
     @Autowired
@@ -44,6 +44,19 @@ public class BookInternalControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("도서 재고 감소 - 성공")
+    void decreaseBookCount_success() throws Exception {
+        BookCountDecreaseRequest validRequest = new BookCountDecreaseRequest(1L, 2L);
+
+        mockMvc.perform(post("/public/books/internal/decrease-bookCount")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRequest)))
+                .andExpect(status().isOk());
+
+        verify(bookService, times(1)).decreaseBookCount(any(BookCountDecreaseRequest.class));
     }
 
     @Test

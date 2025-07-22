@@ -1,38 +1,10 @@
-CREATE TABLE IF NOT EXISTS book (
-    book_id BIGINT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    author VARCHAR(255),
-    isbn VARCHAR(20),
-    regular_price BIGINT,
-    sale_price BIGINT,
-    status VARCHAR(20)
-    );
 
-CREATE TABLE IF NOT EXISTS tag (
-   tag_id BIGINT PRIMARY KEY,
-   tag_name VARCHAR(100) NOT NULL
-    );
-
-CREATE TABLE IF NOT EXISTS book_tag (
-    book_id BIGINT NOT NULL,
-    tag_id BIGINT NOT NULL,
-    PRIMARY KEY (book_id, tag_id),
-    CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES book(book_id),
-    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag(tag_id)
-    );
-
-CREATE TABLE IF NOT EXISTS image (
-    image_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    book_id BIGINT NOT NULL,
-    uuid VARCHAR(255),
-    is_thumbnail BOOLEAN,
-    CONSTRAINT fk_book_image FOREIGN KEY (book_id) REFERENCES book(book_id)
-    );
-
-INSERT INTO book (book_id, title, author, isbn, regular_price, sale_price, status) VALUES
-    (1, 'Spring Boot 완벽 가이드', '홍길동', '9781234567890', 30000, 25000, 'SELL'),
-    (2, 'JPA 입문', '김철수', '9780987654321', 25000, 20000, 'SELL'),
-    (3, 'Querydsl 사용법', '박영희', '9781111111111', 20000, 18000, 'REMOVED');
+INSERT INTO book
+(book_id, title, description, author, publisher, published_at, isbn, regular_price, status, sale_price, is_giftable, view_count, book_count, discount_rate)
+VALUES
+    (1, 'Spring Boot 완벽 가이드', 'Spring Boot를 완벽히 배우는 실전 가이드', '홍길동', '한빛미디어', '2024-01-10', '9781234567890', 30000, 'SELL', 25000, FALSE, 100, 50, 10),
+    (2, 'JPA 입문', 'JPA의 기초부터 활용까지', '김철수', '에이콘출판', '2023-09-15', '9780987654321', 25000, 'SELL', 20000, FALSE, 80, 30, 10),
+    (3, 'Querydsl 사용법', 'Querydsl로 타입 안전한 쿼리 작성', '박영희', '위키북스', '2022-12-05', '9781111111111', 20000, 'REMOVED', 18000, FALSE, 60, 20,10);
 
 INSERT INTO tag (tag_id, tag_name) VALUES
     (1, '프로그래밍'),
