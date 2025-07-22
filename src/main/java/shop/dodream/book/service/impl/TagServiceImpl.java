@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.TagResponse;
 import shop.dodream.book.entity.Tag;
 import shop.dodream.book.exception.TagNotFoundException;
-import shop.dodream.book.repository.BookTagRepository;
 import shop.dodream.book.repository.TagRepository;
 import shop.dodream.book.service.TagService;
 
@@ -16,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
-    private final BookTagRepository bookTagRepository;
 
     @Override @Transactional
     public TagResponse createTag(String newTagName){

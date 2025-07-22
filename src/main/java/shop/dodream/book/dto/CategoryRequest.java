@@ -1,13 +1,13 @@
 package shop.dodream.book.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import shop.dodream.book.entity.Category;
-
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -21,4 +21,9 @@ public class CategoryRequest {
     private Long depth;
     @Positive(message = "부모 카테고리 ID는 양수여야 합니다.")
     private Long parentId;
+
+    public CategoryRequest(String categoryName, long depth) {
+        this.categoryName = categoryName;
+        this.depth = depth;
+    }
 }
