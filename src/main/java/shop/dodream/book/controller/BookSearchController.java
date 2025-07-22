@@ -12,6 +12,8 @@ import shop.dodream.book.dto.BookItemWithCountResponse;
 import shop.dodream.book.dto.BookSortType;
 import shop.dodream.book.service.BookSearchService;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
