@@ -40,7 +40,7 @@ public class BookViewCountSyncScheduler {
 
                     bookDocumentUpdater.incrementViewCount(bookId, increment);
 
-                    redisTemplate.delete(key);
+                    redisTemplate.opsForValue().decrement(key, increment);
 
                     log.info("조회수 동기화 완료 - bookId={}, increment={}", bookId, increment);
                 }

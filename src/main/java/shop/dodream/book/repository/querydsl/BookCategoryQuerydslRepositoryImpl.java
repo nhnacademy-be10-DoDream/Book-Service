@@ -14,7 +14,6 @@ import shop.dodream.book.dto.projection.QBookListResponseRecord;
 import shop.dodream.book.entity.BookCategory;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.QBookCategory;
-import shop.dodream.book.service.BookDocumentUpdater;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +29,6 @@ import static shop.dodream.book.entity.QImage.image;
 @Transactional(readOnly = true)
 public class BookCategoryQuerydslRepositoryImpl implements BookCategoryQuerydslRepository{
     private final JPAQueryFactory queryFactory;
-    private final BookDocumentUpdater bookDocumentUpdater;
 
     @Override
     public Page<BookListResponseRecord> findBookListByCategoryIds(Set<Long> categoryIds, Pageable pageable) {

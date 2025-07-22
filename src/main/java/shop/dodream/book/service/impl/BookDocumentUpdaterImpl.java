@@ -116,6 +116,20 @@ public class BookDocumentUpdaterImpl implements BookDocumentUpdater {
     }
 
     @Override
+    public void updateStatusToRemoved(Long bookId) {
+        try {
+            client.update(u -> u
+                            .index("dodream_books")
+                            .id(bookId.toString())
+                            .doc(Map.of("status", "REMOVED")),
+                    BookDocument.class
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Elasticsearch에서 상태를 REMOVED로 업데이트 실패: bookId=" + bookId, e);
+        }
+    }
+
+    @Override
     public void incrementViewCount(Long bookId, Long increment) {
         try {
             client.update(u -> u

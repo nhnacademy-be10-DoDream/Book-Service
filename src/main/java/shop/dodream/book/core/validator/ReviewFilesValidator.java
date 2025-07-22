@@ -41,7 +41,7 @@ public class ReviewFilesValidator implements ConstraintValidator<ValidatedFiles,
             }
 
             if (file.getSize() > MAX_FILE_SIZE) {
-                context.buildConstraintViolationWithTemplate(String.format("%s : 파일 크기는 %dMB를 초과할 수 없습니다.", filename, + (MAX_FILE_SIZE / 1024 / 1024)))
+                context.buildConstraintViolationWithTemplate(String.format("%s : 파일 크기는 %dMB를 초과할 수 없습니다.", filename, (MAX_FILE_SIZE / 1024 / 1024)))
                         .addConstraintViolation();
                 valid = false;
             }

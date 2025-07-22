@@ -7,13 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
-import shop.dodream.book.entity.Image;
-import shop.dodream.book.infra.dto.AladdinBookResponse;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookRegisterRequest {

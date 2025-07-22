@@ -11,6 +11,8 @@ public interface BookDocumentUpdater {
 
     void updateBookFields(Long bookId, Map<String, Object> fieldsToUpdate);
 
+    void updateStatusToRemoved(Long bookId);
+
     void updateReviewStatus(Long bookId, float oldRating, float newRating);
 
     void incrementViewCount(Long bookId, Long increment);

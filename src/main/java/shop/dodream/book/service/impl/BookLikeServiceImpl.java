@@ -17,7 +17,6 @@ import shop.dodream.book.repository.BookLikeRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.service.BookLikeService;
 
-import java.util.List;
 
 
 @Service
@@ -36,49 +35,32 @@ public class BookLikeServiceImpl implements BookLikeService {
         if (bookLikeRepository.existsByBookIdAndUserId(bookId,userId)) {
             throw new BookLikeAlreadyRegisterException();
         }
-
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
-
-        if (book.getStatus() == BookStatus.REMOVED){
-            throw new BookAlreadyRemovedException();
-        }
-
+        Book book = getValidBook(bookId);
         BookLike bookLike = new BookLike(userId, book);
         bookLikeRepository.save(bookLike);
-
     }
 
 
     @Override
     @Transactional(readOnly = true)
     public Boolean bookLikeFindMe(Long bookId, String userId) {
-        bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
-
+        getValidBook(bookId);
         return bookLikeRepository.existsByBookIdAndUserId(bookId,userId);
-
     }
 
     @Override
     @Transactional
     public void bookLikeDelete(Long bookId, String userId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
-
-        if (book.getStatus() == BookStatus.REMOVED){
-            throw new BookAlreadyRemovedException();
-        }
-
+        getValidBook(bookId);
         BookLike bookLike = bookLikeRepository.findByBookIdAndUserId(bookId, userId).orElseThrow(()-> new BookLikeNotFoundException(bookId,userId));
 
-
         bookLikeRepository.delete(bookLike);
-
     }
 
 
     @Override
     @Transactional(readOnly = true)
     public Page<BookListResponseRecord> getLikedBooksByUserId(String userId, Pageable pageable) {
-
         return bookLikeRepository.findLikedBooksByUserId(userId, pageable);
     }
 
@@ -88,5 +70,14 @@ public class BookLikeServiceImpl implements BookLikeService {
     @Transactional(readOnly = true)
     public Long getBookLikeCount(Long bookId) {
         return bookLikeRepository.countByBookId(bookId);
+    }
+
+    private Book getValidBook(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
+        if (book.getStatus() == BookStatus.REMOVED) {
+            throw new BookAlreadyRemovedException();
+        }
+        return book;
     }
 }

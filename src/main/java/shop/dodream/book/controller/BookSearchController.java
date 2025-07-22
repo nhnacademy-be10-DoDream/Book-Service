@@ -13,8 +13,6 @@ import shop.dodream.book.dto.BookItemResponse;
 import shop.dodream.book.dto.BookSortType;
 import shop.dodream.book.service.BookSearchService;
 
-import java.util.List;
-
 
 @RestController
 @RequiredArgsConstructor

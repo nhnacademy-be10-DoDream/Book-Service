@@ -5,8 +5,6 @@ import org.springframework.data.domain.Pageable;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 
 
-import java.util.List;
-
 public interface BookLikeService {
 
 

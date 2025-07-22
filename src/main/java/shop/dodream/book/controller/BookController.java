@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.service.BookService;
@@ -25,7 +24,7 @@ public class BookController {
     @GetMapping("{book-id}")
     public BookDetailResponse getBookById(@PathVariable("book-id") Long bookId){
 
-        bookService.increaseViewCount(bookId);
+        bookService.redisIncreaseViewCount(bookId);
 
         return bookService.getBookByIdForUser(bookId);
     }

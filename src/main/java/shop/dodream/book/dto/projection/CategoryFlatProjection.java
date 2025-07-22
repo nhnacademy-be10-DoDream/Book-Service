@@ -1,7 +1,6 @@
 package shop.dodream.book.dto.projection;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
