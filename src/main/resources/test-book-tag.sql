@@ -2,9 +2,9 @@
 INSERT INTO book
 (book_id, title, description, author, publisher, published_at, isbn, regular_price, status, sale_price, is_giftable, view_count, book_count, discount_rate)
 VALUES
-    (1, 'Spring Boot 완벽 가이드', 'Spring Boot를 완벽히 배우는 실전 가이드', '홍길동', '한빛미디어', '2024-01-10', '9781234567890', 30000, 'SELL', 25000, FALSE, 100, 50, 10),
+    (1, 'Spring Boot 완벽 가이드', 'Spring Boot를 완벽히 배우는 실전 가이드', '홍길동', '한빛미디어', '2024-01-10', '9781234567890', 30000, 'SELL', 25000, FALSE, 100, 50, 5),
     (2, 'JPA 입문', 'JPA의 기초부터 활용까지', '김철수', '에이콘출판', '2023-09-15', '9780987654321', 25000, 'SELL', 20000, FALSE, 80, 30, 10),
-    (3, 'Querydsl 사용법', 'Querydsl로 타입 안전한 쿼리 작성', '박영희', '위키북스', '2022-12-05', '9781111111111', 20000, 'REMOVED', 18000, FALSE, 60, 20,10);
+    (3, 'Querydsl 사용법', 'Querydsl로 타입 안전한 쿼리 작성', '박영희', '위키북스', '2022-12-05', '9781111111111', 20000, 'REMOVED', 18000, FALSE, 60, 20,15);
 
 INSERT INTO tag (tag_id, tag_name) VALUES
     (1, '프로그래밍'),
