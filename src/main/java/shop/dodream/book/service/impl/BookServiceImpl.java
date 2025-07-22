@@ -77,10 +77,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void registerFromAladdin(BookRegisterRequest item) {
-        if (bookRepository.existsByIsbn(item.getIsbn())){
-            throw new DuplicateIsbnException(item.getIsbn());
-        }
-
+        validateIsbnUnique(item.getIsbn());
 
         String imageUrl = fileService.uploadBookImageFromUrl(item.getImageUrl());
 
@@ -102,9 +99,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void registerBookDirect(BookRegisterRequest registerRequest, List<MultipartFile> files) {
-        if (bookRepository.existsByIsbn(registerRequest.getIsbn())){
-            throw new DuplicateIsbnException(registerRequest.getIsbn());
-        }
+        validateIsbnUnique(registerRequest.getIsbn());
 
         Book book = registerRequest.toEntity();
 
@@ -194,7 +189,7 @@ public class BookServiceImpl implements BookService {
         }
 
         book.updateTextFields(request);
-        updateStatusByBookCount(book);
+        book.updateStatusByBookCount();
 
         Map<String, Object> updateMap = request.toUpdateMap();
         if (!updateMap.isEmpty()){
@@ -208,15 +203,16 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public void deleteBook(Long bookId) {
         Book book = bookRepository.findById(bookId).orElseThrow(()-> new BookNotFoundException(bookId));
-        book.setStatus(BookStatus.REMOVED);
+        book.markAsRemoved();
 
         List<String> deleteKeys = book.getImages().stream()
                 .map(Image::getUuid)
                 .toList();
 
         eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
-//        bookElasticsearchRepository.deleteById(bookId);
 
+
+        bookDocumentUpdater.updateStatusToRemoved(bookId);
     }
 
     @Override
@@ -233,8 +229,7 @@ public class BookServiceImpl implements BookService {
         }
 
         book.setBookCount(currentStock-request.getBookCount());
-
-        updateStatusByBookCount(book);
+        book.updateStatusByBookCount();
 
         return new BookCountDecreaseResponse(book.getId(), book.getBookCount(), book.getStatus() == BookStatus.SELL);
     }
@@ -248,7 +243,7 @@ public class BookServiceImpl implements BookService {
         Long currentStock = book.getBookCount();
         book.setBookCount(currentStock+request.getBookCount());
 
-        updateStatusByBookCount(book);
+        book.updateStatusByBookCount();
 
     }
 
@@ -259,17 +254,16 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    @Override
+    public void redisIncreaseViewCount(Long bookId) {
+        String key = "viewCount:book:"+bookId;
+        redisTemplate.opsForValue().increment(key);
+    }
 
-    private void updateStatusByBookCount(Book book) {
-        if (book.getStatus() != BookStatus.REMOVED) {
-            long count = book.getBookCount();
-            if (count == 0) {
-                book.setStatus(BookStatus.SOLD_OUT);
-            } else if (count <= 5) {
-                book.setStatus(BookStatus.LOW_STOCK);
-            } else {
-                book.setStatus(BookStatus.SELL);
-            }
+
+    private void validateIsbnUnique(String isbn) {
+        if (bookRepository.existsByIsbn(isbn)) {
+            throw new DuplicateIsbnException(isbn);
         }
     }
 
@@ -288,10 +282,5 @@ public class BookServiceImpl implements BookService {
     }
 
 
-    @Override
-    public void increaseViewCount(Long bookId) {
-        String key = "viewCount:book:"+bookId;
-        redisTemplate.opsForValue().increment(key);
-    }
 
 }

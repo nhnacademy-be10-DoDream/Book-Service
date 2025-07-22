@@ -59,7 +59,6 @@ public class Book extends BaseTimeEntity{
     @Column(nullable = false)
     private Long regularPrice;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookStatus status;
@@ -176,6 +175,22 @@ public class Book extends BaseTimeEntity{
 
     private Long calculateDiscountRate(Long regularPrice, Long salePrice) {
         return Math.round((1 - (double) salePrice / regularPrice) * 100);
+    }
+
+    public void updateStatusByBookCount() {
+        if (this.status != BookStatus.REMOVED) {
+            if (this.bookCount == 0) {
+                this.status = BookStatus.SOLD_OUT;
+            } else if (this.bookCount <= 5) {
+                this.status = BookStatus.LOW_STOCK;
+            } else {
+                this.status = BookStatus.SELL;
+            }
+        }
+    }
+
+    public void markAsRemoved(){
+        this.status = BookStatus.REMOVED;
     }
 
 

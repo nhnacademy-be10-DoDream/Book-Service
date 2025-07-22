@@ -14,10 +14,11 @@ public interface BookQuerydslRepository {
     Page<BookAdminListResponseRecord> findAllBy(Pageable pageable);
 
     List<BookListResponseRecord> findAllBy();
+
     List<BookListResponseRecord> findVisibleBooksByIds(List<Long> ids);
 
-    Optional<BookDetailResponse> findBookDetailForAdmin(Long bookId);
     Optional<BookDetailResponse> findBookDetailForUser(Long bookId);
+    Optional<BookDetailResponse> findBookDetailForAdmin(Long bookId);
 
 
     Optional<BookItemResponse> findByIsbn(String Isbn);
