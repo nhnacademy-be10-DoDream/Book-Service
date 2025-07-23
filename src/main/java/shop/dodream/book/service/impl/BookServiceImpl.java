@@ -22,16 +22,13 @@ import shop.dodream.book.entity.Image;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.infra.client.AladdinBookClient;
 import shop.dodream.book.infra.dto.AladdinBookResponse;
-import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
-import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.BookService;
 import shop.dodream.book.service.FileService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -41,9 +38,7 @@ public class BookServiceImpl implements BookService {
     private final AladdinBookClient aladdinBookClient;
     private final BookRepository bookRepository;
     private final AladdinBookProperties properties;
-    private final BookElasticsearchRepository bookElasticsearchRepository;
     private final FileService fileService;
-    private final BookDocumentUpdater bookDocumentUpdater;
     private final ApplicationEventPublisher eventPublisher;
     private final MinIOProperties minIOProperties;
     private final RedisTemplate<String, Long> redisTemplate;
@@ -86,9 +81,8 @@ public class BookServiceImpl implements BookService {
 
             Image bookImage = new Image(book, imageUrl, true);
             book.addImages(List.of(bookImage));
-            Book savedBook = bookRepository.save(book);
+            bookRepository.save(book);
 
-            bookElasticsearchRepository.save(new BookDocument(savedBook, imageUrl));
         }catch (Exception e) {
             eventPublisher.publishEvent(new BookImageDeleteEvent(List.of(imageUrl)));
             throw e;
@@ -114,12 +108,7 @@ public class BookServiceImpl implements BookService {
 
         try {
             book.addImages(createBookImagesThumbnail(book,uploadedImageKeys));
-            Book savedBook = bookRepository.save(book);
-            String img = minIOProperties.getDefaultImage();
-            if (!uploadedImageKeys.isEmpty()) {
-                img = uploadedImageKeys.getFirst();
-            }
-            bookElasticsearchRepository.save(new BookDocument(savedBook, img));
+            bookRepository.save(book);
         }catch (Exception e) {
             eventPublisher.publishEvent(new BookImageDeleteEvent(uploadedImageKeys));
             throw e;
@@ -191,10 +180,10 @@ public class BookServiceImpl implements BookService {
         book.updateTextFields(request);
         book.updateStatusByBookCount();
 
-        Map<String, Object> updateMap = request.toUpdateMap();
-        if (!updateMap.isEmpty()){
-                bookDocumentUpdater.updateBookFields(bookId, updateMap);
-        }
+//        Map<String, Object> updateMap = request.toUpdateMap();
+//        if (!updateMap.isEmpty()){
+//                bookDocumentUpdater.updateBookFields(bookId, updateMap);
+//        }
 
 
     }
@@ -212,7 +201,7 @@ public class BookServiceImpl implements BookService {
         eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
 
 
-        bookDocumentUpdater.updateStatusToRemoved(bookId);
+//        bookDocumentUpdater.updateStatusToRemoved(bookId);
     }
 
     @Override

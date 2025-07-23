@@ -23,7 +23,6 @@ import shop.dodream.book.exception.ReviewNotFoundException;
 import shop.dodream.book.infra.client.OrderClient;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.ReviewRepository;
-import shop.dodream.book.service.BookDocumentUpdater;
 import shop.dodream.book.service.FileService;
 import shop.dodream.book.service.ReviewService;
 
@@ -38,7 +37,6 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
     private final FileService fileService;
-    private final BookDocumentUpdater bookDocumentUpdater;
 
     @Transactional
     public void createReview(Long bookId, String userId, ReviewCreateRequest reviewCreateRequest, List<MultipartFile> files) {
@@ -69,7 +67,6 @@ public class ReviewServiceImpl implements ReviewService {
         try {
             review.addImages(createReviewImages(review, uploadedImageKeys));
             reviewRepository.save(review);
-            bookDocumentUpdater.increaseReviewStatus(bookId, reviewCreateRequest.getRating());
         }catch (Exception e) {
             eventPublisher.publishEvent(new ReviewImageDeleteEvent(uploadedImageKeys));
             throw e;
@@ -120,9 +117,6 @@ public class ReviewServiceImpl implements ReviewService {
         eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         review.addImages(createReviewImages(review, uploadedKeys));
-
-        bookDocumentUpdater.updateReviewStatus(review.getBook().getId(), review.getRating(), reviewUpdateRequest.getRating());
-
     }
 
     @Transactional
@@ -136,8 +130,6 @@ public class ReviewServiceImpl implements ReviewService {
         eventPublisher.publishEvent(new ReviewImageDeleteEvent(deleteKeys));
 
         reviewRepository.deleteById(reviewId);
-
-        bookDocumentUpdater.decreaseReviewStatus(review.getBook().getId(), review.getRating());
     }
 
     @Transactional

@@ -93,7 +93,6 @@ public class Book extends BaseTimeEntity{
 
 
 
-
     // 책 직접등록용
     public Book(String title, String description, String author, String publisher, LocalDate publishedAt, String isbn, Long regularPrice, BookStatus status, Long salePrice, Boolean isGiftable, Long viewCount, Long bookCount) {
         this.title = title;

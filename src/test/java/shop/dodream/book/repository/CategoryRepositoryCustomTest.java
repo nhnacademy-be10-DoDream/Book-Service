@@ -4,13 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import shop.dodream.book.core.config.QuerydslConfig;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.dto.projection.CategoryWithParentProjection;
-import shop.dodream.book.service.BookDocumentUpdater;
 
 import java.util.List;
 
@@ -24,8 +22,6 @@ class CategoryRepositoryCustomTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @MockBean
-    private BookDocumentUpdater bookDocumentUpdater;
 
     @Test
     @DisplayName("모든 카테고리를 평면 리스트로 조회")
