@@ -37,7 +37,7 @@ class TagControllerTest {
 
         when(tagService.createTag(newTagName)).thenReturn(new TagResponse(newTagId, newTagName));
 
-        mockMvc.perform(post("/tags")
+        mockMvc.perform(post("/admin/tags")
                 .param("newTagName", newTagName)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -46,6 +46,22 @@ class TagControllerTest {
 
         verify(tagService, times(1)).createTag(newTagName);
     }
+
+    @Test
+    @DisplayName("단일 태그 조회 테스트")
+    void getTag() throws Exception {
+        Long tagId = 1L;
+        String tagName = "단일 조회태그";
+
+        when(tagService.getTag(tagId)).thenReturn(new TagResponse(tagId, tagName));
+
+        mockMvc.perform(get("/public/tags/" + tagId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tagId").value(tagId))
+                .andExpect(jsonPath("$.tagName").value(tagName));
+        verify(tagService, times(1)).getTag(tagId);
+    }
+
 
     @Test
     @DisplayName("전체 태그 조회 테스트 - 페이징 없음")
@@ -78,7 +94,7 @@ class TagControllerTest {
         String newTagName = "수정 태그";
 
         when(tagService.updateTag(newTagId, newTagName)).thenReturn(new TagResponse(newTagId, newTagName));
-        mockMvc.perform(put("/tags/{tag-id}", newTagId)
+        mockMvc.perform(put("/admin/tags/{tag-id}", newTagId)
                 .param("newTagName", newTagName))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tagId").value(newTagId))
@@ -94,7 +110,7 @@ class TagControllerTest {
 
         doNothing().when(tagService).deleteTag(newTagId);
 
-        mockMvc.perform(delete("/tags/" + newTagId))
+        mockMvc.perform(delete("/admin/tags/" + newTagId))
                 .andExpect(status().isNoContent());
 
     }

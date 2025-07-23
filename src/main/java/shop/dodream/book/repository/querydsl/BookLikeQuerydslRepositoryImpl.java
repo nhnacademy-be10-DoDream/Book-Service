@@ -10,14 +10,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.QBookListResponseRecord;
-import shop.dodream.book.dto.projection.QReviewResponseRecord;
 import shop.dodream.book.entity.BookStatus;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
-import static com.querydsl.core.group.GroupBy.list;
 import static shop.dodream.book.entity.QBook.book;
 import static shop.dodream.book.entity.QBookLike.bookLike;
 import static shop.dodream.book.entity.QImage.image;

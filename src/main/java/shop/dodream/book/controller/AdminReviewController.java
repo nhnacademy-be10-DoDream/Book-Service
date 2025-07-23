@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.core.annotation.ValidatedFiles;
 import shop.dodream.book.dto.ReviewUpdateRequest;
 import shop.dodream.book.dto.projection.ReviewResponseRecord;
-import shop.dodream.book.dto.projection.ReviewSummaryResponse;
 import shop.dodream.book.service.ReviewService;
 
 import java.util.List;

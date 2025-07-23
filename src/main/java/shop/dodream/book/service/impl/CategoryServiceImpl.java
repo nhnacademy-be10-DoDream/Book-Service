@@ -12,8 +12,6 @@ import shop.dodream.book.exception.CategoryDepthNotFoundException;
 import shop.dodream.book.exception.CategoryNotDeleteWithChildren;
 import shop.dodream.book.exception.CategoryNotFoundException;
 import shop.dodream.book.exception.InvalidParentCategoryException;
-import shop.dodream.book.repository.BookCategoryRepository;
-import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.CategoryService;
 
@@ -24,8 +22,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final BookRepository bookRepository;
-    private final BookCategoryRepository bookCategoryRepository;
 
     @Override @Transactional
     public CategoryResponse createCategory(CategoryRequest request) {

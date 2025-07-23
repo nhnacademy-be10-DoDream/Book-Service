@@ -2,6 +2,7 @@ package shop.dodream.book.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -21,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class BookDocument {
 
     @Id
@@ -66,22 +68,22 @@ public class BookDocument {
     @Field(type = FieldType.Keyword)
     private BookStatus status;
 
-    public BookDocument(Book book, String imageUrl) {
-        this.bookId = book.getId();
-        this.title = book.getTitle();
-        this.description = book.getDescription();
-        this.author = book.getAuthor();
-        this.publisher = book.getPublisher();
-        this.salePrice = book.getSalePrice();
-        this.publishedAt = Date.from(
-                book.getPublishedAt().atStartOfDay(ZoneId.systemDefault()).toInstant()
-        );
-        this.viewCount = book.getViewCount();
-        this.ratingAvg = 0.0f;
-        this.reviewCount = 0L;
-        this.imageUrl = imageUrl;
-        this.status = book.getStatus();
-    }
+//    public BookDocument(Book book, String imageUrl) {
+//        this.bookId = book.getId();
+//        this.title = book.getTitle();
+//        this.description = book.getDescription();
+//        this.author = book.getAuthor();
+//        this.publisher = book.getPublisher();
+//        this.salePrice = book.getSalePrice();
+//        this.publishedAt = Date.from(
+//                book.getPublishedAt().atStartOfDay(ZoneId.systemDefault()).toInstant()
+//        );
+//        this.viewCount = book.getViewCount();
+//        this.ratingAvg = 0.0f;
+//        this.reviewCount = 0L;
+//        this.imageUrl = imageUrl;
+//        this.status = book.getStatus();
+//    }
 
 
 }

@@ -2,13 +2,11 @@ package shop.dodream.book.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import shop.dodream.book.dto.*;
 import shop.dodream.book.dto.projection.BookAdminListResponseRecord;
 import shop.dodream.book.dto.projection.BookDetailResponse;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
-import shop.dodream.book.infra.dto.AladdinBookResponse;
 
 import java.util.List;
 
@@ -40,6 +38,6 @@ public interface BookService {
 
     BookItemResponse getBookByIsbn(String isbn);
 
-    void increaseViewCount(Long bookId);
+    void redisIncreaseViewCount(Long bookId);
 
 }

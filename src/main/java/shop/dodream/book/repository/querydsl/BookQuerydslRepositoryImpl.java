@@ -176,7 +176,7 @@ public class BookQuerydslRepositoryImpl implements BookQuerydslRepository{
     @Override
     public void incrementViewCount(Long bookId, Long increment) {
         queryFactory.update(book)
-                .set(book.viewCount, book.bookCount.add(increment))
+                .set(book.viewCount, book.viewCount.add(increment))
                 .where(book.id.eq(bookId))
                 .execute();
     }

@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.dodream.book.repository.BookRepository;
-import shop.dodream.book.service.BookDocumentUpdater;
 
 import java.util.Set;
 
@@ -18,7 +17,6 @@ public class BookViewCountSyncScheduler {
 
     private final RedisTemplate<String, Long> redisTemplate;
     private final BookRepository bookRepository;
-    private final BookDocumentUpdater bookDocumentUpdater;
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     @Transactional
@@ -38,9 +36,7 @@ public class BookViewCountSyncScheduler {
                 if (increment != null && increment>0){
                     bookRepository.incrementViewCount(bookId, increment);
 
-                    bookDocumentUpdater.incrementViewCount(bookId, increment);
-
-                    redisTemplate.delete(key);
+                    redisTemplate.opsForValue().decrement(key, increment);
 
                     log.info("조회수 동기화 완료 - bookId={}, increment={}", bookId, increment);
                 }

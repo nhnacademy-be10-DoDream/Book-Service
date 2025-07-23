@@ -16,7 +16,7 @@ public class Tag {
 
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "tag_name", nullable = false)
     @Setter
     @Getter
     private String tagName;
