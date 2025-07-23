@@ -48,7 +48,6 @@ class BookCategoryServiceTest {
                 bookCategoryRepository, bookRepository, categoryRepository);
         ReflectionTestUtils.setField(bookCategoryService, "entityManager", entityManager);
 
-        // entityManager.getReference() 동작 모킹
         when(entityManager.getReference(eq(Category.class), anyLong())).thenAnswer(invocation -> {
             Long id = invocation.getArgument(1);
             return new Category(id, "테스트 카테고리", 1L, null);
@@ -83,9 +82,11 @@ class BookCategoryServiceTest {
         CategoryWithParentProjection projection =
                 new CategoryWithParentProjection(10L, "카테고리", 1L, null, null);
 
+
         when(categoryRepository.findAllByIdsWithParent(eq(ids))).thenReturn(List.of(projection));
-        Category category = new Category(10L);
-        when(categoryRepository.findById(10L)).thenReturn(Optional.of(category));
+
+        Category mockCategory = new Category(10L,"카테고리", 1L, null);
+        when(categoryRepository.findById(10L)).thenReturn(Optional.of(mockCategory));
         BookWithCategoriesResponse response = bookCategoryService.registerCategory(bookId, request);
 
         assertThat(response).isNotNull();
@@ -187,7 +188,6 @@ class BookCategoryServiceTest {
 
         BookDocument document = new BookDocument();
         document.setCategoryIds(new ArrayList<>(List.of(oldCatId)));
-        document.setCategoryNames(new ArrayList<>(List.of("oldCategory")));
 
         bookCategoryService.updateCategoryByBook(bookId, oldCatId, newCatId);
 
@@ -209,7 +209,6 @@ class BookCategoryServiceTest {
 
         BookDocument mockDocument = new BookDocument();
         mockDocument.setCategoryIds(new ArrayList<>());
-        mockDocument.setCategoryNames(new ArrayList<>());
 
         bookCategoryService.deleteCategoriesByBook(bookId, request);
 
