@@ -7,13 +7,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.BookWithCategoriesResponse;
+import shop.dodream.book.dto.CategoryResponse;
+import shop.dodream.book.dto.CategoryTreeResponse;
+import shop.dodream.book.dto.IdsListRequest;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.dto.projection.CategoryWithParentProjection;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookCategory;
-import shop.dodream.book.entity.BookCategoryId;
 import shop.dodream.book.entity.Category;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.repository.BookCategoryRepository;
@@ -65,7 +67,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         List<CategoryResponse> categoryResponses = initialCategories.stream()
                 .map(dto -> new CategoryResponse(dto.id(), dto.categoryName(), dto.depth(), dto.parentId()))
                 .toList();
-
 
         return new BookWithCategoriesResponse(book.getId(), categoryResponses);
     }
@@ -165,7 +166,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             throw new BookCategoriesNotFoundException(bookId, categoryIds.getIds());
         }
         bookCategoryRepository.deleteByBookIdAndCategoryIds(bookId, categoryIds.getIds());
-
     }
 
     private CategoryTreeResponse copyNode(CategoryTreeResponse response) {
@@ -233,12 +233,11 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private List<BookCategory> createBookCategoryEntities(Book book, List<CategoryWithParentProjection> categories) {
         return categories.stream()
                 .map(dto -> {
-                    Category categoryRef = new Category(dto.id());
-                    return new BookCategory(new BookCategoryId(book.getId(), dto.id()), book, categoryRef);
+                    Category category = categoryRepository.findById(dto.id())
+                            .orElseThrow(() -> new CategoryNotFoundException(dto.id()));
+                    return new BookCategory(book, category);
                 }).toList();
     }
-
-
 
     private Set<Long> findAllChildCategoryIds(Long categoryId) {
         List<CategoryFlatProjection> flatCategories = categoryRepository.findAllFlat();
