@@ -145,12 +145,11 @@ public class ReviewQuerydslRepositoryImpl implements ReviewQuerydslRepository {
     }
 
     private long getTotalCount(BooleanBuilder builder) {
-        Long count = queryFactory
+        return Optional.ofNullable(queryFactory
                 .select(review.count())
                 .from(review)
                 .where(builder)
-                .fetchOne();
-        return count != null ? count : 0L;
+                .fetchOne()).orElse(0L);
     }
 
     private List<Long> getReviewIdsWithPagination(BooleanBuilder builder, Pageable pageable) {
