@@ -1,13 +1,13 @@
 ### 도서 카테고리 추가
-POST http://localhost:8080/admin/books/30/categories
+POST http://localhost:8090/admin/books/1/categories
 Content-Type: application/json
 
 {
-  "ids": [1,2]
+  "ids": [1]
 }
 
 ### 해당 도서의 카테고리 조회
-GET http://localhost:8090/public/books/7/categories
+GET http://localhost:8090/public/books/1/categories
 Content-Type: application/json
 
 ### 해당 도서의 카테고리 플랫구조로 조회

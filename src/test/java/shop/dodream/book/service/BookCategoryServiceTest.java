@@ -19,7 +19,6 @@ import shop.dodream.book.entity.BookCategory;
 import shop.dodream.book.entity.BookStatus;
 import shop.dodream.book.entity.Category;
 import shop.dodream.book.repository.BookCategoryRepository;
-import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.impl.BookCategoryServiceImpl;
@@ -37,7 +36,6 @@ class BookCategoryServiceTest {
     private BookRepository bookRepository;
     private BookCategoryRepository bookCategoryRepository;
     private CategoryRepository categoryRepository;
-    private BookElasticsearchRepository bookElasticsearchRepository;
     private BookCategoryServiceImpl bookCategoryService;
 
     @BeforeEach
@@ -45,10 +43,9 @@ class BookCategoryServiceTest {
         bookRepository = mock(BookRepository.class);
         bookCategoryRepository = mock(BookCategoryRepository.class);
         categoryRepository = mock(CategoryRepository.class);
-        bookElasticsearchRepository = mock(BookElasticsearchRepository.class);
         entityManager = mock(EntityManager.class);
         bookCategoryService = new BookCategoryServiceImpl(
-                bookCategoryRepository, bookRepository, categoryRepository, bookElasticsearchRepository);
+                bookCategoryRepository, bookRepository, categoryRepository);
         ReflectionTestUtils.setField(bookCategoryService, "entityManager", entityManager);
 
         // entityManager.getReference() 동작 모킹
@@ -87,15 +84,8 @@ class BookCategoryServiceTest {
                 new CategoryWithParentProjection(10L, "카테고리", 1L, null, null);
 
         when(categoryRepository.findAllByIdsWithParent(eq(ids))).thenReturn(List.of(projection));
-
-        BookDocument document = BookDocument.builder()
-                .bookId(bookId)
-                .categoryIds(new ArrayList<>())
-                .categoryNames(new ArrayList<>())
-                .build();
-
-        when(bookElasticsearchRepository.findById(bookId)).thenReturn(Optional.of(document));
-
+        Category category = new Category(10L);
+        when(categoryRepository.findById(10L)).thenReturn(Optional.of(category));
         BookWithCategoriesResponse response = bookCategoryService.registerCategory(bookId, request);
 
         assertThat(response).isNotNull();
@@ -198,7 +188,6 @@ class BookCategoryServiceTest {
         BookDocument document = new BookDocument();
         document.setCategoryIds(new ArrayList<>(List.of(oldCatId)));
         document.setCategoryNames(new ArrayList<>(List.of("oldCategory")));
-        when(bookElasticsearchRepository.findById(bookId)).thenReturn(Optional.of(document));
 
         bookCategoryService.updateCategoryByBook(bookId, oldCatId, newCatId);
 
@@ -222,12 +211,9 @@ class BookCategoryServiceTest {
         mockDocument.setCategoryIds(new ArrayList<>());
         mockDocument.setCategoryNames(new ArrayList<>());
 
-        when(bookElasticsearchRepository.findById(bookId)).thenReturn(Optional.of(mockDocument));
-
         bookCategoryService.deleteCategoriesByBook(bookId, request);
 
         verify(bookCategoryRepository).deleteByBookIdAndCategoryIds(bookId, ids);
-        verify(bookElasticsearchRepository).save(mockDocument);
     }
 
 }

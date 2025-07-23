@@ -7,17 +7,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.dodream.book.dto.*;
+import shop.dodream.book.dto.BookWithCategoriesResponse;
+import shop.dodream.book.dto.CategoryResponse;
+import shop.dodream.book.dto.CategoryTreeResponse;
+import shop.dodream.book.dto.IdsListRequest;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.dto.projection.CategoryFlatProjection;
 import shop.dodream.book.dto.projection.CategoryWithParentProjection;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookCategory;
-import shop.dodream.book.entity.BookCategoryId;
 import shop.dodream.book.entity.Category;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.repository.BookCategoryRepository;
-import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.BookCategoryService;
@@ -30,7 +31,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
-    private final BookElasticsearchRepository bookElasticsearchRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -67,21 +67,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         List<CategoryResponse> categoryResponses = initialCategories.stream()
                 .map(dto -> new CategoryResponse(dto.id(), dto.categoryName(), dto.depth(), dto.parentId()))
                 .toList();
-
-        BookDocument document = bookElasticsearchRepository.findById(bookId)
-                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
-        Set<Long> updatedIds = new LinkedHashSet<>(existingCategoryIds);
-        updatedIds.addAll(requestCategoryIds);
-        document.setCategoryIds(new ArrayList<>(updatedIds));
-        List<String> existingNames = document.getCategoryNames() != null ? document.getCategoryNames() : new ArrayList<>();
-        List<String> newCategoryNames = initialCategories.stream()
-                .map(CategoryWithParentProjection::categoryName)
-                .toList();
-
-        Set<String> updatedNames = new LinkedHashSet<>(existingNames);
-        updatedNames.addAll(newCategoryNames);
-        document.setCategoryNames(new ArrayList<>(updatedNames));
-        bookElasticsearchRepository.save(document);
 
         return new BookWithCategoriesResponse(book.getId(), categoryResponses);
     }
@@ -168,8 +153,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         bookCategoryRepository.delete(bookCategory);
         bookCategoryRepository.save(new BookCategory(book, category));
 
-        syncCategoriesToElasticsearch(bookId);
-
         return newCategoryId;
     }
 
@@ -183,9 +166,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             throw new BookCategoriesNotFoundException(bookId, categoryIds.getIds());
         }
         bookCategoryRepository.deleteByBookIdAndCategoryIds(bookId, categoryIds.getIds());
-
-        syncCategoriesToElasticsearch(bookId);
-
     }
 
     private CategoryTreeResponse copyNode(CategoryTreeResponse response) {
@@ -253,27 +233,10 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private List<BookCategory> createBookCategoryEntities(Book book, List<CategoryWithParentProjection> categories) {
         return categories.stream()
                 .map(dto -> {
-                    Category categoryRef = new Category(dto.id());
-                    return new BookCategory(new BookCategoryId(book.getId(), dto.id()), book, categoryRef);
+                    Category category = categoryRepository.findById(dto.id())
+                            .orElseThrow(() -> new CategoryNotFoundException(dto.id()));
+                    return new BookCategory(book, category);
                 }).toList();
-    }
-
-    private void syncCategoriesToElasticsearch(Long bookId) {
-        Set<Long> remainingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId);
-        List<Long> remainingCategoryIdList = new ArrayList<>(remainingCategoryIds);
-
-        List<String> remainingCategoryNames = remainingCategoryIds.stream()
-                .map(id -> categoryRepository.findById(id)
-                        .orElseThrow(() -> new CategoryNotFoundException(id))
-                        .getCategoryName())
-                .toList();
-
-        BookDocument document = bookElasticsearchRepository.findById(bookId)
-                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
-
-        document.setCategoryIds(remainingCategoryIdList);
-        document.setCategoryNames(remainingCategoryNames);
-        bookElasticsearchRepository.save(document);
     }
 
     private Set<Long> findAllChildCategoryIds(Long categoryId) {
