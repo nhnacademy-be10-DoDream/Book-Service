@@ -38,7 +38,7 @@ public class BookItemResponse {
         this.publisher = document.getPublisher();
         this.salePrice = document.getSalePrice();
         this.publishedAt = String.valueOf(document.getPublishedAt());
-        this.imageUrl = document.getImageUrl();
+        this.imageUrl = document.getUuid();
         this.categoryIds = document.getCategoryIds();
     }
 
