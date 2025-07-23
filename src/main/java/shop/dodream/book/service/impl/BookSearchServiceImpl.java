@@ -82,7 +82,7 @@ public class BookSearchServiceImpl implements BookSearchService {
             SortOptions sortOption = sortType.toSortOption();
 
             SearchRequest request = new SearchRequest.Builder()
-                    .index("dodream_books")
+                    .index("dodream_books_v2")
                     .query(query)
                     .from((int) pageable.getOffset())  // offset = page * size
                     .size(pageable.getPageSize())

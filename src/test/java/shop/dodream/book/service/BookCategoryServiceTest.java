@@ -91,7 +91,6 @@ class BookCategoryServiceTest {
         BookDocument document = BookDocument.builder()
                 .bookId(bookId)
                 .categoryIds(new ArrayList<>())
-                .categoryNames(new ArrayList<>())
                 .build();
 
         when(bookElasticsearchRepository.findById(bookId)).thenReturn(Optional.of(document));
@@ -197,7 +196,6 @@ class BookCategoryServiceTest {
 
         BookDocument document = new BookDocument();
         document.setCategoryIds(new ArrayList<>(List.of(oldCatId)));
-        document.setCategoryNames(new ArrayList<>(List.of("oldCategory")));
         when(bookElasticsearchRepository.findById(bookId)).thenReturn(Optional.of(document));
 
         bookCategoryService.updateCategoryByBook(bookId, oldCatId, newCatId);
@@ -220,7 +218,6 @@ class BookCategoryServiceTest {
 
         BookDocument mockDocument = new BookDocument();
         mockDocument.setCategoryIds(new ArrayList<>());
-        mockDocument.setCategoryNames(new ArrayList<>());
 
         when(bookElasticsearchRepository.findById(bookId)).thenReturn(Optional.of(mockDocument));
 

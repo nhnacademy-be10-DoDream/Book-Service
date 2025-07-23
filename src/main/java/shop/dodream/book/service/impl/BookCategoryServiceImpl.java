@@ -68,20 +68,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
                 .map(dto -> new CategoryResponse(dto.id(), dto.categoryName(), dto.depth(), dto.parentId()))
                 .toList();
 
-        BookDocument document = bookElasticsearchRepository.findById(bookId)
-                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
-        Set<Long> updatedIds = new LinkedHashSet<>(existingCategoryIds);
-        updatedIds.addAll(requestCategoryIds);
-        document.setCategoryIds(new ArrayList<>(updatedIds));
-        List<String> existingNames = document.getCategoryNames() != null ? document.getCategoryNames() : new ArrayList<>();
-        List<String> newCategoryNames = initialCategories.stream()
-                .map(CategoryWithParentProjection::categoryName)
-                .toList();
-
-        Set<String> updatedNames = new LinkedHashSet<>(existingNames);
-        updatedNames.addAll(newCategoryNames);
-        document.setCategoryNames(new ArrayList<>(updatedNames));
-        bookElasticsearchRepository.save(document);
 
         return new BookWithCategoriesResponse(book.getId(), categoryResponses);
     }
@@ -168,8 +154,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         bookCategoryRepository.delete(bookCategory);
         bookCategoryRepository.save(new BookCategory(book, category));
 
-        syncCategoriesToElasticsearch(bookId);
-
         return newCategoryId;
     }
 
@@ -183,8 +167,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             throw new BookCategoriesNotFoundException(bookId, categoryIds.getIds());
         }
         bookCategoryRepository.deleteByBookIdAndCategoryIds(bookId, categoryIds.getIds());
-
-        syncCategoriesToElasticsearch(bookId);
 
     }
 
@@ -258,23 +240,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
                 }).toList();
     }
 
-    private void syncCategoriesToElasticsearch(Long bookId) {
-        Set<Long> remainingCategoryIds = bookCategoryRepository.findCategoryIdsByBookId(bookId);
-        List<Long> remainingCategoryIdList = new ArrayList<>(remainingCategoryIds);
 
-        List<String> remainingCategoryNames = remainingCategoryIds.stream()
-                .map(id -> categoryRepository.findById(id)
-                        .orElseThrow(() -> new CategoryNotFoundException(id))
-                        .getCategoryName())
-                .toList();
-
-        BookDocument document = bookElasticsearchRepository.findById(bookId)
-                .orElseThrow(() -> new ElasticsearchBookNotFoundException(bookId));
-
-        document.setCategoryIds(remainingCategoryIdList);
-        document.setCategoryNames(remainingCategoryNames);
-        bookElasticsearchRepository.save(document);
-    }
 
     private Set<Long> findAllChildCategoryIds(Long categoryId) {
         List<CategoryFlatProjection> flatCategories = categoryRepository.findAllFlat();

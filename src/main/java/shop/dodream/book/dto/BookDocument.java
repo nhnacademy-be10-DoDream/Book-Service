@@ -7,18 +7,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
-import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookStatus;
 
-import java.time.ZoneId;
+
 import java.util.Date;
 import java.util.List;
 
 
 @Data
-@Document(indexName = "dodream_books")
-@Setting(settingPath = "elasticsearch/setting.json")
-@Mapping(mappingPath = "elasticsearch/mapping.json")
+@Document(indexName = "dodream_books_v2")
+//@Setting(settingPath = "elasticsearch/setting.json")
+//@Mapping(mappingPath = "elasticsearch/mapping.json")
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -57,13 +56,10 @@ public class BookDocument {
     private Long reviewCount;
 
     @Field(type = FieldType.Text)
-    private String imageUrl;
+    private String uuid;
 
     @Field(type = FieldType.Long)
     private List<Long> categoryIds;
-
-    @Field(type = FieldType.Keyword)
-    private List<String> categoryNames;
 
     @Field(type = FieldType.Keyword)
     private BookStatus status;
