@@ -16,4 +16,7 @@ import java.time.ZonedDateTime;
 public class BaseTimeEntity {
     @Column(updatable = false)
     private ZonedDateTime createdAt;
+
+    @Column(nullable = false)
+    private ZonedDateTime updatedAt;
 }

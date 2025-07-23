@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import shop.dodream.book.core.config.QuerydslConfig;
 import shop.dodream.book.entity.BookCategory;
-import shop.dodream.book.service.BookDocumentUpdater;
 
 import java.util.List;
 
@@ -23,8 +22,6 @@ class BookCategoryRepositoryTest {
     @Autowired
     private BookCategoryRepository bookCategoryRepository;
 
-    @MockBean
-    private BookDocumentUpdater bookDocumentUpdater;
 
 
     @Test

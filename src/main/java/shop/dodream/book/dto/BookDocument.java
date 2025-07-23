@@ -68,22 +68,22 @@ public class BookDocument {
     @Field(type = FieldType.Keyword)
     private BookStatus status;
 
-    public BookDocument(Book book, String imageUrl) {
-        this.bookId = book.getId();
-        this.title = book.getTitle();
-        this.description = book.getDescription();
-        this.author = book.getAuthor();
-        this.publisher = book.getPublisher();
-        this.salePrice = book.getSalePrice();
-        this.publishedAt = Date.from(
-                book.getPublishedAt().atStartOfDay(ZoneId.systemDefault()).toInstant()
-        );
-        this.viewCount = book.getViewCount();
-        this.ratingAvg = 0.0f;
-        this.reviewCount = 0L;
-        this.imageUrl = imageUrl;
-        this.status = book.getStatus();
-    }
+//    public BookDocument(Book book, String imageUrl) {
+//        this.bookId = book.getId();
+//        this.title = book.getTitle();
+//        this.description = book.getDescription();
+//        this.author = book.getAuthor();
+//        this.publisher = book.getPublisher();
+//        this.salePrice = book.getSalePrice();
+//        this.publishedAt = Date.from(
+//                book.getPublishedAt().atStartOfDay(ZoneId.systemDefault()).toInstant()
+//        );
+//        this.viewCount = book.getViewCount();
+//        this.ratingAvg = 0.0f;
+//        this.reviewCount = 0L;
+//        this.imageUrl = imageUrl;
+//        this.status = book.getStatus();
+//    }
 
 
 }

@@ -13,7 +13,6 @@ import shop.dodream.book.core.config.QuerydslConfig;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.BookCategory;
 import shop.dodream.book.repository.querydsl.BookCategoryQuerydslRepositoryImpl;
-import shop.dodream.book.service.BookDocumentUpdater;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +28,6 @@ class BookCategoryQuerydslRepositoryTest {
     @Autowired
     private BookCategoryQuerydslRepositoryImpl repository;
 
-    @MockBean
-    private BookDocumentUpdater bookDocumentUpdater;
 
     @Test
     @DisplayName("카테고리 ID들로 도서 목록 페이징 조회")

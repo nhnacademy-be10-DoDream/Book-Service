@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +12,6 @@ import shop.dodream.book.core.config.QuerydslConfig;
 import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Tag;
 import shop.dodream.book.repository.querydsl.BookTagQuerydslRepositoryImpl;
-import shop.dodream.book.service.BookDocumentUpdater;
 
 import java.util.List;
 
@@ -27,8 +25,6 @@ class BookTagQuerydslRepositoryTest {
     @Autowired
     private BookTagQuerydslRepositoryImpl bookTagQuerydslRepository;
 
-    @MockBean
-    private BookDocumentUpdater bookDocumentUpdater;
 
     @Test
     @DisplayName("책 ID로 태그 전체 조회")
