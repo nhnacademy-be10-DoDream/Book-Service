@@ -17,7 +17,6 @@ import shop.dodream.book.entity.BookCategoryId;
 import shop.dodream.book.entity.Category;
 import shop.dodream.book.exception.*;
 import shop.dodream.book.repository.BookCategoryRepository;
-import shop.dodream.book.repository.BookElasticsearchRepository;
 import shop.dodream.book.repository.BookRepository;
 import shop.dodream.book.repository.CategoryRepository;
 import shop.dodream.book.service.BookCategoryService;
@@ -30,7 +29,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
-    private final BookElasticsearchRepository bookElasticsearchRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
