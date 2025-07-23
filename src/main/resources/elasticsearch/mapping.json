@@ -18,29 +18,26 @@
     "publisher": {
       "type": "keyword"
     },
-    "salePrice": {
+    "sale_price": {
       "type": "long"
     },
-    "publishedAt": {
+    "published_at": {
       "type": "date",
       "format": "strict_date_optional_time||epoch_millis"
     },
-    "viewCount": {
+    "view_count": {
       "type": "long"
     },
-    "ratingAvg": {
+    "rating_avg": {
       "type": "float"
     },
-    "reviewCount": {
+    "review_count": {
       "type": "long"
     },
-    "categoryIds": {
+    "category_ids": {
       "type": "long"
     },
-    "categoryNames": {
-      "type": "keyword"
-    },
-    "imageUrl": {
+    "image_url": {
       "type": "keyword"
     },
     "status": {
