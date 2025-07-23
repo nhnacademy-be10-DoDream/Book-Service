@@ -126,15 +126,9 @@ public class BookSearchServiceImpl implements BookSearchService {
                     .collect(Collectors.groupingBy(CategoryResponse::getParentId));
 
             for (CategoryResponse depth1 : depth1Categories) {
-                long sum = 0L;
-                List<CategoryResponse> secondLevelCategories = parentToChildrenMap.getOrDefault(depth1.getCategoryId(), List.of());
-                for (CategoryResponse second : secondLevelCategories) {
-                    sum += categoryCountMap.getOrDefault(second.getCategoryId(), 0L);
-                }
-                if (sum > 0) {
-                    categoryCountMap.put(depth1.getCategoryId(), sum);
-                }
+                sumCategoryCounts(depth1.getCategoryId(), parentToChildrenMap, categoryCountMap);
             }
+
 
             Page<BookItemResponse> page = new PageImpl<>(content, pageable, totalHits);
             return new BookItemWithCountResponse(page, categoryCountMap);
@@ -143,5 +137,18 @@ public class BookSearchServiceImpl implements BookSearchService {
             e.printStackTrace();
             return new BookItemWithCountResponse(Page.empty(), Collections.emptyMap());
         }
+    }
+    private long sumCategoryCounts(Long categoryId, Map<Long, List<CategoryResponse>> parentToChildrenMap, Map<Long, Long> categoryCountMap) {
+        List<CategoryResponse> children = parentToChildrenMap.getOrDefault(categoryId, List.of());
+        long sum = categoryCountMap.getOrDefault(categoryId, 0L);
+        for (CategoryResponse child : children) {
+            sum += sumCategoryCounts(child.getCategoryId(), parentToChildrenMap, categoryCountMap);
+        }
+        if (sum > 0) {
+            categoryCountMap.put(categoryId, sum);
+        } else {
+            categoryCountMap.remove(categoryId);
+        }
+        return sum;
     }
 }
