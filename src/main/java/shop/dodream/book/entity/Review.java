@@ -8,6 +8,7 @@ import shop.dodream.book.dto.ReviewUpdateRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Getter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,12 +18,10 @@ import java.util.stream.Collectors;
 })
 public class Review extends BaseTimeEntity{
     @Id
-    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reviewId;
 
     @Setter
-    @Getter
     @Max(10)
     @Min(0)
     @Column(columnDefinition = "TINYINT")
@@ -34,12 +33,10 @@ public class Review extends BaseTimeEntity{
     private String content;
 
     @NotNull
-    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", updatable = false)
     private Book book;
 
-    @Getter
     @OneToMany(
             mappedBy = "review",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
