@@ -43,7 +43,7 @@ public class BookSearchServiceImpl implements BookSearchService {
         try {
             MultiMatchQuery multiMatchQuery = new MultiMatchQuery.Builder()
                     .query(keyword)
-                    .fields("title^100", "author^50", "categoryNames^10", "description^5")
+                    .fields("title^100", "author^50", "description^5")
                     .build();
 
             BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder()
