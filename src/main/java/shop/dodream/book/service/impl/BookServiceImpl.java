@@ -180,10 +180,6 @@ public class BookServiceImpl implements BookService {
         book.updateTextFields(request);
         book.updateStatusByBookCount();
 
-//        Map<String, Object> updateMap = request.toUpdateMap();
-//        if (!updateMap.isEmpty()){
-//                bookDocumentUpdater.updateBookFields(bookId, updateMap);
-//        }
 
 
     }
@@ -201,7 +197,6 @@ public class BookServiceImpl implements BookService {
         eventPublisher.publishEvent(new BookImageDeleteEvent(deleteKeys));
 
 
-//        bookDocumentUpdater.updateStatusToRemoved(bookId);
     }
 
     @Override
