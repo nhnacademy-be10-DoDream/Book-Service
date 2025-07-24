@@ -10,10 +10,6 @@ public class ForbiddenException extends RuntimeException implements ErrorRespons
 
     private final transient ProblemDetail body;
 
-    public ForbiddenException() {
-        this("Forbidden");
-    }
-
     public ForbiddenException(String message) {
         this(message, null);
     }

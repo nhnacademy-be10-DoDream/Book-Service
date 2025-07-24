@@ -16,6 +16,7 @@ import shop.dodream.book.dto.projection.BookListResponseRecord;
 import shop.dodream.book.entity.Book;
 import shop.dodream.book.entity.BookLike;
 import shop.dodream.book.entity.BookStatus;
+import shop.dodream.book.exception.BookLikeAlreadyRegisterException;
 import shop.dodream.book.exception.BookLikeNotFoundException;
 import shop.dodream.book.repository.BookLikeRepository;
 import shop.dodream.book.repository.BookRepository;
@@ -28,8 +29,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -65,16 +65,29 @@ class BookLikeServiceTest {
     @Test
     @DisplayName("registerBookLike - 북 좋아요 등록 성공")
     void registerBookLike_success() {
-        // given
         when(bookLikeRepository.existsByBookIdAndUserId(1L, "user1")).thenReturn(false);
         when(bookRepository.findById(1L)).thenReturn(Optional.of(sampleBook));
 
-        // when
         bookLikeService.registerBookLike(1L, "user1");
 
-        // then
         verify(bookLikeRepository).save(any(BookLike.class));
     }
+
+    @Test
+    @DisplayName("registerBookLike - 이미 좋아요 등록된 경우 예외 발생")
+    void registerBookLike_alreadyExists_throwsException() {
+        // given
+        when(bookLikeRepository.existsByBookIdAndUserId(1L, "user1")).thenReturn(true);
+
+        // when & then
+        assertThrows(BookLikeAlreadyRegisterException.class, () ->
+                bookLikeService.registerBookLike(1L, "user1")
+        );
+
+        // save가 호출되지 않았는지도 검증
+        verify(bookLikeRepository, never()).save(any(BookLike.class));
+    }
+
 
     @Test
     @DisplayName("bookLikeFindMe - 내가 좋아요 눌렀는지 확인")
@@ -95,10 +108,8 @@ class BookLikeServiceTest {
         when(bookLikeRepository.findByBookIdAndUserId(1L, "user1")).thenReturn(Optional.of(bookLike));
 
 
-        // when
         bookLikeService.bookLikeDelete(1L, "user1");
 
-        // then
         verify(bookLikeRepository).delete(bookLike);
     }
 
@@ -130,10 +141,8 @@ class BookLikeServiceTest {
         Page<BookListResponseRecord> page = new PageImpl<>(List.of(record), pageable, 1);
         when(bookLikeRepository.findLikedBooksByUserId("user1", pageable)).thenReturn(page);
 
-        // when
         Page<BookListResponseRecord> result = bookLikeService.getLikedBooksByUserId("user1", pageable);
 
-        // then
         assertEquals(1, result.getTotalElements());
         assertEquals("제목", result.getContent().getFirst().title());
     }
@@ -141,13 +150,10 @@ class BookLikeServiceTest {
     @Test
     @DisplayName("getBookLikeCount - 특정 도서의 좋아요 수 조회")
     void getBookLikeCount_success() {
-        // given
         when(bookLikeRepository.countByBookId(1L)).thenReturn(42L);
 
-        // when
         Long count = bookLikeService.getBookLikeCount(1L);
 
-        // then
         assertEquals(42L, count);
     }
 }
