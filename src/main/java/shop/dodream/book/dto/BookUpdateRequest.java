@@ -8,10 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Setter
 @Getter
@@ -43,20 +39,5 @@ public class BookUpdateRequest {
         return salePrice <= regularPrice;
     }
 
-
-
-
-    public Map<String, Object> toUpdateMap(){
-        Map<String, Object> map = new HashMap<>();
-        if (title != null) map.put("title", title);
-        if (description != null) map.put("description", description);
-        if (author != null) map.put("author", author);
-        if (publisher != null) map.put("publisher", publisher);
-        if (salePrice != null) map.put("salePrice", salePrice);
-        if (publishedAt != null) map.put("publishedAt", Date.from(
-                publishedAt.atStartOfDay(ZoneId.systemDefault()).toInstant()
-        ));
-        return map;
-    }
 
 }
